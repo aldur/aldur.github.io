@@ -1,0 +1,13 @@
+# Site navigation links
+
+- title: Source
+  url: https://github.com/aldur/aldur.github.io
+
+- title: About
+  url: /about/
+
+- title: Home
+  url: /
+
+- title: Articles
+  url: /articles/
