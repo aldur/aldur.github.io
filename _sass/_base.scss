@@ -192,10 +192,6 @@ tt, code, kbd, samp, pre {
 	font-family: $code-font;
 }
 p, li {
-    text-align: justify;
-    -moz-text-align-last: justify;
-    text-align-last: justify;
-
 	code {
 		@include font-size(14);
 		font-family: $code-font;
