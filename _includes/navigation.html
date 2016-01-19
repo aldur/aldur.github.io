@@ -1,13 +1,13 @@
 <div class="navigation-wrapper">
-	<nav role="navigation" id="site-nav" class="">
-	    <ul>
-      {% for link in site.data.navigation %}
+<nav role="navigation" id="site-nav" class="">
+    <ul>
+        {% for link in site.data.navigation %}
 		    {% if link.url contains 'http' %}
 		        {% assign domain = '' %}
             {% else %}
 		        {% assign domain = site.url %}
 		    {% endif %}
-            
+
             <li>
                 <a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}>
                     {% if link.url contains 'github' %}
@@ -16,9 +16,10 @@
                     <i class="fa fa-home fa-2x"></i>
                     {% elsif link.title contains 'About' %}
                     <i class="fa fa-question-circle fa-2x"></i>
-                    {% else %}
-                    {{ link.title }}
+                    {% elsif link.title contains 'Articles' %}
+                    <i class="fa fa-comments fa-2x"></i>
                     {% endif %}
+                    {{ link.title }}
                 </a>
             </li>
         {% endfor %}
