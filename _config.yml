@@ -2,7 +2,7 @@
 
 title: Life, Universe and Bits
 locale: en_US
-description: > # this means to ignore newlines until "baseurl:"
+description: > # ignore following new lines
     Personal blog about life, experiences and science.
 logo: site-logo.png
 search: false
@@ -12,7 +12,7 @@ enforce_ssl: aldur.github.io
 
 permalink:   /:categories/:title/
 markdown:    kramdown
-highlighter: pygments
+highlighter: rouge
 sass:
   sass_dir: _sass
   style: compressed
@@ -20,11 +20,11 @@ gems:
   - jekyll-sitemap
 
 kramdown:
+  input: GFM
   auto_ids: true
   footnote_nr: 1
   entity_output: as_char
   toc_levels: 1..2
-  enable_coderay: false
 
 mathjax: true
 
