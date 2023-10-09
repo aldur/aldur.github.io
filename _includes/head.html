@@ -1,74 +1,14 @@
-<meta charset="utf-8">
-<title>{% if page.title %}{{ page.title }} &#8211; {% endif %}{{ site.title }}</title>
-{% if page.excerpt %}<meta name="description" content="{{ page.excerpt | strip_html }}">{% endif %}
-{% if page.tags %}<meta name="keywords" content="{{ page.tags | join: ', ' }}">{% endif %}
-{% if page.author %}
-  {% assign author = site.data.authors[page.author] %}{% else %}{% assign author = site.owner %}
-{% endif %}
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {%- seo -%}
+  <link id="stylesheet" rel="stylesheet" href="{{ "/assets/css/style.css" | relative_url }}">
+  {%- feed_meta -%}
+  {%- if jekyll.environment == 'production' and site.google_analytics -%}
+    {%- include google-analytics.html -%}
+  {%- endif -%}
 
-{% if site.enforce_ssl %}
-<!--
-    redirect users to the https version of the website.
-    but: only check when on the production domain, as set in _config.yml.
--->
-<script type="text/javascript">
-var enforce = "{{ site.enforce_ssl }}";
-if ((enforce == window.location.host) && (window.location.protocol != "https:"))
-window.location = window.location.toString().replace(/^http:/, "https:");
-</script>
-{% endif %}
+  {%- include custom-head.html -%}
 
-{% include open-graph.html %}
-
-{% if site.owner.google.verify %}<!-- Webmaster Tools verfication -->
-<meta name="google-site-verification" content="{{ site.owner.google.verify }}">{% endif %}
-{% if site.owner.bing-verify %}<meta name="msvalidate.01" content="{{ site.owner.bing-verify }}">{% endif %}
-
-{% capture canonical %}{{ site.url }}{% if site.permalink contains '.html' %}{{ page.url }}{% else %}{{ page.url | remove:'index.html' | strip_slash }}{% endif %}{% endcapture %}
-<link rel="canonical" href="{{ canonical }}">
-<link href="{{ site.url }}/feed.xml" type="application/atom+xml" rel="alternate" title="{{ site.title }} Feed">
-
-<!-- https://t.co/dKP3o1e -->
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- For all browsers -->
-<link rel="stylesheet" href="{{ site.url }}/assets/css/main.css">
-<!-- Webfonts -->
-<script src="https://use.edgefonts.net/source-sans-pro:n2,i2,n3,i3,n4,i4,n6,i6,n7,i7,n9,i9;source-code-pro:n4,n7;volkhov.js"></script>
-
-<meta http-equiv="cleartype" content="on">
-
-<!-- HTML5 Shiv and Media Query Support -->
-<!--[if lt IE 9]>
-  <script src="{{ site.url }}/assets/js/vendor/html5shiv.min.js"></script>
-  <script src="{{ site.url }}/assets/js/vendor/respond.min.js"></script>
-<![endif]-->
-
-<!-- Modernizr -->
-<script src="{{ site.url }}/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
-
-{% if site.mathjax == true %}
-<!-- MathJax -->
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-{% endif %}
-
-<!-- Icons -->
-<link rel="apple-touch-icon" sizes="57x57" href="{{ site.url }}/favicon/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="{{ site.url }}/favicon/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="{{ site.url }}/favicon/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="{{ site.url }}/favicon/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="{{ site.url }}/favicon/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="{{ site.url }}/favicon/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="{{ site.url }}/favicon/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="{{ site.url }}/favicon/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="{{ site.url }}/favicon/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="{{ site.url }}/favicon/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="{{ site.url }}/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="{{ site.url }}/favicon/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="{{ site.url }}/favicon/favicon-16x16.png">
-<link rel="manifest" href="{{ site.url }}/favicon/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="{{ site.url }}/favicon/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+</head>

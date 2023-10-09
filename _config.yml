@@ -1,42 +1,62 @@
-# Site wide configuration
+title: Universal Bits
 
-title: Life, Universe and Bits
-locale: en_US
-description: > # ignore following new lines
-    Personal blog about life, experiences and science.
-logo: site-logo.png
-search: false
-enforce_ssl: aldur.github.io
+description: >- # ignore line-breaks until next key.
+  aldur's blog
 
-# Jekyll configuration
+author: false
 
-permalink:   /:categories/:title/
-markdown:    kramdown
-highlighter: rouge
-sass:
-  sass_dir: _sass
-  style: compressed
-gems:
-  - jekyll-sitemap
+theme: minima
 
-kramdown:
-  input: GFM
-  auto_ids: true
-  footnote_nr: 1
-  entity_output: as_char
-  toc_levels: 1..2
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
 
-mathjax: true
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+      type: "posts"
+    values:
+      author:
+        # Default author, unless differently specified.
+        - Adriano Di Luzio
 
-include: [".htaccess"]
-exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules", "Gemfile", "Gemfile.lock", "LICENSE", "README.md", "vendor"]
+# Theme-specific settings
 
+minima:
+  skin: auto
 
-# Site owner
-owner:
-  name: Adriano Di Luzio
-  avatar: profile-picture.jpg
-  email: namesurname@gmail.com
-  github: aldur
-  twitter: AdrianoDiLuzio
-  disqus-shortname: aldur
+  # Minima date format.
+  # Refer to https://shopify.github.io/liquid/filters/date/
+  # if you want to customize this.
+  #
+  # date_format: "%b %-d, %Y"
+
+  # Generate social links in footer.
+  social_links:
+    - { platform: email, user_url: "mailto:firstname_lastname@gmail.com" }
+    - { platform: github, user_url: "https://github.com/aldur" }
+    - { platform: x, user_url: "https://x.com/AdrianoDiLuzio" }
+    #   - { platform: devto,          user_url: "https://dev.to/jekyll" }
+    #   - { platform: dribbble,       user_url: "https://dribbble.com/jekyll" }
+    #   - { platform: facebook,       user_url: "https://www.facebook.com/jekyll" }
+    #   - { platform: flickr,         user_url: "https://www.flickr.com/photos/jekyll" }
+    #   - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=qc6CJjYAAAAJ" }
+    #   - { platform: instagram,      user_url: "https://www.instagram.com/jekyll" }
+    #   - { platform: keybase,        user_url: "https://keybase.io/jekyll" }
+    #   - { platform: linkedin,       user_url: "https://www.linkedin.com/in/jekyll" }
+    #   - { platform: microdotblog,   user_url: "https://micro.blog/jekyll" }
+    #   - { platform: pinterest,      user_url: "https://www.pinterest.com/jekyll" }
+    #   - { platform: stackoverflow,  user_url: "https://stackoverflow.com/users/1234567/jekyll" }
+    #   - { platform: telegram,       user_url: "https://t.me/jekyll" }
+    #   - { platform: youtube,        user_url: "https://www.youtube.com/jekyll" }
+
+# If you want to link only specific pages in your header, uncomment this and
+# add the path to the pages in
+# order as they should show up.
+#
+# header_pages:
+#   - about.md
+
+show_excerpts: true
+show_tags: false

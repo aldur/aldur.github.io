@@ -1,8 +1,7 @@
-# Aldur's pages.
+# Universal Bits
 
-Personal site.
-Powered by Jekyll.
+Personal blog, powered by [Jekyll](https://jekyllrb.com).
 
 ## License
 
-MIT license where not differently specified.
+See [LICENSE](./LICENSE).

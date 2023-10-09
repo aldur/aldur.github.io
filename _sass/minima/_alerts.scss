@@ -1,0 +1,109 @@
+// Originally based on:
+// https://www.seanh.cc/jekyll-theme-oatcake/2019/09/09/alert-boxes/
+
+.admonition,
+.attention,
+.caution,
+.danger,
+.error,
+.important,
+.warning,
+.hint,
+.tip,
+.note,
+.seealso,
+.todo {
+  @extend %vertical-rhythm;
+  border: 1px solid transparent;
+
+  border-radius: .25rem;
+
+  padding: 8px 12px;
+}
+
+.admonition > *:last-child,
+.attention > *:last-child,
+.caution > *:last-child,
+.danger > *:last-child,
+.error > *:last-child,
+.important > *:last-child,
+.warning > *:last-child,
+.hint > *:last-child,
+.tip > *:last-child,
+.note > *:last-child,
+.seealso > *:last-child,
+.todo > *:last-child {
+  margin-bottom: 0;
+}
+
+.admonition {
+  background-color: #d6d8d9;
+  border-color: #c6c8ca;
+  color: #1b1e21;
+}
+
+.admonition a {
+  color: #040505;
+}
+
+.attention,
+.caution,
+.danger,
+.error,
+.important,
+.warning {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.attention a,
+.caution a,
+.danger a,
+.error a,
+.important a,
+.warning a {
+  color: #491217;
+}
+
+.hint,
+.tip {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  color: #0c5460;
+}
+
+.hint a,
+.tip a {
+  color: #062c33;
+}
+
+.note {
+  background-color: #e2e3e5;
+  border-color: #d6d8db;
+  color: #383d41;
+}
+
+.note a {
+  color: #202326;
+}
+
+.todo {
+  background-color: #cce5ff;
+  border-color: #b8daff;
+  color: #004085;
+}
+
+.todo a {
+  color: #002752;
+}
+
+.seealso {
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+  color: #856404;
+}
+
+.seealso a {
+  color: #533f03;
+}
