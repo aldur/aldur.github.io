@@ -11,7 +11,11 @@ module SkinManager
     # NOTE: Use `in_theme_dir` if using a remote theme, otherwise use
     # `in_source_dir`.
     skins_dir = site.in_theme_dir("_sass", "minima", "skins")
-    SkinManager.available_skins = Dir["#{skins_dir}/*.scss"].map { |i| File.basename(i, ".scss") }
+    SkinManager.available_skins = Dir["#{skins_dir}/*.scss"].map {
+      |i| File.basename(i, ".scss")
+    }.select {
+      |s| s == "classic" || s == 'dark'
+    }
   end
 
   Jekyll::Hooks.register [:pages, :documents], :pre_render do |doc, payload|
