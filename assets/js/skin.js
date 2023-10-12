@@ -1,9 +1,9 @@
 const SKIN_NAME_KEY = "skinName";
 
 const Skins = {
-  Default: "style.css",
-  Light: "classic.css",
-  Dark: "dark.css",
+  Default: "follows-system",
+  Light: "light",
+  Dark: "dark",
 };
 
 const Icons = {
@@ -50,17 +50,66 @@ function iconForSkin(currentSkin) {
   }
 }
 
-function setSkin(targetSkin) {
-  var metaTag = document.getElementById("stylesheet");
-  var skinRef = metaTag.href;
+function applySkin(skin) {
+  // https://stackoverflow.com/questions/56300132/
+  // how-to-override-css-prefers-color-scheme-setting
+  for (var s = 0; s < document.styleSheets.length; s++) {
+    for (var i = 0; i < document.styleSheets[s].cssRules.length; i++) {
+      rule = document.styleSheets[s].cssRules[i];
 
-  let currentSkin = skinRef.substring(skinRef.lastIndexOf("/") + 1);
+      if (
+        rule &&
+        rule.media &&
+        rule.media.mediaText.includes("prefers-color-scheme")
+      ) {
+        switch (skin) {
+          case Skins.Light:
+            rule.media.appendMedium("original-prefers-color-scheme");
+            if (rule.media.mediaText.includes("light")) {
+              rule.media.deleteMedium("(prefers-color-scheme: light)");
+            }
+            if (rule.media.mediaText.includes("dark")) {
+              rule.media.deleteMedium("(prefers-color-scheme: dark)");
+            }
+            break;
+          case Skins.Dark:
+            // Our CSS only inlcudes `prefers-color-scheme: dark.
+            // So, by adding `prefers-color-scheme: light`
+            // we enable it at all times.
+            rule.media.appendMedium("(prefers-color-scheme: light)");
+
+            // This is a fix wrt the provided implementation.
+            if (!rule.media.mediaText.includes("dark")) {
+              rule.media.appendMedium("(prefers-color-scheme: dark)");
+            }
+            if (rule.media.mediaText.includes("original")) {
+              rule.media.deleteMedium("original-prefers-color-scheme");
+            }
+            break;
+          default:
+            console.error(`Unexpected skin ${skin}.`);
+        }
+      }
+    }
+  }
+}
+
+function setSkin(targetSkin) {
+  let currentSkin = localStorage.getItem(SKIN_NAME_KEY);
+  if (currentSkin === null) {
+    currentSkin = Skins.Default;
+  }
 
   if (targetSkin === undefined) {
     targetSkin = toggleSkinFrom(currentSkin);
   }
   localStorage.setItem(SKIN_NAME_KEY, targetSkin);
 
+  setIcon(targetSkin);
+  applySkin(targetSkin);
+}
+
+function setIcon(targetSkin) {
   let iconTag = document.getElementById("use-skin-icon");
   let iconRef = iconTag.getAttribute("xlink:href");
   let currentIcon = iconRef.split("#")[1];
@@ -68,15 +117,23 @@ function setSkin(targetSkin) {
     "xlink:href",
     iconRef.replace(currentIcon, iconForSkin(targetSkin)),
   );
-
-  metaTag.href = skinRef.replace(currentSkin, targetSkin);
 }
 
 function loadSkin() {
   let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
   if (savedSkin !== null) {
-    setSkin(savedSkin);
+    setSkin(savedSkin); // Also takes care of the icon.
+  } else {
+    setIcon(Skins.Default);
   }
 }
+
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", (_) => {
+    if (localStorage.getItem(SKIN_NAME_KEY) === null) {
+      setIcon(Skins.Default);
+    }
+  });
 
 window.onload = loadSkin;
