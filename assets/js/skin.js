@@ -122,13 +122,15 @@ function setIcon(targetSkin) {
 function migrateSkinName() {
   let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
   switch (savedSkin) {
+    // -- before 1f93c2
     case "classic.css":
       localStorage.setItem(SKIN_NAME_KEY, Skins.Light);
       break;
     case "dark.css":
       localStorage.setItem(SKIN_NAME_KEY, Skins.Dark);
       break;
-    case undefined:
+    // -- /before 1f93c2
+    case undefined:  // 1f93c2
       localStorage.removeItem(SKIN_NAME_KEY);
       break;
   }
