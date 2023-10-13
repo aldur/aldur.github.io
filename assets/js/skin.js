@@ -119,7 +119,24 @@ function setIcon(targetSkin) {
   );
 }
 
+function migrateSkinName() {
+  let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
+  switch (savedSkin) {
+    case "classic.css":
+      localStorage.setItem(SKIN_NAME_KEY, Skins.Light);
+      break;
+    case "dark.css":
+      localStorage.setItem(SKIN_NAME_KEY, Skins.Dark);
+      break;
+    case undefined:
+      localStorage.removeItem(SKIN_NAME_KEY);
+      break;
+  }
+}
+
 function loadSkin() {
+  migrateSkinName();
+
   let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
   if (savedSkin !== null) {
     setSkin(savedSkin); // Also takes care of the icon.
