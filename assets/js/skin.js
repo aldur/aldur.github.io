@@ -131,6 +131,7 @@ function migrateSkinName() {
       break;
     // -- /before 1f93c2
     case undefined:  // 1f93c2
+    case 'undefined':  // 1f93c2
       localStorage.removeItem(SKIN_NAME_KEY);
       break;
   }
