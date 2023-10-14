@@ -60,3 +60,10 @@ minima:
 
 show_excerpts: true
 show_tags: false
+
+strict_front_matter : true
+
+liquid:
+  strict_filters    : true
+
+incremental         : true
