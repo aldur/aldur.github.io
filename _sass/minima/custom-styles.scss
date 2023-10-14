@@ -120,6 +120,14 @@ img.centered {
 /** --- /Site footer --- */
 
 .post-content {
-	// TODO: How to add this only?
 	text-align: justify;
+}
+
+/**
+ * Code formatting
+ */
+pre,
+code {
+  // Prevents `alerts` from messing with this.
+  color: $text-color;
 }
