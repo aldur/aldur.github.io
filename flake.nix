@@ -71,6 +71,9 @@
             '';
           };
 
+          # This doesn't work, becase `bundix` runs nix-build (or similar)
+          # and clashes with the sandbox.
+          /* 
           gemset-is-locked = pkgs.stdenv.mkDerivation {
             name = "gemset-is-locked";
             src = with pkgs; lib.cleanSourceWith {
@@ -82,7 +85,7 @@
               ;
             };
             # `cacert` is required to get Ruby's OpenSSL to work
-            # and fetch the # hashes remotely.
+            # and fetch the hashes remotely.
             buildInputs = [ pkgs.bundix pkgs.cacert ];
             buildPhase = ''
               # Required by `bundix` to store data.
@@ -102,6 +105,7 @@
             outputHashAlgo = "sha256";
             outputHash = builtins.hashFile "sha256" ./gemset.nix;
           };
+          */
         };
 
         packages = {
