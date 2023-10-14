@@ -78,6 +78,10 @@ img.centered {
 	display: flex;
 	justify-content: space-evenly;
 	flex-wrap: wrap;
+
+	@media screen and (max-width: $on-tiny) {
+		flex-direction: column;
+	}
 }
 
 .social-media-list {
@@ -92,17 +96,24 @@ img.centered {
 
 .footer-col {
 	margin-bottom: 0;
-	padding: 0 ($spacing-unit * 0.5);
 	width: unset;
 
-	&:first-child {
-		padding-right: $spacing-unit * 0.5;
-		padding-left: 0;
+	@media screen and (min-width: $on-tiny) {
+        padding: 0 ($spacing-unit * 0.5);
+
+		&:first-child {
+			padding-right: $spacing-unit * 0.5;
+			padding-left: 0;
+		}
+
+		&:last-child {
+			padding-right: 0;
+			padding-left: $spacing-unit * 0.5;
+		}
 	}
 
-	&:last-child {
-		padding-right: 0;
-		padding-left: $spacing-unit * 0.5;
+	@media screen and (max-width: $on-tiny) {
+		padding: 0 0;
 	}
 }
 
