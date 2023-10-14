@@ -4,11 +4,11 @@ title: 'Jekyll + Nix'
 categories: articles
 ---
 
-When I [started writing again]({% post_url 2023-10-07-reboot %}), building it
-again with [Jekyll](https://jekyllrb.com) after so many years hasn't been easy.
-Let's fix that.
+When I [started writing again]({% post_url 2023-10-07-reboot %}), re-building
+this blog with [Jekyll](https://jekyllrb.com) hasn't been easy. Let's fix that
+with [Nix](https://nixos.org).
 
-### Building Jekyll
+### Building with Jekyll
 
 Jekyll is powered by Ruby. When I tried building it on macOS, installing its
 Ruby `gem` either required `sudo` or failed when using `--user-install`[^gem].
@@ -20,7 +20,7 @@ Installing `ruby` from `homebrew` solved this, but:
   `/opt/homebrew/lib/ruby/gems/3.2.0/`. The next `ruby` version upgrade would
   require re-installing the gems.
 
-I could go on, but... How do we do better? With [Nix](https://nixos.org)!
+I could go on, but... How do we do better?
 
 ### Enters Nix
 
@@ -43,7 +43,8 @@ system must _collaborate_.
 
 ### Nix + Bundler
 
-Let's look at Ruby. Jekyll relies on [Bundler](https://bundler.io):
+Let's look at our build system. Jekyll is a Ruby app that relies on
+[Bundler](https://bundler.io):
 
 > Bundler provides a consistent environment for Ruby projects by tracking and
 > installing the exact gems and versions that are needed.
@@ -121,9 +122,8 @@ one, `bundix`!
 
 ### The full nix flake
 
-Writing the rest of the `flake.nix` file ({%- include github_link.html
-url="https://github.com/aldur/aldur.github.io/blob/ad72870b4ae0c89cf99f99e9b33270b71fc8844a/flake.nix"
-text="result here" -%}) gives us our reproducible system.
+Writing the rest of the `flake.nix` file ({% include github_link.html
+url="https://github.com/aldur/aldur.github.io/blob/ad72870b4ae0c89cf99f99e9b33270b71fc8844a/flake.nix" text="full result here" -%}) gives us our reproducible system.
 
 We can now run `nix run` to download any required package/flake, build the blog,
 and serve it. `nix run .lockGemset` will (you guessed it) generate `gemset.nix`.
@@ -186,6 +186,7 @@ I'll show myself to the door. 'til next time! 👋
     ```
 
 [^sandbox]:
-    This got me quite confused for a second. On macOS, the check I had
-    [originally written](https://github.com/aldur/aldur.github.io/pull/4/files/774d4792fa7265a99b7c19390cfec2c13293897a#diff-206b9ce276ab5971a2489d75eb1b12999d4bf3843b7988cbe8d687cfde61dea0R95) was working as expected, but it would fail on CI. That's
+    This got me quite confused for a second. On macOS, the check I had {%
+    include github_link.html
+    url="https://github.com/aldur/aldur.github.io/pull/4/files/774d4792fa7265a99b7c19390cfec2c13293897a#diff-206b9ce276ab5971a2489d75eb1b12999d4bf3843b7988cbe8d687cfde61dea0R95" text="originally written" %} was working as expected, but it would fail on CI. That's
     because sandboxing is disabled on macOS, but enabled on CI.
