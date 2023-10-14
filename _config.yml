@@ -67,3 +67,10 @@ liquid:
   strict_filters    : true
 
 incremental         : true
+
+exclude:
+  - LICENSE
+  - README.md
+  - flake.lock
+  - flake.nix
+  - gemset.nix
