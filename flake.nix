@@ -93,7 +93,14 @@
               ${pkgs.bundix}/bin/bundix -l
               popd
               diff gemset.nix $out/gemset.nix
+              mv $out/gemset.nix gemset.nix.new
+              rm -rf $out
+              mv gemset.nix.new $out
             '';
+
+            outputHashMode = "flat";
+            outputHashAlgo = "sha256";
+            outputHash = builtins.hashFile "sha256" ./gemset.nix;
           };
         };
 
