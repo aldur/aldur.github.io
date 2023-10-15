@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <generator uri="https://jekyllrb.com/"
                version="4.3.2">Jekyll</generator>
-    <link href="/feed.xml"
+    <link href="https://aldur.github.io/feed.xml"
           rel="self"
           type="application/atom+xml" />
     <link href="/"
@@ -20,7 +20,7 @@
               title="This feed has migrated!" />
         <published>2023-10-15T00:00:00+02:00</published>
         <updated>2023-10-15T00:00:00+02:00</updated>
-        <id>https://aldur.pages.dev</id>
+        <id>https://aldur.pages.dev/</id>
         <content type="html"
                  xml:base="https://aldur.github.io">
 <![CDATA[This feed has migrated to <a id="target" href="https://aldur.pages.dev">https://aldur.pages.dev</a>]]>
