@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <generator uri="https://jekyllrb.com/"
+               version="4.3.2">Jekyll</generator>
+    <link href="/feed.xml"
+          rel="self"
+          type="application/atom+xml" />
+    <link href="/"
+          rel="alternate"
+          type="text/html" />
+    <updated>2023-10-15T00:00:00+02:00</updated>
+    <id>/feed.xml</id>
+    <title type="html">Universal Bits</title>
+    <subtitle>aldur's blog</subtitle>
+    <entry>
+        <title type="html">This blog has migrated to https://aldur.pages.dev</title>
+        <link href="https://aldur.pages.dev/feed.xml"
+              rel="alternate"
+              type="text/html"
+              title="This feed has migrated!" />
+        <published>2023-10-15T00:00:00+02:00</published>
+        <updated>2023-10-15T00:00:00+02:00</updated>
+        <id>https://aldur.pages.dev</id>
+        <content type="html"
+                 xml:base="https://aldur.github.io">
+<![CDATA[This feed has migrated to <a id="target" href="https://aldur.pages.dev">https://aldur.pages.dev</a>]]>
+        </content>
+        <author>
+            <name>["Adriano Di Luzio"]</name>
+        </author>
+        <category term="articles" />
+        <summary type="html">
+<![CDATA[This feed has migrated to <a id="target" href="https://aldur.pages.dev">https://aldur.pages.dev</a>]]>
+        </summary>
+    </entry>
+</feed>
