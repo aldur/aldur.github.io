@@ -17,9 +17,8 @@ defaults:
       path: "" # an empty string here means all files in the project
       type: "posts"
     values:
-      author:
-        # Default author, unless differently specified.
-        - Adriano Di Luzio
+      # Default author, unless differently specified.
+      author: aldur
 
 # Theme-specific settings
 
