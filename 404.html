@@ -1,10 +1,10 @@
 <html lang="en">
-<head>
-    <meta charset="utf-8"/>
+  <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="3;url=https://aldur.pages.dev"/>
-    <link rel="canonical" href="https://aldur.pages.dev"/>
-    <title>This blog has moved!</title>
+    <title>
+      This blog has moved!
+    </title>
     <style>
         body {
             font-family: sans-serif;
@@ -12,9 +12,29 @@
             margin: 1em auto;
         }
     </style>
-</head>
-<body>
-    <h1>This blog has moved!</h1>
-    <p>Redirecting to <a href="https://aldur.pages.dev">https://aldur.pages.dev</a> in 3 seconds...</p>
-</body>
+  </head>
+  <body>
+    <h1>
+      This blog has moved!
+    </h1>
+    <p>
+      I have tried to ensure a smooth migration, but if you ended up here it means something went
+      wrong. But don't worry! This page will automatically try to redirect you to the correct
+      migrated location.
+    </p>
+    <p>
+      Redirecting to <a id="target" href="https://aldur.pages.dev">https://aldur.pages.dev</a> in 3
+      seconds...
+    </p>
+    <script type="text/javascript">
+        let target = window.location.href.replace("github.io", "pages.dev");
+        let a = document.getElementById("target");
+        a.href = target;
+        a.text = target;
+
+        setTimeout(function () {
+            window.location.replace(target);
+        }, 3000);
+    </script>
+  </body>
 </html>
