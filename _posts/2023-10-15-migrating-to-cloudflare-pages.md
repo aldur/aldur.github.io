@@ -29,24 +29,24 @@ I like GitHub Pages! They make it easy to spin up Jekyll websites. GitHub
 Actions, then, provide additional space for customization, if one needs to. But
 simplicity comes with constraints, too.
 
-In my case, I was looking at how to integrate privacy-preserving (and
-GDPR-compliant) analytics into the blog. GitHub Pages doesn't provide analytics.
-[Plausible](https://plausible.io) is a great alternative. But the _very little_
-(read: _0_) traffic on this blog doesn't justify their paid plans; the
-self-hosted option instead requires spinning up an instance, securing it,
-maintaining it, and so on. Not ideal.
+In my case, I wanted to add privacy-preserving (and GDPR-compliant) analytics to
+the blog. GitHub doesn't provide analytics for pages.
+[Plausible](https://plausible.io) would be a good alternative, but the _little_
+traffic on this blog doesn't justify their paid plans; the self-hosted option
+instead requires spinning up an instance, securing it, maintaining it, and so
+on. Not ideal.
 
-That's when I thought about Cloudflare Pages -- their product to serve static
+That's when I thought about Cloudflare Pages -- their option to serve static
 content.
 
-Being integrated into Cloudflare, their Pages provide [privacy-preserving
+Being integrated into Cloudflare, Pages can measure [privacy-preserving
 analytics](https://www.cloudflare.com/en-gb/web-analytics/) that don't rely on
 client state and don't require adding the most-hated-banner of the web: "_Allow
 Cookies?_". Also, I have used Cloudflare to manage DNSs before. If I ever move
 this to a custom domain, it would be good to have everything it one
 place[^censorship].
 
-So, Cloudflare Pages it is.
+So, Cloudflare Pages.
 
 ## Setting things up
 
@@ -74,8 +74,7 @@ Let's establish our migration _goals_:
 
 - We want _links_ pointing to existing _resources_ on GitHub to redirect to the
   same resource, on Cloudflare. No generic redirects to the root of the new
-  domain that leave to the users the burden to navigate back to their
-  destination.
+  domain that leave the users to find again their destination.
 - We also want _previous_ users to remain up-to-date. For that, we need to tell
   "browser users" that the blog has moved and notify _somehow_ RSS users too.
 
@@ -100,13 +99,13 @@ OK, what's the plan then? We will take the matter into our hands!
 
 #### HTML pages
 
-All HTML pages at GitHub redirect to their corresponding page at Cloudflare by
-using `<meta http-equiv="refresh"
+All HTML pages at GitHub will redirect to their corresponding page at Cloudflare
+by using `<meta http-equiv="refresh"
 content="3;url=https://aldur.pages.dev/[destination]">` and `<link
 rel="canonical" href="https://aldur.pages.dev/[destination]">`. This informs
 search-engine bots of the redirect and lets us display an informative page to
-the user. At this stage, we have less than a dozen pages. It takes less to write
-the HTML code by hand than to script it -- but a Jekyll plugin could do that
+the user. There are less than a dozen pages in total. It takes less to write the
+HTML code by hand than to script it -- but a Jekyll plugin could do that
 automatically.
 
 {:.text-align-center}
@@ -116,8 +115,8 @@ _What the result looks like for our [about](https://aldur.github.io/about) page 
 #### The RSS feed
 
 The RSS feed needs special treatment. If someone consumes this blog only through
-the feed, they'll need to manually edit the feed URI to get new posts. So, we
-want to notify them: We will create a static new RSS entry that points to the
+the feed, they'll need to manually edit the feed URI to get new posts, and we
+want to notify them. We will create a static new RSS entry that points to the
 new website.
 
 {:.text-align-center}
@@ -134,18 +133,18 @@ to prevent mistakes.
 
 For sure! Static assets, uploads, and so on. Short of continuing to serve their
 original version, there's not much we can do. They are not HTML files, and we
-can't redirect a `webp` image without dynamic HTTP redirects. But still, there's
-less chance of someone visiting/requesting static assets from the old domain.
+can't redirect a `webp` image without dynamic HTTP redirects. Still, there's
+little chance of someone visiting/requesting static assets from the old domain.
 
-So, it's to compromise. We can use a little JavaScript to:
+This time is OK to compromise. We can use a little JavaScript to:
 
 - Inform the user of what's happening.
-- Do our best to redirecting them to the right place.
+- Do our best to redirect them to the right place.
 
-If we use a `404.html` file, as a bonus this will also catch and redirect
-requests to resources that didn't exist on the old website -- or more
-realistically that we missed in our migration. The downside, if you are asking,
-is that the JavaScript approach doesn't work with `curl`, bots, and so on.
+Bonus: If we use a `404.html` file it will also catch and redirect requests to
+resources that didn't exist on the old website -- or anything we missed during
+the migration. The downside, if you are asking, is that the JavaScript approach
+doesn't work with `curl`, bots, and so on.
 
 You can try the resulting feel [here](https://aldur.github.io/foo).
 
