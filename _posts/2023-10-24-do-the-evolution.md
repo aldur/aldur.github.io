@@ -14,9 +14,7 @@ articles like _this_, bringing _bits_ of computer science into other fields.
 </div>
 
 <!-- prettier-ignore-start -->
-
 #### Post outline
-
 {:.no_toc}
 
 - Table of Contents
@@ -377,7 +375,7 @@ _In informal terms_ (remember, I am a computer scientist stepping into biology
 strategy(ies), it will resist _invasions_ from other (sets of) strategies.
 
 We have now mentioned the word "evolutionary" a few times, so let's bring the
-big guns in. So far, we haven't considered the role of "evolution" . Instead, we
+big guns in. So far, we haven't considered the role of "evolution". Instead, we
 have just enumerated the different hawk-to-dove ratios in the population and
 found an ESS through brute force. What's truly fascinating is that _individual
 selection_ will lead us to the ESS.
@@ -391,10 +389,10 @@ doves (for instance, 55% vs 45%). We are _descending_ along the slope of the
 orange line.
 
 Now consider another scenario, where there are too many hawks. Competition is
-fierce and lot of fights among hawks end with severe injuries. In contrast,
-doves back off from fights against hawks and enjoy a better expected payoff.
-This translates to improved chances of reproduction, leading to the next
-generation having more doves and less hawks (_ascending_ along the blue line).
+fierce and fights among hawks end with severe injuries. In contrast, doves back
+off from fights against hawks and enjoy a better expected payoff. This
+translates to improved chances of reproduction, leading to the next generation
+having more doves and fewer hawks (_ascending_ along the blue line).
 
 ### Weighted Average Payoff → Fitness
 
