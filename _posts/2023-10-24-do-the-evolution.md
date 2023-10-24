@@ -524,7 +524,7 @@ is in fact not an ESS. A "dove" in a population of "retaliator" behaves like a
 
 ## Footnotes
 
-[^40th]: 40th Anniversary edition, edited by Oxford Landmark Science.
+[^40th]: 40th Anniversary edition, published by Oxford Landmark Science.
 [^doves]:
     This dove is different from the animal we know, who is in fact quite
     an aggressive species.
