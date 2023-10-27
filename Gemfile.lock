@@ -47,6 +47,8 @@ GEM
       sass-embedded (~> 1.54)
     jekyll-seo-tag (2.8.0)
       jekyll (>= 3.8, < 5.0)
+    jekyll-sitemap (1.4.0)
+      jekyll (>= 3.7, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     kramdown (2.4.0)
@@ -83,7 +85,8 @@ DEPENDENCIES
   jekyll (~> 4.3)
   jekyll-feed (~> 0.17)
   jekyll-seo-tag (~> 2.8)
+  jekyll-sitemap (~> 1.4)
   minima!
 
 BUNDLED WITH
-   2.4.20
+   2.4.19
