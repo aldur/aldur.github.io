@@ -4,8 +4,8 @@ title: >
   Simulating individual selection with evolutionary game theory
 categories: articles
 excerpt: >
-  Learn how to implement a Python simulation for individual selection based on
-  evolutionary game theory (hawks vs doves). In other words: Do the evolution!
+  Building a Python simulation for selecting and evolving "hawks" vs "doves"
+  with evolutionary game theory.
 ---
 
 <div class="note" markdown="1">
