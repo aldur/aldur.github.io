@@ -9,8 +9,8 @@ excerpt: >
 ---
 
 <div class="note" markdown="1">
-"Universal Bits", uh? When I chose that name I was thinking about
-articles like _this_, bringing _bits_ of computer science into other fields.
+"Universal Bits", uh? I named this blog thinking about
+articles like _this_, taking _bits_ of computer science to other fields.
 </div>
 
 <!-- prettier-ignore-start -->
@@ -49,7 +49,7 @@ what nature does best.
 This post focuses on one field in particular, bridging biology, computer
 science, and even economics: _game theory_. It explains equally well how peers
 contribute to a decentralized system (for instance, in Web3) and how investors
-behave in a market. Today, we will look at it from an evolutionary perspective.
+behave in a market. Today, we look at it from an evolutionary perspective.
 
 ## Hawks and Doves
 
@@ -58,7 +58,7 @@ demonstrate how different individuals in a population adopt various
 _strategies_, resulting in different _payoffs_, that affect their chances of
 survival and reproduction.
 
-Whoa, let's break this down.
+Let's break this down.
 
 Imagine observing a full ecosystem, isolated under a glass bell, where there
 only live two species: _hawks_ and _doves_[^neil_young]. When looking at a pair
@@ -79,7 +79,7 @@ These hypothetical fights represent fierce _competition_ for limited resources.
 The winner _gains_ access to the resource and thereby develops a better position
 to spread its genes. A species' _strategy_ defines their behaviour in fights --
 in other words, how they interact with the surrounding environment and react to
-external to stimuli.
+external stimuli.
 
 Assigning numerical scores to the result of fights allows us to compute
 _payoffs_:
@@ -205,7 +205,7 @@ Lastly, we conclude with a `simulate` function to:
 from itertools import groupby
 
 def mean(x):
-    pass # [...], does what you'd expect
+    ... # [...], does what you'd expect
 
 
 def simulate(population, n_fights=1000) -> dict[Strategy, dict[Strategy, float]]:
@@ -261,7 +261,7 @@ print(payoffs_matrix)
 
 <div class="tip" markdown="1">
 
-If you prefer to look at the code, you can find it
+If you prefer to look at the code, you can find the full source
 {% include github_link.html url="https://github.com/aldur/hawks_and_doves" text="here" %}.
 
 </div>
@@ -431,6 +431,7 @@ def scale(d, min_payoff, max_payoff):
     if min_payoff < 0 and abs(min_payoff) > max_payoff:
         max_payoff = abs(min_payoff)
 
+    # Made very verbose for explainability.
     r = {k: (v - min_payoff) / (0 - min_payoff) for k, v in d.items() if v < 0} | {
         k: (1 + v - 0) / (max_payoff - 0) for k, v in d.items() if v > 0
     }
@@ -482,21 +483,48 @@ Here is the plot resulting from a run of the simulation.
 ![frequency of hawks and doves in the population as generations evolve]({% link /images/hawks_by_generation.svg %}){:.centered}
 _Frequency of hawks and doves in each generation, as they evolve._
 
-This run took less than 10 generations to reach the ESS, denoted by the red line
-at 58.3%. Once at the equilibrium, it resists invasion. Evolution continues to
-change slightly the percentage of hawks and doves in the population, but their
-frequency reverts to the ESS.
+This particular simulation took less than 10 generations to reach the ESS,
+highlighted by the red line at 58.3% (the 7/12 ratio we have previously
+discovered through brute force). Our hand-crafted _fitness function_ provides a
+good indicator for _individual selection_, leading the proportion of hawks to
+doves to _quickly_ reach the equilibrium.
 
-We see the definition of ESS being applied in practice. Any change to the mix
-result in a less favorable payoff for both species and will be discouraged by
-individual selection.
+Once at the equilibrium, the strategy resists invasion. Evolution continues and
+slightly changes the percentage of hawks and doves in the population, but their
+frequency reverts to the ESS. Again, informed by our fitness function.
 
-<div class="note" markdown="1">
+Our experimental results show the definition of ESS being applied _in practice_.
+From [above](#evolutionarily-stable-strategies-ess):
+
+> ESS means that once a population adopts this (mix of)
+> strategy(ies), it will resist _invasions_ from other (sets of) strategies.
+
+The ESS _resists_ changes to the population split that would result in less
+favorable payoffs. Notably, one can think of a "population split" as a strategy
+where the individual privately tosses a biased coin before each fight to decide
+whether to behave like a hawk or a dove. In these terms, our ESS:
+
+- Resists invasion from strategies bias differently from 7:12, in favor of
+  hawks.
+- Performs well against itself. In fact, this is an alternative definition for
+  ESS: a strategy that "does well" against copies of itself.
+
+## Conclusions
+
+We have covered a lot of ground, starting from the high-level definition of
+fitness to end at a simulation that shows us individual selection in action.
+
+Armed with these tools, there's so much more we can experiment about! Other
+interesting strategies, for example. How about someone who _retaliates_,
+fighting back only if attacked? The [references](#references) will give you a
+sneak peek.
+
 👋 That's it for today! Thank you for reading so far.
 
-One last thing: I can't leave you without pointing to the soundtrack I had in mind all along.
+<div class="note" markdown="1">
+One last thing: I can't leave you without pointing you to the soundtrack I had
+in mind all along.
 <br>🎧 [Do the Evolution - Pearl Jam](https://www.youtube.com/watch?v=aDaOgu2CQtI)
-
 </div>
 
 ## References
