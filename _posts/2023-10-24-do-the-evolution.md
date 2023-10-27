@@ -10,7 +10,7 @@ excerpt: >
 
 <div class="note" markdown="1">
 "Universal Bits", uh? I named this blog thinking about
-articles like _this_, taking _bits_ of computer science to other fields.
+articles like _this one_, applying computer science _bits_ to other fields.
 </div>
 
 <!-- prettier-ignore-start -->
