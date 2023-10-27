@@ -512,13 +512,13 @@ whether to behave like a hawk or a dove. In these terms, our ESS:
 
 ## Conclusions
 
-We have covered a lot of ground, starting from the high-level definition of
-fitness to end at a simulation that shows us individual selection in action.
+We've covered a lot of ground, starting from the high-level definition of
+fitness to arrive at simulating individual selection.
 
-Armed with these tools, there's so much more we can experiment about! Other
+Armed with these tools there's so much more we can experiment about! Other
 interesting strategies, for example. How about someone who _retaliates_,
-fighting back only if attacked? The [references](#references) will give you a
-sneak peek.
+fighting back only if attacked? Check the [references](#references) for a sneak
+peek.
 
 👋 That's it for today! Thank you for reading so far.
 
