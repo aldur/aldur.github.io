@@ -10,6 +10,10 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  # This requires `url` being set.
+  # Also, its effect depend on _where_ you position in in the plugins list.
+  # See: https://github.com/jekyll/jekyll-sitemap
+  - jekyll-sitemap
 
 defaults:
   -

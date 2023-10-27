@@ -11,7 +11,7 @@ Install [Nix](https://nixos.org) and enable
 
 - Running `nix develop` will prepare and enter an environment with everything
   you need.
-- `nix run .lockGemset` generates `gemset.nix` from `Gemfile.lock`.
+- `nix run '.#lockGemset'` generates `gemset.nix` from `Gemfile.lock`.
 - `nix flake check` tests the build and runs linters.
 
 ## License
