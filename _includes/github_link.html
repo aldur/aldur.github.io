@@ -1,3 +1,5 @@
+{%- capture a -%}
 {%- assign url = include.url | escape -%}
-{%- assign text = include.text | escape | default: "here" -%}
+{%- assign text = include.text | escape | default: "here" | strip -%}
 <a href="{{ url }}" title="{{ text }}"><svg class="svg-icon svg-icon-font-size grey"><use xlink:href="{{ '/assets/minima-social-icons.svg#github' | relative_url }}"/></svg> {{ text }}</a>
+{%- endcapture -%}{{- a | strip_newlines -}}
