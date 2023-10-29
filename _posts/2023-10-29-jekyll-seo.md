@@ -99,4 +99,4 @@ If you ended up through a Google search: It worked!
     The plugin also makes social information and title/excerpts of posts
     available to search crawlers. The [`minima`
     theme](https://github.com/jekyll/minima) I am [using]({% post_url
-    2023-10-07-reboot %}) suggests to add it in its default configuration.
+    2023-10-07-reboot %}) suggests adding it in its default configuration.
