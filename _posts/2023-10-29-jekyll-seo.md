@@ -4,12 +4,12 @@ title: 'Bare-minimum Google indexing for Jekyll'
 categories: articles
 ---
 
-Searching for this blog on Google with `site:aldur.pages.dev` right now does not
-return any results. Let's fix that.
+Searching for this blog on Google right now does not return any results. Let's
+fix that.
 
-If you think about it, it makes sense. If there are no links pointing to this
+If you think about it, that makes sense! If there are no links pointing to this
 blog Google cannot follow them to find it and index it[^analytics]. Luckily we
-can gently _welcome_ Google's crawlers here by:
+can _welcome_ Google's crawlers here by:
 
 1. Adding a new "property" for this blog to the "Google Search Console".
 1. Verifying we own the "property".
@@ -21,10 +21,10 @@ can gently _welcome_ Google's crawlers here by:
 [This Google support
 page](https://support.google.com/webmasters/answer/34592?hl=en#zippy=%2Cdomain-property-examplecom)
 shows how add the property. We are using a [Cloudflare Pages']({% post_url
-2023-10-15-migrating-to-cloudflare-pages %}) domain, so we don't control DNS. We
-will need to create a URL-prefix property.
+2023-10-15-migrating-to-cloudflare-pages %}) domain, so we don't control DNS, and
+we will need to create a URL-prefix property.
 
-To verify the URL-prefix we need to add the following snippet to the `<head>` of
+To verify the URL-prefix we need the following snippet within the `<head>` of
 our index:
 
 ```html
@@ -35,7 +35,8 @@ I first considered doing this by hand, but then found out that the
 [jekyll-seo-tag](https://github.com/jekyll/jekyll-seo-tag/) plugin[^seo-tag]
 supports this. Adding a `google_site_verification` entry to the {% include
 github_link.html url="https://github.com/aldur/aldur.github.io/pull/15"
-text="site configuration" %} marked the verification as complete.
+text="site configuration" %} and deploying the change was enough to complete the
+verification.
 
 #### Indexing content
 
@@ -50,17 +51,18 @@ all entries in an XML document (similar to an RSS feed). The
 populating it and updating it with new articles.
 
 <div class="warning" markdown="1">
-The behaviour of the sitemap plugin depend on the index at which we add it to
+The behaviour of the sitemap plugin depends on the index at which we add it to
 Jekyll's `plugins` array in the site configuration.
 </div>
 
 <div class="tip" markdown="1">
-In my case, I just added it last -- it "knows" _not_ add my RSS feed to the sitemap and I want it to index the rest of the content.
+In my case, I added it _last_ -- it "knows" _not_ add my RSS feed to the sitemap
+and I want it to index the rest of the content.
 </div>
 
-Last, we [add a `robots.txt`
+By [adding a `robots.txt`
 file](https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt)
-to inform bots about the sitemap:
+we inform bots about the sitemap:
 
 ```txt
 User-agent: *
@@ -77,7 +79,7 @@ site.url }}/sitemap.xml`
 
 I prepared and merged the {% include github_link.html
 url="https://github.com/aldur/aldur.github.io/pull/16" text="changes" %}. Then,
-I refreshed Google's `robots.txt` cache (see
+I refreshed Google's `robots.txt` cache (instructions
 [here](https://developers.google.com/search/docs/crawling-indexing/robots/submit-updated-robots-txt)).
 
 The Search Console tells me it will take a couple of days to index everything.
@@ -95,6 +97,6 @@ If you ended up through a Google search: It worked!
 
 [^seo-tag]:
     The plugin also makes social information and title/excerpts of posts
-    available to search crawlers. The default configuration of the [`minima`
-    theme](https://github.com/jekyll/minima) [I am using]({% post_url
-    2023-10-07-reboot %}) includes it as a suggested dependency.
+    available to search crawlers. The [`minima`
+    theme](https://github.com/jekyll/minima) I am [using]({% post_url
+    2023-10-07-reboot %}) suggests to add it in its default configuration.
