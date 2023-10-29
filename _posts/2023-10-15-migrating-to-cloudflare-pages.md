@@ -186,7 +186,7 @@ Our RSS validator complains -- and rightly so:
 Interestingly, this doesn't break my RSS reader.
 
 To {% include github_link.html
-url="https://github.com/aldur/aldur.github.io/pull/11" text="fix this" -%} we
+url="https://github.com/aldur/aldur.github.io/pull/11" text="fix this" %} we
 add a Cloudflare-specific configuration file and instruct Cloudflare Pages
 to use it while building the site (`jekyll build --config
 _config.yml,cloudflare_pages._config.yml` in "Build configuration").

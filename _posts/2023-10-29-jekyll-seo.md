@@ -35,7 +35,7 @@ I first considered doing this by hand, but then found out that the
 [jekyll-seo-tag](https://github.com/jekyll/jekyll-seo-tag/) plugin[^seo-tag]
 supports this. Adding a `google_site_verification` entry to the {% include
 github_link.html url="https://github.com/aldur/aldur.github.io/pull/15"
-text="site configuration" -%} marked the verification as complete.
+text="site configuration" %} marked the verification as complete.
 
 #### Indexing content
 
@@ -76,7 +76,7 @@ site.url }}/sitemap.xml`
 #### Results
 
 I prepared and merged the {% include github_link.html
-url="https://github.com/aldur/aldur.github.io/pull/16" text="changes" -%}. Then,
+url="https://github.com/aldur/aldur.github.io/pull/16" text="changes" %}. Then,
 I refreshed Google's `robots.txt` cache (see
 [here](https://developers.google.com/search/docs/crawling-indexing/robots/submit-updated-robots-txt)).
 
