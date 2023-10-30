@@ -8,7 +8,7 @@ Searching for this blog on Google right now does not return any results. Let's
 fix that.
 
 If you think about it, that makes sense! If there are no links pointing to this
-blog Google cannot follow them to find it and index it[^analytics]. Luckily we
+blog, Google cannot follow them to find it and index it[^analytics]. Luckily we
 can _welcome_ Google's crawlers here by:
 
 1. Adding a new "property" for this blog to the "Google Search Console".
