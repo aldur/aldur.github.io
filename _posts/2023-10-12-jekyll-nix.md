@@ -123,7 +123,8 @@ one, `bundix`!
 ### The full nix flake
 
 Writing the rest of the `flake.nix` file ({% include github_link.html
-url="https://github.com/aldur/aldur.github.io/blob/ad72870b4ae0c89cf99f99e9b33270b71fc8844a/flake.nix" text="full result here" -%}) gives us our reproducible system.
+url="https://github.com/aldur/aldur.github.io/blob/ad72870b4ae0c89cf99f99e9b33270b71fc8844a/flake.nix"
+text="full result here" %}) gives us our reproducible system.
 
 We can now run `nix run` to download any required package/flake, build the blog,
 and serve it. `nix run .lockGemset` will (you guessed it) generate `gemset.nix`.
