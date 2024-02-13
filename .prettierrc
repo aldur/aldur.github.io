@@ -5,7 +5,6 @@
   "singleQuote": true,
   "trailingComma": "all",
   "bracketSpacing": true,
-  "parenSpacing": false,
   "bracketSameLine": false,
   "semi": true,
   "arrowParens": "always"
