@@ -1,0 +1,25 @@
+<ul class="social-media-list">
+  {% comment %}
+  Extend 
+  https://github.com/jekyll/minima/blob/10124515953527c8990a2de99ae4ddb2a81ffee3/_includes/social.html
+  to add the email (and re-use config)
+  {% endcomment %}
+  {%- if site.author and site.author.nick %}
+    <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>
+  {%- endif %}
+  {%- if site.author and site.author.pgp_pk_url %}
+    <data class="u-key" href="{{ site.author.pgp_pk_url }}"></data>
+  {%- endif %}
+  {%- if site.author and site.author.email %}
+    <li>
+      <a rel="me" class="u-email" href="mailto:{{ site.author.email }}" target="_blank" title="email">
+        <svg class="svg-icon grey">
+          <use xlink:href="{{ '/assets/icons.svg#email' | relative_url }}"></use>
+        </svg>
+      </a>
+    </li>
+  {%- endif %}
+  {%- for entry in site.minima.social_links -%}
+    {%- include social-item.html item = entry -%}
+  {%- endfor -%}
+</ul>
