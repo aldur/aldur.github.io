@@ -5,7 +5,7 @@
   to add the email (and re-use config)
   {% endcomment %}
   {%- if site.description %}
-    <data class="p-note" hidden>{{ site.description | escape }}</data>
+    <data class="p-note" hidden>{{ site.description.short | escape }}</data>
   {%- endif %}
   {%- if site.author and site.author.nick %}
     <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>

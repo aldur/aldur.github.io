@@ -7,7 +7,7 @@ permalink: /about/
 👋 I am Adriano ({% include github_link.html url="https://github.com/aldur/"
 text="aldur" -%}). Welcome to my blog!
 
-🔬 {{- site.description }}
+🔬 {{- site.description.long }}
 
 📚 I hope you enjoy reading this blog. If you'd like to stay up-to-date, you can
 subscribe to the [RSS feed]({{ site.feed.path | default: 'feed.xml' |
