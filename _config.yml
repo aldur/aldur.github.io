@@ -33,7 +33,7 @@ social:
 
 # --- /Required by Jekyll SEO
 
-# Site author
+# Author for both site and posts
 author:
   name: aldur
   nick: aldur
@@ -50,15 +50,6 @@ plugins:
   # Also, its effect depend on _where_ you position in in the plugins list.
   # See: https://github.com/jekyll/jekyll-sitemap
   - jekyll-sitemap
-
-defaults:
-  -
-    scope:
-      path: "" # an empty string here means all files in the project
-      type: "posts"
-    values:
-      # Default author for posts, unless differently specified.
-      author: aldur
 
 # Theme-specific settings
 
