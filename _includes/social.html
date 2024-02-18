@@ -8,8 +8,9 @@
     <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>
   {%- endif %}
   {%- if site.author and site.author.pgp_pk_url %}
-    <data class="u-key">{{ site.author.pgp_pk_url }}</data>
+    <data class="u-key" hidden>{{ site.author.pgp_pk_url }}</data>
   {%- endif %}
+  <data class="u-photo" hidden>/assets/images/favicon.svg</data>
   {%- if site.author and site.author.email %}
     <li>
       <a rel="me" class="u-email" href="mailto:{{ site.author.email }}" target="_blank" title="email">
