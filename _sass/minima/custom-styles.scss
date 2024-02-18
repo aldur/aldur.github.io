@@ -1,4 +1,4 @@
-@import "minima/syntax_highlight";
+@import 'minima/syntax_highlight';
 
 /**
  * Make post links in home more compact
@@ -100,8 +100,12 @@ img.centered {
 	margin-bottom: 0;
 	width: unset;
 
+	a {
+		color: $text-color;
+	}
+
 	@media screen and (min-width: $on-tiny) {
-        padding: 0 ($spacing-unit * 0.5);
+		padding: 0 ($spacing-unit * 0.5);
 
 		&:first-child {
 			padding-right: $spacing-unit * 0.5;
