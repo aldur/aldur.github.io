@@ -1,7 +1,5 @@
 title: Universal Bits
 
-tagline: Welcome
-
 about:
   long: >- # ignore line-breaks until next key.
     I sometime _stumble_ on fundamental insights of knowledge that stood the test
@@ -14,10 +12,34 @@ about:
     Hi! 👋 Computer scientist exploring mental models, connecting the dots, and
     writing about it.
 
+# --- Required by Jekyll SEO
+
+twitter:
+  username: AdrianoDiLuzio
+  card: summary
+
+tagline: Welcome
+
+description: >-
+  Exploring mental models, connecting the dots, and writing about it.
+
+logo: /assets/images/favicon.svg
+
+social:
+  name: aldur
+  links:
+    - https://x.com/AdrianoDiLuzio
+    - https://github.com/aldur
+
+# --- /Required by Jekyll SEO
+
+# Site author
 author:
+  name: aldur
   nick: aldur
   email: adriano._lookupmylastnameontwitter_@gmail.com
   pgp_pk_url: https://github.com/aldur.gpg
+  twitter: AdrianoDiLuzio
 
 theme: minima
 
@@ -35,7 +57,7 @@ defaults:
       path: "" # an empty string here means all files in the project
       type: "posts"
     values:
-      # Default author, unless differently specified.
+      # Default author for posts, unless differently specified.
       author: aldur
 
 # Theme-specific settings
