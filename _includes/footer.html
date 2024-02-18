@@ -11,17 +11,6 @@
             </svg><span>Subscribe</span>
           </a>
         </p>
-      {%- if site.author %}
-        {{ site.author | jsonify | escape }}
-        <ul class="contact-list">
-          {% if site.author.name -%}
-            <li class="p-name">{{ site.author.name | escape }}</li
-          {% endif -%}
-          {% if site.author.email -%}
-            <li><a class="u-email" href="mailto:{{ site.author.email }}">{{ site.author.email | escape }}</a></li>
-          {%- endif %}
-        </ul>
-      {%- endif %}
       </div>
       <div class="footer-col">
         <div class="social-links">
@@ -29,7 +18,7 @@
         </div>
       </div>
       <div class="footer-col">
-        <p class="footer-col-desc">{{ site.description | escape }}</p>
+        <p class="footer-col-desc p-note">{{ site.description | escape }}</p>
       </div>
     </div>
   </div>

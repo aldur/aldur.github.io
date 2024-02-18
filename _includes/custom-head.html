@@ -1,2 +1,7 @@
 <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 <link rel="icon" type="image/png" href="/assets/images/favicon.png">
+
+{%- if site.author and site.author.pgp_pk_url %}
+<link rel="pgpkey" href="{{ site.author.pgp_pk_url }}">
+<link rel="authorization_endpoint" href="https://indieauth.com/auth">
+{%- endif %}

@@ -3,7 +3,10 @@ title: Universal Bits
 description: >- # ignore line-breaks until next key.
   aldur's blog
 
-author: false
+author:
+  nick: aldur
+  email: firstname_lastname@gmail.com
+  pgp_pk_url: https://github.com/aldur.gpg
 
 theme: minima
 
@@ -37,7 +40,6 @@ minima:
 
   # Generate social links in footer.
   social_links:
-    - { platform: email, user_url: "mailto:firstname_lastname@gmail.com" }
     - { platform: github, user_url: "https://github.com/aldur" }
     - { platform: x, user_url: "https://x.com/AdrianoDiLuzio" }
     #   - { platform: devto,          user_url: "https://dev.to/jekyll" }
