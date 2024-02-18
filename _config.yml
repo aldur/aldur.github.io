@@ -1,11 +1,16 @@
 title: Universal Bits
 
 description: >- # ignore line-breaks until next key.
-  aldur's blog
+  I sometime _stumble_ on fundamental insights of knowledge that stood the test
+  of time, apply across different disciplines, and help me connect the dots,
+  make better decisions, or simply _understand_ things. Some like to call them
+  "mental models", I call them "Universal Bits". Whenever that happens, I write
+  about it here. I also write about computer science and all other topics that
+  fascinate me.
 
 author:
   nick: aldur
-  email: firstname_lastname@gmail.com
+  email: adriano._lookupmylastnameontwitter_@gmail.com
   pgp_pk_url: https://github.com/aldur.gpg
 
 theme: minima
