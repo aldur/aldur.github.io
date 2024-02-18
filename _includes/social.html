@@ -1,19 +1,19 @@
+{% comment %}
+Extend 
+https://github.com/jekyll/minima/blob/10124515953527c8990a2de99ae4ddb2a81ffee3/_includes/social.html
+to add the email (and re-use config)
+{% endcomment %}
+{%- if site.about.short %}
+  <data class="p-note" hidden>{{ site.about.short | escape }}</data>
+{%- endif %}
+{%- if site.author and site.author.nick %}
+  <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>
+{%- endif %}
+{%- if site.author and site.author.pgp_pk_url %}
+  <data class="u-key" hidden>{{ site.author.pgp_pk_url }}</data>
+{%- endif %}
+<data class="u-photo" hidden>/assets/images/favicon.svg</data>
 <ul class="social-media-list">
-  {% comment %}
-  Extend 
-  https://github.com/jekyll/minima/blob/10124515953527c8990a2de99ae4ddb2a81ffee3/_includes/social.html
-  to add the email (and re-use config)
-  {% endcomment %}
-  {%- if site.about.short %}
-    <data class="p-note" hidden>{{ site.about.short | escape }}</data>
-  {%- endif %}
-  {%- if site.author and site.author.nick %}
-    <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>
-  {%- endif %}
-  {%- if site.author and site.author.pgp_pk_url %}
-    <data class="u-key" hidden>{{ site.author.pgp_pk_url }}</data>
-  {%- endif %}
-  <data class="u-photo" hidden>/assets/images/favicon.svg</data>
   {%- if site.author and site.author.email %}
     <li>
       <a rel="me" class="u-email" href="mailto:{{ site.author.email }}" target="_blank" title="email">
