@@ -8,7 +8,7 @@
     <data class="p-name p-nickname" hidden>{{ site.author.nick | escape }}</data>
   {%- endif %}
   {%- if site.author and site.author.pgp_pk_url %}
-    <data class="u-key" href="{{ site.author.pgp_pk_url }}"></data>
+    <data class="u-key">{{ site.author.pgp_pk_url }}</data>
   {%- endif %}
   {%- if site.author and site.author.email %}
     <li>
