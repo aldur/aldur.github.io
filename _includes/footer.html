@@ -8,7 +8,7 @@
           <a href="{{ site.feed.path | default: 'feed.xml' | absolute_url }}">
             <svg class="svg-icon orange">
               <use xlink:href="{{ 'assets/minima-social-icons.svg#rss' | relative_url }}"></use>
-            </svg><span>Subscribe</span>
+            </svg><span>{{ site.title }}</span>
           </a>
         </p>
       </div>
@@ -18,7 +18,11 @@
         </div>
       </div>
       <div class="footer-col">
-        <p class="footer-col-desc p-note">{{ site.description | escape }}</p>
+        <p class="footer-col-desc">
+          <a href="https://xn--sr8hvo.ws/previous">←</a>
+          <a href="https://xn--sr8hvo.ws">🕸💍</a>
+          <a href="https://xn--sr8hvo.ws/next">→</a>
+        </p>
       </div>
     </div>
   </div>
