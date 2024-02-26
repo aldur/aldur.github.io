@@ -29,11 +29,13 @@ I know, I know. Having two `head` section is not good. But it renders!
       justify-content: center;
       align-items: center;
 
+      {%- unless include.is_embedded -%}
       position: sticky;
       top: 0;
       background-color: var(--minima-background-color);
       z-index: 1000;
       width: 100%;
+      {% endunless %}
 
       button {
         background-color: var(--primary-color);
@@ -115,7 +117,8 @@ I know, I know. Having two `head` section is not good. But it renders!
     }
 
     .currentTimelineItem {
-      opacity: 1.0;
+      padding-top: 7px;
+      padding-bottom: 7px;
 
       *.timeline-icon {
         visibility: visible;
@@ -124,7 +127,6 @@ I know, I know. Having two `head` section is not good. But it renders!
 
     .timeline-item-container {
       width: 100%;
-      height: 30px;
       position: relative;
       display: flex;
       align-items: center;
@@ -133,6 +135,8 @@ I know, I know. Having two `head` section is not good. But it renders!
       color: var(--minima-table-text-color);
       border-radius: 5px;
       margin-left: 10px;
+      padding-top: 3px;
+      padding-bottom: 3px;
 
       p {
         margin-bottom: 0;
@@ -140,7 +144,7 @@ I know, I know. Having two `head` section is not good. But it renders!
     }
 
     .timeline-item-progress-bar {
-      height: 29px;
+      height: 100%;
       width: 0%;
       background-color: var(--primary-color);
       position: absolute;
@@ -457,10 +461,12 @@ I know, I know. Having two `head` section is not good. But it renders!
       pElements.forEach((el, index) => {
         if (index === phaseIndex) {
           el.classList.add('currentTimelineItem');
+        {%- unless include.is_embedded -%}
           el.scrollIntoView({
             behavior: 'smooth',
             block: 'center'
           });
+        {%- endunless -%}
         } else {
           el.classList.remove('currentTimelineItem');
           el.classList.remove('pastTimelineItem');
