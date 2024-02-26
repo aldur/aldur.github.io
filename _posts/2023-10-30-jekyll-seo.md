@@ -2,6 +2,7 @@
 layout: post
 title: 'Bare-minimum Google indexing for Jekyll'
 categories: articles
+modified_date: 2024-02-26
 ---
 
 Searching for this blog on Google right now does not return any results. Let's
@@ -56,7 +57,7 @@ Jekyll's `plugins` array in the site configuration.
 </div>
 
 <div class="tip" markdown="1">
-In my case, I added it _last_ -- it "knows" _not_ add my RSS feed to the sitemap
+In my case, I added it _last_ -- it "knows" _not_ to add my RSS feed to the sitemap
 and I want it to index the rest of the content.
 </div>
 
@@ -88,6 +89,15 @@ anything else I need to do.
 
 If you ended up through a Google search: It worked!
 
+#### Post scriptum
+
+It turns out that _despite_ all above, these days Google will not
+index[^indexing] your website unless one of its crawlers finds a reference to
+it. In my case, [this tweet](https://twitter.com/swardley/status/1758925267395842521)
+triggered some traffic and an email from Google, informing me that I can monitor
+incoming traffic from the console. Alas, as of February 2024, the console shows
+little traffic but has not picked up any page in the index yet.
+
 #### Footnotes
 
 [^analytics]:
@@ -100,3 +110,12 @@ If you ended up through a Google search: It worked!
     available to search crawlers. The [`minima`
     theme](https://github.com/jekyll/minima) I am [using]({% post_url
     2023-10-07-reboot %}) suggests adding it in its default configuration.
+
+[^indexing]:
+    In my case, trying to manually request the indexing from the Google Search
+    Console got me:
+
+    > Sorry--we couldn't process this request because you've exceeded your daily
+    > quota. Please try submitting this again tomorrow.
+
+    I got this on my first request of the day. Is the quota zero?
