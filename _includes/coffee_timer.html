@@ -1,0 +1,547 @@
+{%- unless include.is_embedded -%}
+<html>
+<meta charset="UTF-8">
+
+{%- include head.html -%}
+{%- endunless -%}
+
+<!--
+I know, I know. Having two `head` section is not good. But it renders!
+/-->
+
+<head>
+  <style>
+    :root {
+      --primary-color: #3d8b68;
+      --transition-duration: 0.5s ease-in-out;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      {%- unless include.is_embedded -%}
+      position: sticky;
+      top: 0;
+      background-color: var(--minima-background-color);
+      z-index: 1000;
+      width: 100%;
+      {% endunless %}
+
+      button {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 5px;
+        color: var(--minima-background-color);
+        padding: 5px 6px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+    }
+
+    .timer-and-buttons {
+      display: flex;
+    }
+
+    #buttonsContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 10px;
+    }
+
+    #timer {
+      font-size: 48px;
+      margin: 10px;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      padding-left: 25px;
+      list-style: none;
+    }
+
+    .padding {
+      flex-grow: 1;
+    }
+
+    .timeline:before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--primary-color);
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-right: 15px;
+    }
+
+    .timeline-icon {
+      aspect-ratio: 1 / 1;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      visibility: hidden;
+    }
+
+    .currentTimelineItem {
+      padding-top: 7px;
+      padding-bottom: 7px;
+
+      *.timeline-icon {
+        visibility: visible;
+      }
+    }
+
+    .timeline-item-container {
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--minima-table-header-bg-color);
+      color: var(--minima-table-text-color);
+      border-radius: 5px;
+      margin-left: 10px;
+      padding-top: 3px;
+      padding-bottom: 3px;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    .timeline-item-progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--primary-color);
+      position: absolute;
+      z-index: 1;
+      border-radius: 5px;
+      transition: width var(--transition-duration);
+    }
+
+    .pastTimelineItem {
+      opacity: 0.5;
+
+      .timeline-item-progress-bar {
+        width: 100%;
+      }
+    }
+
+    .timeline-item-duration,
+    .timeline-item-title {
+      z-index: 2;
+    }
+
+    .timeline-item-duration {
+      margin-right: 15px;
+    }
+
+    .timeline-item-title {
+      font-weight: bold;
+      margin-left: 15px;
+      padding-right: 15px;
+    }
+
+    .collapsible {
+      background-color: var(--minima-table-header-bg-color);
+      color: var(--minima-table-text-color);
+      cursor: pointer;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+      margin-top: 10px;
+      border-radius: 5px;
+      padding: 5px 6px;
+    }
+
+    .active,
+    .collapsible:hover {
+      background-color: var(--minima-table-header-border);
+    }
+
+    .collapsible .icon {
+      float: right;
+      transition: transform 0.5s ease;
+    }
+
+    .collapsible.active .icon {
+      transform: rotate(180deg);
+    }
+
+    .preparation-content {
+      padding: 0 3px;
+      border-radius: 5px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .active-preparation {
+      max-height: 500px;
+    }
+
+    #preparationSteps {
+      list-style-type: none;
+      padding: 3px;
+      margin: 0;
+    }
+
+    #preparationSteps li {
+      padding: 8px;
+      padding-right: 11px;
+      margin-bottom: 5px;
+      background-color: var(--minima-table-header-bg-color);
+      color: var(--minima-table-text-color);
+      border: 1px solid var(--minima-border-color-01);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    #preparationSteps li:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    #preparationSteps li input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    .reference {
+      font-size: 12px;
+      color: var(--minima-text-color);
+    }
+  </style>
+
+</head>
+
+{%- unless include.is_embedded -%}
+<body>
+  {%- include header.html -%}
+  {%- endunless -%}
+  <div class="container">
+    <div class="container">
+      <button type="button" class="collapsible">Preparation Steps<span class="icon">&#9660;</span></button>
+      <div class="preparation-content">
+        <ul id="preparationSteps"></ul>
+      </div>
+    </div>
+    <div class="flex-container">
+      <div id="timer">00:00</div>
+      <div id="buttonsContainer">
+        <button id="startStopBtn" onclick="startStopTimer()">Start</button>
+        <button id="pauseBtn" onclick="startPauseTimer()">Pause</button>
+      </div>
+    </div>
+    <div class="timeline"></div>
+    <p class="reference">
+      From <a href="https://www.youtube.com/watch?v=1oB1oDrDkHM">
+        A Better 1 Cup V60 Technique</a>, by James Hoffmann</p>
+    <div class="padding"></div>
+  </div>
+
+  <script>
+    const preparation = [
+      "Ground your beans",
+      "Rinse and pre-heat paper and cone",
+      "Pour the ground coffee",
+      "Draw a little volcano in it",
+      "Zero your scale",
+      "Boil the kettle",
+    ];
+
+    const phases = [
+      {action: "Pour 50g of water to bloom", duration: 10},
+      {action: "Gently Swirl", duration: 5},
+      {action: "Bloom", duration: 30},
+      {action: "Pour up to 100g total (40%)", duration: 15},
+      {action: "Pause", duration: 10},
+      {action: "Pour up to 150g total (60%)", duration: 10},
+      {action: "Pause", duration: 10},
+      {action: "Pour up to 200g total (80%)", duration: 10},
+      {action: "Pause", duration: 10},
+      {action: "Pour up to 250g total (100%)", duration: 10},
+      {action: "Gently swirl", duration: 5},
+      {action: "Drawdown", duration: 180 - 125}
+    ];
+
+    for (let i = 0, len = phases.length; i < len; i++) {
+      if (i === 0) {
+        phases[i].time = 0;
+        continue;
+      }
+      phases[i].time = phases[i - 1].time + phases[i - 1].duration;
+    }
+
+    let currentPhase = 0;
+    let timer = null;
+    let seconds = 0;
+
+    let isRunning = false;
+    let isPaused = false;
+
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+      } catch (err) {
+        console.error(`Error while requesting wake lock: ${err.name}, ${err.message}`);
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLock != null) {
+        wakeLock.release().then(() => {
+          wakeLock = null;
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      displayTimeline();
+      displayPreparation();
+      resetState();
+    });
+
+    function displayPreparation() {
+      var coll = document.querySelector(".collapsible");
+      coll.addEventListener("click", function () {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        content.classList.toggle("active-preparation");
+      });
+
+      const prepSteps = document.getElementById('preparationSteps');
+      preparation.forEach(step => {
+        const li = document.createElement('li');
+        li.innerHTML = `<input type="checkbox">${step}`;
+        prepSteps.appendChild(li);
+      });
+    }
+
+    function startStopTimer() {
+      if (isRunning) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      isRunning = true;
+      document.getElementById('pauseBtn').style.display = 'inline';
+      document.getElementById('startStopBtn').textContent = 'Stop';
+
+      requestWakeLock()
+      resumeTimer();
+    }
+
+    function stopTimer() {
+      pauseTimer();
+      resetState();
+    }
+
+    function startPauseTimer() {
+      if (isPaused) {
+        isPaused = false;
+        document.getElementById('pauseBtn').textContent = 'Pause';
+        resumeTimer();
+      } else {
+        isPaused = true;
+        document.getElementById('pauseBtn').textContent = 'Resume';
+        pauseTimer();
+      }
+    }
+
+    function resumeTimer() {
+      timer = setInterval(() => {
+        seconds++;
+        const currentTime = formatTime(seconds);
+        document.getElementById('timer').textContent = currentTime;
+        const phaseIndex = checkPhase(seconds);
+        highlightCurrentPhase(phaseIndex);
+        adjustProgressBar(seconds, phaseIndex);
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      releaseWakeLock();
+      clearInterval(timer);
+      isPaused = true;
+    }
+
+    function resetState() {
+      currentPhase = 0;
+      isPaused = false;
+      isRunning = false;
+      seconds = 0;
+
+      document.getElementById('timer').textContent = "00:00";
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('startStopBtn').textContent = 'Start';
+
+      highlightCurrentPhase(-1); // Remove highlighting
+
+      const pElements = document.querySelectorAll('.timeline-item-progress-bar');
+      pElements.forEach((el, index) => {
+        el.style.width = `0%`;
+      });
+
+      releaseWakeLock()
+    }
+
+    function checkPhase(seconds) {
+      if (currentPhase < phases.length && seconds >= phases[currentPhase].time) {
+        if (currentPhase > 0) {
+          playSound();
+        }
+        currentPhase++;
+      }
+      return currentPhase - 1;
+    }
+
+    function adjustProgressBar(seconds, phaseIndex) {
+      if (phaseIndex >= 0) {
+        const phase = phases[phaseIndex];
+        const phaseDuration = phase.duration;
+        const phaseStart = phase.time;
+        const phaseEnd = phaseStart + phaseDuration;
+        const timeLeft = phaseEnd - seconds;
+        const sliderValue = (timeLeft / phaseDuration) * 100;
+
+        const fillElement = document.querySelector(`.currentTimelineItem .timeline-item-container .timeline-item-progress-bar`);
+        if (fillElement) {
+          fillElement.style.width = `${100 - sliderValue}%`;
+        }
+      }
+    }
+
+    function highlightCurrentPhase(phaseIndex) {
+      const pElements = document.querySelectorAll('.timeline-item');
+      pElements.forEach((el, index) => {
+        if (index === phaseIndex) {
+          el.classList.add('currentTimelineItem');
+        {%- unless include.is_embedded -%}
+          el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        {%- endunless -%}
+        } else {
+          el.classList.remove('currentTimelineItem');
+          el.classList.remove('pastTimelineItem');
+
+          if (index < phaseIndex) {
+            el.classList.add('pastTimelineItem');
+            el.querySelector('.timeline-item-progress-bar').style.removeProperty("width");
+          }
+        }
+      });
+    }
+
+    function displayTimeline() {
+      const timeline = document.querySelector('.timeline');
+      phases.forEach((phase, index) => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.id = `phase${index}`;
+
+        const icon = document.createElement('div');
+        icon.className = 'timeline-icon';
+
+        const container = document.createElement('div');
+        container.className = 'timeline-item-container';
+
+        const progressBar = document.createElement('div');
+        progressBar.className = 'timeline-item-progress-bar';
+
+        const title = document.createElement('p');
+        title.className = 'timeline-item-title';
+        title.textContent = phase.action;
+
+        const duration = document.createElement('p');
+        duration.className = 'timeline-item-duration';
+        duration.textContent = `${phase.duration}"`;
+
+        container.appendChild(progressBar)
+        container.appendChild(title)
+        container.appendChild(duration)
+
+        item.appendChild(icon);
+        item.appendChild(container);
+
+        timeline.appendChild(item);
+      });
+    }
+
+    let audio = null;
+
+    function preloadAudio() {
+      audio = new Audio("{{ '/assets/ding.mp3' | relative_url }}");
+      audio.load(); // Preload the audio
+      document.removeEventListener('click', preloadAudio);
+    }
+
+    // Required for Safari auto-play
+    document.addEventListener('click', preloadAudio);
+
+    function playSound() {
+      if (audio) {
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+    }
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+    }
+  </script>
+
+  {%- unless include.is_embedded -%}
+  {%- include footer.html -%}
+
+</body>
+
+</html>
+{%- endunless -%}
