@@ -260,7 +260,7 @@ I know, I know. Having two `head` section is not good. But it renders!
   {%- endunless -%}
   <div class="container">
     <div class="container">
-      <button type="button" class="collapsible">Preparation Steps<span class="icon">&#9660;</span></button>
+      <button type="button" class="collapsible">Preparation<span class="icon">&#9660;</span></button>
       <div class="preparation-content">
         <ul id="preparationSteps"></ul>
       </div>
@@ -281,7 +281,7 @@ I know, I know. Having two `head` section is not good. But it renders!
 
   <script>
     const preparation = [
-      "Grind your beans",
+      "Grind 15g of coffee beans",
       "Rinse and pre-heat paper and cone",
       "Put the coffee in",
       "Dig a little volcano in it",
@@ -315,6 +315,9 @@ I know, I know. Having two `head` section is not good. But it renders!
     let currentPhase = 0;
     let timer = null;
     let seconds = 0;
+
+    let lastPhase = phases[phases.length - 1]
+    let end = lastPhase.time + lastPhase.duration
 
     let isRunning = false;
     let isPaused = false;
@@ -396,12 +399,24 @@ I know, I know. Having two `head` section is not good. But it renders!
     function resumeTimer() {
       timer = setInterval(() => {
         seconds++;
+
         const currentTime = formatTime(seconds);
         document.getElementById('timer').textContent = currentTime;
-        const phaseIndex = checkPhase(seconds);
+        const phaseIndex = getPhase(seconds);
         highlightCurrentPhase(phaseIndex);
         adjustProgressBar(seconds, phaseIndex);
+
+        if (seconds >= end) {
+          done()
+        }
       }, 1000);
+    }
+
+    function done() {
+      playSound();
+      startPauseTimer();
+      document.getElementById('pauseBtn').style.display = 'none';
+      document.getElementById('startStopBtn').textContent = 'Reset'
     }
 
     function pauseTimer() {
@@ -430,7 +445,7 @@ I know, I know. Having two `head` section is not good. But it renders!
       releaseWakeLock()
     }
 
-    function checkPhase(seconds) {
+    function getPhase(seconds) {
       if (currentPhase < phases.length && seconds >= phases[currentPhase].time) {
         if (currentPhase > 0) {
           playSound();
