@@ -109,14 +109,14 @@
         };
 
         packages = {
-          lockGemset = pkgs.writeScriptBin "run" ''
+          lockGemset = pkgs.writeShellScript "run" ''
             echo "Locking Gemfile..."
             ${env}/bin/bundler lock
             echo "Locking Gemfile.lock to gemset.nix..."
             ${pkgs.bundix}/bin/bundix -l
           '';
 
-          serveJekyll = pkgs.writeScriptBin "run" ''
+          serveJekyll = pkgs.writeShellScript "run" ''
             ${env}/bin/bundler exec -- jekyll serve \
                 --trace --livereload --drafts
           '';
@@ -126,12 +126,12 @@
           {
             lock = {
               type = "app";
-              program = "${self.packages.${system}.lockGemset}/bin/run";
+              program = "${self.packages.${system}.lockGemset}";
             };
 
             default = {
               type = "app";
-              program = "${self.packages.${system}.serveJekyll}/bin/run";
+              program = "${self.packages.${system}.serveJekyll}";
             };
           };
 
