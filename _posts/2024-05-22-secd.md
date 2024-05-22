@@ -1,0 +1,357 @@
+---
+layout: post
+title: 'Liberating an always-on core from all my iCloud devices'
+categories: articles
+---
+
+How migrating from 1Password to iCloud Keychain triggered a bug that spread
+to all my Apple devices and how I fixed it.
+
+## The setup: Migrating 1Password to iCloud Keychain
+
+I have been a loving 1Password users for many years, appreciating the UX/UI, its
+system-wide integration and its ease of use. Unfortunately, its latest
+iterations don't match my needs and disagree with my trust model. Syncing my
+encrypted vault to a third party doesn't sound like a good idea, and I'd rather
+not have to deal with another Electron desktop app.
+
+I stuck with 1Password 7 for as long as I could. But I knew its time was
+coming. Version 8 (the one shipping cloud sync through a subscription model) had
+been out for [two
+years](https://www.macrumors.com/2022/05/03/1password-8-for-mac-released/)
+already. And version 7 started feeling like being the last one at a party and
+being gently asked to leave: it didn't get any new feature (e.g., passkey), and
+I worried that at some point it would reach end of life and stop getting
+security patches.
+
+So, on a winter morning I decided to migrate to iCloud Keychain for most of the
+passwords and a [self-hosted Bitwarden
+instance](https://github.com/dani-garcia/vaultwarden) for a few more complex
+items[^electron]. This story focuses on iCloud Keychain.
+
+I used 1Password's export function to get a CSV of about 1000 items compatible
+with iCloud Keychain import. I stored the file in `ramfs` to avoid forgetting
+them on the file-system and worked within a temporarily air-gapped system. I
+then went forward and imported the CSV in Keychain. The migration went ok and I
+could see the passwords in macOS' built-in password manager.
+
+Browsing felt _great_! I could log into websites without having to juggle
+between multiple overlapping autocompletion pop-ups (1Password's, iCloud
+Keychain's). So far so good, less painful than I expected.
+
+Happy with the result, I disabled 1Password's browser extension and decided to
+keep the application around just in case I had to look up the odd items that did
+not correctly migrate[^urls].
+
+## Troubles: cloud-synced performance cores
+
+{:.text-align-center}
+![A bad quality screenshot showing `secd` using 53% CPU]({% link /images/secd_cpu_usage.webp %}){:.centered}{:.seventyfive}
+_Pardon the bad screenshot quality, didn't have enough CPU to make it better._
+
+The silver lining did not last long and troubles began right away. I noticed one
+of the M1 Mac _performance cores_ running 100% the `secd` process -- a
+"centralized keychain agent" according to `man secd(8)`. `kill`-ing the process
+temporarily alleviated the problem, only until it would automatically restart.
+Both the Mac's battery-life and performance suffered from it[^impressive].
+
+Like bad news do, troubles also spread fast. In my case, to all other my iCloud
+devices.
+
+Opening the "Password" screen on an iPhone or a (dated) iPad started feeling
+like navigating through a sea of jelly, where letters typed into the search bar
+would filter results slower than your average LLM output. Looking up websites
+credentials in the "Password" screen became a frustrating experience. Even
+Safari scrolling suffered from this, with the screen moving about 1 third of the
+vertical space and then just... stopping. Oh, don't even mention battery life.
+Or whether the Watch was affected (probably).
+
+I tried ignoring the problem for a few weeks, hoping it would go away. It did
+not, so I set my mind up to solve it.
+
+I started with my usual debugging playbook. Google suggested deleting the local
+Keychain store, but I suspected this wouldn't work as my issue spread across
+devices[^local]. Next, I tried to take a look at the Keychain itself, but I couldn't,
+because the "Keychain Access" app on the Mac froze on start and did not
+allow navigating.
+
+<div class="hint" markdown="1">
+  🦌 Insert obligatory "_We need to go deeper_" meme, minus copyright trouble and/or
+  AI-generated art.
+</div>
+
+Next I decided to look at Console logs[^logs], which dutifully gathered 9K lines of
+`secd` logs over 19 seconds (about 500 lines per second):
+
+```bash
+» cat secd.logs | grep secd | head -n1
+default 09:18:18.073714+0200  SecWarning  com.apple.securityd secd  81301 0xd6a2fa
+   SecDbKeychainItemV7: item's secret data exceeds reasonable size (468128 bytes) (com.apple.security.sos)
+
+» cat secd.logs | grep secd | tail -n1
+default 09:18:37.972543+0200  signpost  com.apple.security.signposts  secd  81301 0xd6be63
+   END [34492] 0.352725s: SOSCCProcessSyncWithPeers  SOSSignpostNameSOSCCProcessSyncWithPeers=__##__signpost.telemetry#____#number1#_##_#1##__##
+
+» cat secd.logs | grep secd | wc -l
+    9243
+```
+
+## Going in circles: unreasonable items
+
+The very first line caught my eyes. Some item is clearly being _unreasonable_
+and maybe that was my clue?
+
+Apple open-sources some of its components, including the Security framework. The
+line producing that output is
+[here](https://github.com/apple-oss-distributions/Security/blob/0600e7bab30fbac3adcafcb6c57d3981dc682304/keychain/securityd/SecDbKeychainItemV7.m#L600).
+The source code does not help much here, but it tells us that _reasonable_ size
+is 32KiB.
+
+Is there a way to find the offending items? Keychain Access was not working, so
+I ruled it out. But inspecting `secd` through "Activity Monitor" shows a list
+of open files:
+
+```bash
+# ... snip
+/Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db
+/Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db-shm
+/Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db-wal
+# ... snip
+/usr/libexec/secd
+```
+
+This `.db` file looks promising and its `.db-wal` friends makes it likely to be
+an `.sqlite` database. Nice, we can work with that!
+
+```bash
+» file /Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db
+
+/Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db:
+SQLite 3.x database, last written using SQLite version 3043002, writer version
+2, read version 2, file counter 12070, database pages 12203, 1st free page
+11827, free pages 1818, cookie 0x34e, schema 4, largest root page 187, UTF-8,
+vacuum mode 1, version-valid-for 12070
+```
+
+Opening the database revealed a set of tables and columns with short,
+uninformative names. But the source code and the logs told us the "reasonable"
+size and the unreasonable one -- starting from there, I hacked together a quick
+Python script to enumerate all entries (in all rows in all tables in the `.db`)
+and sort them by descending size:
+
+| Table    | Row  | Column   | Size (bytes) |
+| -------- | ---- | -------- | ------------ |
+| genp     | 5    | data     | 507933       |
+| genp     | 76   | data     | 470066       |
+| genp     | 77   | data     | 190289       |
+| genp     | 418  | data     | 138309       |
+| genp     | 903  | data     | 31318        |
+| genp     | 436  | data     | 31301        |
+| ckmirror | 2502 | ckrecord | 15920        |
+| ckmirror | 119  | ckrecord | 14056        |
+| ckmirror | 2451 | ckrecord | 12212        |
+| ckmirror | 605  | ckrecord | 11600        |
+
+Our results show that row number 5 of table `genp`, column `data` weights 507933
+bytes (half a megabyte). What's in that table? First, the schema:
+
+```bash
+sqlite3 /Users/aldur/Library/Keychains/07BF5E04-DAB8-58C9-A0EC-BEB8B068B906/keychain-2.db
+SQLite version 3.43.2 2023-10-10 13:08:14
+Enter ".help" for usage hints.
+sqlite> .schema genp
+
+CREATE TABLE genp (
+  rowid INTEGER PRIMARY KEY AUTOINCREMENT,
+  cdat REAL,
+  mdat REAL,
+  desc BLOB,
+  icmt BLOB,
+  crtr INTEGER,
+  type INTEGER,
+  scrp INTEGER,
+  labl BLOB,
+  alis BLOB,
+  invi INTEGER,
+  nega INTEGER,
+  cusi INTEGER,
+  prot BLOB,
+  acct BLOB NOT NULL DEFAULT '',
+  svce BLOB NOT NULL DEFAULT '',
+  gena BLOB,
+  data BLOB,
+  agrp TEXT NOT NULL,
+  pdmn TEXT,
+  sync INTEGER NOT NULL DEFAULT 0,
+  tomb INTEGER NOT NULL DEFAULT 0,
+  sha1 BLOB,
+  vwht TEXT,
+  tkid TEXT,
+  musr BLOB NOT NULL,
+  UUID TEXT,
+  sysb INTEGER DEFAULT 0,
+  pcss INTEGER,
+  pcsk BLOB,
+  pcsi BLOB,
+  persistref BLOB NOT NULL,
+  clip INTEGER NOT NULL DEFAULT 0,
+  ggrp TEXT,
+  UNIQUE (acct, svce, agrp, sync, vwht, tkid, musr, ggrp)
+);
+```
+
+_As I said, not very informative names._
+
+Luckily, there are a few details about each column
+[here](https://gist.github.com/0xmachos/5bcf2ad0085e09f3b553a88bb0e0574d). If we
+select the protection domain `pdmn` and the Keychain access group `agrp` we can
+find out how these ~~keys~~ passwords are used:
+
+```bash
+sqlite> SELECT rowid, agrp, pdmn, length(data)
+  FROM genp
+  ORDER BY length(data)
+  DESC LIMIT 5
+;
+6|com.apple.security.sos|dku|507933
+122|com.apple.security.sos|dk|470066
+123|com.apple.security.sos|dk|190288
+465|InternetAccounts|dku|138009
+22034|InternetAccounts|cku|31327
+```
+
+Wait, something does not look right. Sure, those are _big_ items. But they
+belong to Apple's own `security.sos` Secure Object Sync according to
+[this](https://www.theiphonewiki.com/wiki/ICloud_Keychain)[^sos], and it's
+unlikely my migration messed with them: Apple's [Secure keychain
+syncing](https://support.apple.com/en-gb/guide/security/sec0a319b35f/web)
+creates "circles" of devices which share their cryptographic identities and then
+use them to circulate the encrypted keychain material. But our first offender
+from the table above is marked as `dku`
+(`kSecAttrAccessibleAlwaysThisDeviceOnly`), which means that particular key
+shall never leave the device. Confirmed then, this is not what is causing our
+troubles.
+
+Time to go back at digging through the logs.
+
+## The murder weapon
+
+After painstakingly searching through the lines, I saw this:
+
+```txt
+default 09:18:18.983936+0200  item  com.apple.securityd secd  81301 0xd6bd90
+insert failed for item <private> with Error Domain=com.apple.utilities.sqlite3
+Code=19 "finalize: 0x138026f10: [19->2067] UNIQUE constraint failed: inet.acct,
+inet.sdmn, inet.srvr, inet.ptcl, inet.atyp, inet.port, inet.path, inet.agrp,
+inet.sync, inet.vwht, inet.tkid, inet.musr, inet.ggrp"
+UserInfo={numberOfErrorsDeep=1, NSDescription=finalize: 0x138026f10: [19->2067]
+UNIQUE constraint failed: inet.acct, inet.sdmn, inet.srvr, inet.ptcl, inet.atyp,
+inet.port, inet.path, inet.agrp, inet.sync, inet.vwht, inet.tkid, inet.musr,
+inet.ggrp, NSUnderlyingError=0x140a85c00 {Error
+Domain=com.apple.utilities.sqlite3 Code=19 "step: [19->2067] UNIQUE constraint
+failed: inet.acct, inet.sdmn, inet.srvr, inet.ptcl, inet.atyp, inet.port,
+inet.path, inet.agrp, inet.sync, inet.vwht, inet.tkid, inet.musr, inet.ggrp"
+UserInfo={numberOfErrorsDeep=0, NSDescription=step: [19->2067] UNIQUE constraint
+failed: inet.acct, inet.sdmn, inet.srvr, inet.ptcl, inet.atyp, inet.port,
+inet.path, inet.agrp, inet.sync, inet.vwht, inet.tkid, inet.musr, inet.ggrp}}}
+```
+
+_Note that it is marked at `default` level, despite being an error. That's why I
+couldn't find this when filtering by log level._
+
+Now we are onto something! The next lines look interesting too:
+
+```txt
+default 09:18:18.984428+0200  SecError  com.apple.securityd secd  81301 0xd6bd90
+  Safari[97852]/1#138 LF=0 add Error Domain=NSOSStatusErrorDomain Code=-25299 "duplicate item O,inet,C8A04B48,S,ak,com.apple.password-manager,0,desc,type,labl,acct,sdmn,srvr,ptcl,atyp,port,path,v_Data,musr,20240510071818.983305Z,CE2942AF" (errKCDuplicateItem / errSecDuplicateItem:  / The item already exists.) UserInfo={numberOfErrorsDeep=0, NSDescription=duplicate item O,inet,C8A04B48,S,ak,com.apple.password-manager,0,desc,type,labl,acct,sdmn,srvr,ptcl,atyp,port,path,v_Data,musr,20240510071818.983305Z,CE2942AF}
+default 09:18:18.986063+0200  item  com.apple.securityd secd  81301 0xd6bd90
+  replaced <private> in <SecDbConnection rw open>
+default 09:18:18.986093+0200  item  com.apple.securityd secd  81301 0xd6bd90
+  with <private> in <SecDbConnection rw open>
+```
+
+Overall, this pattern of lines repeats 19 times in the log. Here's what I
+_think_ was happening: Keychain was struggling to reconcile two somehow
+conflicting items, trying to write them, failing, and repeating the process in a
+busy loop. All the time, across all iCloud-synced devices.
+
+So what is causing it?
+
+### The unmasking
+
+<div class="hint" markdown="1">
+  Yes, it's a Scooby-Doo reference. 🐶
+</div>
+
+I had previously seen [`<private>` log
+entries](https://developer.apple.com/documentation/os/logging/generating_log_messages_from_your_code#3665948)
+before, being part of Apple's unified logging. Since macOS Catalina, we can use
+a [configuration
+profile](https://developer.apple.com/documentation/devicemanagement/systemlogging)
+to show the clear-text entries. After
+[finding](https://georgegarside.com/blog/macos/sierra-console-private/) and
+applying an appropriate `.mobileconfig`, I collected a new batch of logs and
+could finally find out the problem: somehow, `github.com` had two conflicting
+entries that Keychain could not reconciliate.
+
+This did not fix the problem yet, but I was definitely closer. How to fix it,
+though? The `security` command line tool does not work for iCloud Keychain
+items; the Keychain Access app was freezing on me. I didn't know of any other
+way to remove those entries from the Keychain and I was afraid of modifying the
+`sqlite` DB by hand, possibly creating more havoc.
+
+After a while, I noticed that Keychain Access was not _exactly_ freezing, but it
+was constantly re-setting its state to a "start" point: That's where it
+"clicked": at every iteration of the loop above, at every integrity error, the
+app was re-setting. Maybe if I could stop the loop for a moment, I would be able
+to search for the entries and delete them?
+
+After some frustrating trial and error I discovered that disconnecting from the
+internet, killing `secd`, closing all apps (specifically, Safari was on my
+suspects list), I could _barely_ use the Keychain Access app.
+
+The moment I deleted the entries, it all went quiet. The change also immediately
+propagated to all devices. I could again search for passwords and fill log-in
+information without a hitch.
+
+### The aftermath
+
+With the mystery solved and the problem finally fixed, I was feeling pretty
+satisfied.
+
+But I also wondered: how could someone with less patience or technical
+inclinations solve this? Our problem was particularly _nasty_ because it spread
+across all user devices, was hard to debug on mobile (lacking a clear way to
+inspect background tasks), and took a toll on both battery life and performance.
+Nothing deal-breaking, but a turn for the worse in digital quality of life.
+
+As an industry, what can we do better to prevent this or to improve its
+remediation? As always, there are trade-offs involved. In my case, the migration
+from a different password manager caused the bug: something that a _tiny_
+minority of users will ever do. And an even small fraction will possibly trigger
+the same bug. The trade-off might simply be to let this be, as it is
+counter-economical to fix its root cause.
+
+Even if that is the case, I still believe it is important to let users _repair_
+their devices (both on the software and the hardware side). The iCloud Keychain
+(and more in general the full iCloud suite) lacks proper tooling and
+transparency. We should strive to provide good diagnostic, clear run-books, and
+ensure they are easily discoverable (as opposed to all useless search results I
+found, that will only get worse with
+[slop](https://x.com/TomRachman/status/1788324969283273031#)).
+
+This post doesn't have the presumption to do any of that. But at least it
+documents the issue and show how I solved it. In case you encounter the same
+trouble, I hope your online search will bring you here and show you the
+solution.
+
+Thank you for reading and until next time! 👋
+
+#### Footnotes
+
+[^impressive]: I still find it pretty impressive that the M2 would manage to run for a few hours with a core running full-steam all the time.
+[^electron]: I didn't manage to escape the Electron hell, since Bitwarden's macOS client isn't native either.
+[^urls]: The migration requires entries to have a `URL` assigned to be imported in Keychain. I manually migrated all other entries types (e.g. credit cards, passports, etc.).
+[^logs]: I have lightly edited terminal output to display it on multiple lines (e.g., one for the logs metadata, one for the content) to avoid long horizontal scrolling, especially painful on mobile devices.
+[^sos]: Different from the more recent addition to iPhones enabling satellite SOS calls on emergencies.
+[^local]: Also, I would not even know how to delete it on an iPhone.
