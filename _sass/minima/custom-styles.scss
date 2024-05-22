@@ -136,8 +136,14 @@ img.centered {
 
 /** --- /Site footer --- */
 
-.post-content {
-	text-align: justify;
+.post-content p {
+  text-align: justify;
+  text-justify: auto;
+}
+
+.text-align-center,
+.post-content p.text-align-center {
+  text-align: center;
 }
 
 /**
