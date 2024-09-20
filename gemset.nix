@@ -76,10 +76,10 @@
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "1jpjf9p3yf11f1fx74whp4zbxwcaf7jd5y10gknx61fr5z50791q";
+      sha256 = "0fanhdf3vzghma51w1hqpp8s585mwzxgqkwvxj5is4q9j0pgwcs3";
       type = "gem";
     };
-    version = "3.24.4";
+    version = "3.25.5";
   };
   "http_parser.rb" = {
     groups = ["default" "jekyll_plugins"];
