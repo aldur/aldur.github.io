@@ -20,13 +20,13 @@ gene editing should be applied to humans or not, regardless of the opinions of
 the majority of other individuals.
 </div>
 
-This piece collects my in-progress thinking about the second-order effects of
-gene editing on mankind. After ~~procrastinating about it in my drafts' folder~~
-brewing about it for a few months, I decided to start drawing conclusions and
-publish them here. As with most of my writing, I do it to explore what I _don't
-know_, build mental models, and guess what will happen next. Mistakes are not
-only likely, but part of the growth process. If you find any, or you want to
-discuss this piece, please reach out!
+This piece collects my WIP thinking about the second-order effects of gene
+editing on mankind. After ~~procrastinating about it in my drafts' folder~~
+brewing about it for a few months, I decided to try drawing conclusions and
+publishing them here. As with most of my writing, I am not fully satisfied with
+it. Yet, I do it to explore what I _don't know_, build mental models, and guess
+what will happen next. Mistakes are not only likely, but part of the growth
+process. If you find any, or you want to discuss this piece, please reach out!
 
 ## Introduction
 
@@ -69,8 +69,8 @@ generations and which, instead, to mark for extinction. Picking between
 improvements that would benefit the community (improved general intelligence) vs
 improvements that only benefit the individual (being taller).
 
-Germline mutations are a BIG DEAL. Wrong mutations could turn humankind into a
-_less diverse_ species -- where less diversity reduces the ability of adapting
+Germline mutations are a __big deal__. Wrong mutations could turn humankind into
+a _less diverse_ species -- where less diversity reduces the ability of adapting
 to change, usually a bad thing. In addition, today we might not be able to
 foresee side effects that might have long-lasting consequences for the specie.
 
@@ -124,7 +124,7 @@ overruled the original majority of contrarians by leveraging and exacerbating
 the inequality in wealth and access to resources that originally divided the
 population.
 
-This outcome is _extremely different_ than what would have happened through a
+This outcome is _extremely different_ from what would have happened through a
 democratic vote. In that case, if a majority of the population was against gene
 editing, the vote would not have passed. Here, instead, we have played with
 inequality and evolution to show how a minority can overrule the rest: by
