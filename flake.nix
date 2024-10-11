@@ -118,7 +118,7 @@
 
           serveJekyll = pkgs.writeShellScript "run" ''
             ${env}/bin/bundler exec -- jekyll serve \
-                --trace --livereload --drafts
+                --trace --livereload --drafts --future --strict_front_matter
           '';
         };
 
