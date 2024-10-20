@@ -1,6 +1,9 @@
+---
+render_with_liquid: true
+---
 {
   "name": "{{ site.title }}",
-  "short_name": "{{ site.short_title | default site.title }}",
+  "short_name": "{{ site.short_title | default: site.title }}",
   "icons": [
     {
       "src": "/assets/imaegs/web-app-manifest-192x192.png",
