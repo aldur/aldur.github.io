@@ -1,65 +1,59 @@
 {
   description = "Package Jekyll and its gems for 'aldur.github.io'";
 
-  # Uncomment this if you are a 'trusted user'.
-  # nixConfig = {
-  #   extra-substituters = "https://nixpkgs-ruby.cachix.org";
-  #   extra-trusted-public-keys =
-  #     "nixpkgs-ruby.cachix.org-1:vrcdi50fTolOxWCZZkw0jakOnUI1T19oYJ+PRYdK4SM=";
-  # };
-
   inputs = {
     nixpkgs.url = "nixpkgs";
-    ruby-nix = {
-      url = "github:inscapist/ruby-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # `bundix` fork that supports platform dependant gem
-    # bundix = {
-    #   url = "github:inscapist/bundix/main";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
     flake-utils.url = "github:numtide/flake-utils";
 
+    # Up-to-date ruby versions
     nixpkgs-ruby = {
       url = "github:bobvanderlinden/nixpkgs-ruby";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.flake-utils.follows = "flake-utils";
+    };
+
+    # More ergonomical fork of bundlerEnv 
+    ruby-nix = {
+      url = "github:inscapist/ruby-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        name = "aldur.github.io";
+
         pkgs = import nixpkgs {
           inherit system;
           overlays = [ nixpkgs-ruby.overlays.default ];
         };
-        rubyNix = ruby-nix.lib pkgs;
 
-        # TODO: Fail if it doesn't exist?
-        gemset = if builtins.pathExists ./gemset.nix then import ./gemset.nix else { };
+        # NOTE: We require this to exist.
+        gemset = ./gemset.nix;
 
         # If you want to override gem build config, see
         #   https://github.com/NixOS/nixpkgs/blob/master/pkgs/
         #   development/ruby-modules/gem-config/default.nix
         gemConfig = { };
 
-        ruby = nixpkgs-ruby.lib.packageFromRubyVersionFile {
+        rubyUnwrapped = nixpkgs-ruby.lib.packageFromRubyVersionFile {
           file = ./.ruby-version;
           inherit system;
         };
-      in
-      rec {
-        inherit (rubyNix {
-          inherit gemset ruby;
-          name = "aldur.github.io";
-          gemConfig = pkgs.defaultGemConfig // gemConfig;
-        }) env; # If you are wondering about `env`, it's an output of `rubyNix`.
-        # FIXME: This gives an `unknown flake output env` warning.
 
+        # --- Here's what's happening below. ---
+        # First we call the function `ruby-nix.lib` by passing it `pkgs`.
+        # This returns a function, that accepts a set (having a `name`), etc.
+        # The resulting function has a bunch of attributes. 
+        # We are only interested in `env.
+        inherit ((ruby-nix.lib pkgs) {
+          inherit gemset name;
+          ruby = rubyUnwrapped;
+          gemConfig = pkgs.defaultGemConfig // gemConfig;
+        }) env ruby;
+      in
+      {
         checks = {
           jekyll-build = pkgs.stdenv.mkDerivation {
             name = "jekyll-build";
@@ -70,42 +64,6 @@
               mkdir $out;
             '';
           };
-
-          # This doesn't work, becase `bundix` runs nix-build (or similar)
-          # and clashes with the sandbox.
-          /* 
-          gemset-is-locked = pkgs.stdenv.mkDerivation {
-            name = "gemset-is-locked";
-            src = with pkgs; lib.cleanSourceWith {
-              src = ./.; # The original, unfiltered source
-              filter = path: type:
-                lib.hasSuffix "/Gemfile" path ||
-                lib.hasSuffix "/Gemfile.lock" path ||
-                lib.hasSuffix "/gemset.nix" path
-              ;
-            };
-            # `cacert` is required to get Ruby's OpenSSL to work
-            # and fetch the hashes remotely.
-            buildInputs = [ pkgs.bundix pkgs.cacert ];
-            buildPhase = ''
-              # Required by `bundix` to store data.
-              export XDG_CACHE_HOME=$out/.cache
-              mkdir -p $out/.cache
-              cp Gemfile Gemfile.lock $out
-              pushd $out
-              ${pkgs.bundix}/bin/bundix -l
-              popd
-              diff gemset.nix $out/gemset.nix
-              mv $out/gemset.nix gemset.nix.new
-              rm -rf $out
-              mv gemset.nix.new $out
-            '';
-
-            outputHashMode = "flat";
-            outputHashAlgo = "sha256";
-            outputHash = builtins.hashFile "sha256" ./gemset.nix;
-          };
-          */
         };
 
         packages = {
@@ -124,28 +82,26 @@
 
         apps =
           {
-            lock = {
-              type = "app";
-              program = "${self.packages.${system}.lockGemset}";
-            };
-
             default = {
               type = "app";
               program = "${self.packages.${system}.serveJekyll}";
             };
+
+            lock = {
+              type = "app";
+              program = "${self.packages.${system}.lockGemset}";
+            };
           };
 
-        devShells = rec {
-          default = dev;
-
-          dev = pkgs.mkShell {
+        devShells = {
+          default = pkgs.mkShell {
             # Ignore the current machine's platform and install only ruby
             # platform gems. As a result, gems with native extensions will be
             # compiled from source.
             # https://bundler.io/v2.4/man/bundle-config.1.html
             BUNDLE_FORCE_RUBY_PLATFORM = "true";
 
-            buildInputs = [ env ]
+            buildInputs = [ env ruby ]
               ++ (with pkgs; [ bundix ]);
           };
         };
