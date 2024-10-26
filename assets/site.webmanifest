@@ -2,6 +2,7 @@
 render_with_liquid: true
 ---
 {
+  "start_url": "/",
   "name": "{{ site.title }}",
   "short_name": "{{ site.short_title | default: site.title }}",
   "icons": [
