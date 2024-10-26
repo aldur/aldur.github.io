@@ -57,10 +57,12 @@
         buildJekyll = pkgs.stdenv.mkDerivation {
           name = "jekyll-build";
           src = pkgs.lib.cleanSource ./.;
-          nativeBuildInputs = [ env ];
+          buildInputs = [ env ];
           buildPhase = ''
+            rm .bundle/config  # Unset `BUNDLE_PATH`
             ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
+            mv _site $out;
           '';
         };
       in
@@ -80,6 +82,7 @@
           default = buildJekyll;
 
           serveJekyll = pkgs.writeShellScript "run" ''
+            rm .bundle/config  # Unset `BUNDLE_PATH`
             ${env}/bin/bundler exec -- jekyll serve \
                 ${jekyllArgs} --livereload
           '';
