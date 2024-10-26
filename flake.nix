@@ -52,18 +52,21 @@
           ruby = rubyUnwrapped;
           gemConfig = pkgs.defaultGemConfig // gemConfig;
         }) env ruby;
+
+        jekyllArgs = "--trace --drafts --future --strict_front_matter";
+        buildJekyll = pkgs.stdenv.mkDerivation {
+          name = "jekyll-build";
+          src = pkgs.lib.cleanSource ./.;
+          nativeBuildInputs = [ env ];
+          buildPhase = ''
+            ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
+            mkdir $out;
+          '';
+        };
       in
       {
         checks = {
-          jekyll-build = pkgs.stdenv.mkDerivation {
-            name = "jekyll-build";
-            src = pkgs.lib.cleanSource ./.;
-            buildInputs = [ env ];
-            buildPhase = ''
-              ${env}/bin/bundler exec jekyll build;
-              mkdir $out;
-            '';
-          };
+          jekyll-build = buildJekyll;
         };
 
         packages = {
@@ -74,9 +77,11 @@
             ${pkgs.bundix}/bin/bundix -l
           '';
 
+          default = buildJekyll;
+
           serveJekyll = pkgs.writeShellScript "run" ''
             ${env}/bin/bundler exec -- jekyll serve \
-                --trace --livereload --drafts --future --strict_front_matter
+                ${jekyllArgs} --livereload
           '';
         };
 
