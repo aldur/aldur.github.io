@@ -53,7 +53,7 @@
           gemConfig = pkgs.defaultGemConfig // gemConfig;
         }) env ruby;
 
-        jekyllArgs = "--trace --drafts --future --strict_front_matter";
+        jekyllArgs = "--trace --drafts --future";
         buildJekyll = pkgs.stdenv.mkDerivation {
           name = "jekyll-build";
           src = pkgs.lib.cleanSource ./.;
