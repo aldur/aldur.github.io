@@ -59,7 +59,6 @@
           src = pkgs.lib.cleanSource ./.;
           buildInputs = [ env ];
           buildPhase = ''
-            rm .bundle/config  # Unset `BUNDLE_PATH`
             ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
             mv _site $out;
@@ -82,7 +81,6 @@
           default = buildJekyll;
 
           serveJekyll = pkgs.writeShellScript "run" ''
-            rm .bundle/config  # Unset `BUNDLE_PATH`
             ${env}/bin/bundler exec -- jekyll serve \
                 ${jekyllArgs} --livereload
           '';
@@ -108,6 +106,9 @@
             # compiled from source.
             # https://bundler.io/v2.4/man/bundle-config.1.html
             BUNDLE_FORCE_RUBY_PLATFORM = "true";
+
+            # Vendor gems locally instead of in Nix store.
+            BUNDLE_PATH = "vendor/bundle";
 
             buildInputs = [ env ruby ]
               ++ (with pkgs; [ bundix ]);
