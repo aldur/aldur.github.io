@@ -2,6 +2,7 @@
 render_with_liquid: true
 ---
 {
+  "start_url": "/",
   "name": "{{ site.title }}",
   "short_name": "{{ site.short_title | default: site.title }}",
   "icons": [
@@ -16,9 +17,17 @@ render_with_liquid: true
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/assets/images/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+html"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "minimal-ui"
 }

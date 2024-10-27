@@ -1,8 +1,27 @@
 <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
 <link rel="icon" type="image/png" href="/assets/images/favicon-48x48.png" sizes="48x48" />
 <link rel="shortcut icon" href="/assets/images/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="{{ site.short_title | default: site.title }}" />
+
+<meta name="theme-color" content="">
+
+<script>
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    function setBrowserThemeColor() {
+        let color = getComputedStyle(document.documentElement)
+            .getPropertyValue('--minima-background-color')
+        themeColor.setAttribute("content", color);
+    }
+    setBrowserThemeColor()
+</script>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
 <link rel="manifest" href="/assets/site.webmanifest" />
 
 {%- if site.author and site.author.pgp_pk_url %}

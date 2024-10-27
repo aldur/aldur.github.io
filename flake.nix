@@ -52,31 +52,46 @@
           ruby = rubyUnwrapped;
           gemConfig = pkgs.defaultGemConfig // gemConfig;
         }) env ruby;
+
+        jekyllArgs = "--trace --drafts --future";
+        buildJekyll = pkgs.stdenv.mkDerivation {
+          name = "jekyll-build";
+          src = pkgs.lib.cleanSource ./.;
+          buildInputs = [ env ];
+          buildPhase = ''
+            unset BUNDLE_PATH
+            ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
+            mkdir $out;
+            mv _site $out;
+          '';
+        };
       in
       {
         checks = {
-          jekyll-build = pkgs.stdenv.mkDerivation {
-            name = "jekyll-build";
-            src = pkgs.lib.cleanSource ./.;
-            buildInputs = [ env ];
-            buildPhase = ''
-              ${env}/bin/bundler exec jekyll build;
-              mkdir $out;
-            '';
-          };
+          jekyll-build = buildJekyll;
         };
 
         packages = {
           lockGemset = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
             echo "Locking Gemfile..."
             ${env}/bin/bundler lock
             echo "Locking Gemfile.lock to gemset.nix..."
             ${pkgs.bundix}/bin/bundix -l
           '';
 
+          default = buildJekyll;
+
           serveJekyll = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
             ${env}/bin/bundler exec -- jekyll serve \
-                --trace --livereload --drafts --future --strict_front_matter
+                ${jekyllArgs} --livereload
+          '';
+
+          cleanJekyll = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
+            ${env}/bin/bundler exec -- jekyll clean \
+                ${jekyllArgs}
           '';
         };
 
@@ -91,6 +106,11 @@
               type = "app";
               program = "${self.packages.${system}.lockGemset}";
             };
+
+            clean = {
+              type = "app";
+              program = "${self.packages.${system}.cleanJekyll}";
+            };
           };
 
         devShells = {
@@ -100,6 +120,9 @@
             # compiled from source.
             # https://bundler.io/v2.4/man/bundle-config.1.html
             BUNDLE_FORCE_RUBY_PLATFORM = "true";
+
+            # Vendor gems locally instead of in Nix store.
+            BUNDLE_PATH = "vendor/bundle";
 
             buildInputs = [ env ruby ]
               ++ (with pkgs; [ bundix ]);
