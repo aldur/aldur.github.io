@@ -59,6 +59,7 @@
           src = pkgs.lib.cleanSource ./.;
           buildInputs = [ env ];
           buildPhase = ''
+            unset BUNDLE_PATH
             ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
             mv _site $out;
@@ -72,6 +73,7 @@
 
         packages = {
           lockGemset = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
             echo "Locking Gemfile..."
             ${env}/bin/bundler lock
             echo "Locking Gemfile.lock to gemset.nix..."
@@ -81,8 +83,15 @@
           default = buildJekyll;
 
           serveJekyll = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
             ${env}/bin/bundler exec -- jekyll serve \
                 ${jekyllArgs} --livereload
+          '';
+
+          cleanJekyll = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
+            ${env}/bin/bundler exec -- jekyll clean \
+                ${jekyllArgs}
           '';
         };
 
@@ -96,6 +105,11 @@
             lock = {
               type = "app";
               program = "${self.packages.${system}.lockGemset}";
+            };
+
+            clean = {
+              type = "app";
+              program = "${self.packages.${system}.cleanJekyll}";
             };
           };
 
