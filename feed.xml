@@ -8,10 +8,31 @@
     <link href="/"
           rel="alternate"
           type="text/html" />
-    <updated>2023-10-15T00:00:00+02:00</updated>
+    <updated>2024-10-29T00:00:00+02:00</updated>
     <id>https://aldur.github.io/feed.xml</id>
     <title type="html">Universal Bits</title>
     <subtitle>aldur's blog</subtitle>
+    <entry>
+        <title type="html">This blog has migrated (again) to https://aldur.blog</title>
+        <link href="https://aldur.blog/feed.xml"
+              rel="alternate"
+              type="text/html"
+              title="This feed has migrated!" />
+        <published>2024-10-29T00:00:00+02:00</published>
+        <updated>2024-10-29T00:00:00+02:00</updated>
+        <id>https://aldur.blog/</id>
+        <content type="html"
+                 xml:base="https://aldur.github.io">
+<![CDATA[This feed has migrated to <a id="target" href="https://aldur.blog">https://aldur.blog</a>]]>
+        </content>
+        <author>
+            <name>["Adriano Di Luzio"]</name>
+        </author>
+        <category term="articles" />
+        <summary type="html">
+<![CDATA[This feed has migrated to <a id="target" href="https://aldur.blog">https://aldur.blog</a>]]>
+        </summary>
+    </entry>
     <entry>
         <title type="html">This blog has migrated to https://aldur.pages.dev</title>
         <link href="https://aldur.pages.dev/feed.xml"
