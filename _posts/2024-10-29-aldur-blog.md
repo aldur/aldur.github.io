@@ -22,12 +22,9 @@ To refresh things, we will need to:
 
 1. [Redirect each page](#redirect-each-page) to the corresponding page on the
    new domain.
-1. [Inform RSS users](#inform-rss-users)[^rss].
-1. [Take care of SEO](#take-care-of-SEO).
-
-In addition, once we are at it, we can also update the old pages on
-`aldur.github.io` to point directly to the new domain --- this will prevent an
-additional redirect that we can now avoid.
+1. [Inform your RSS users](#inform-your-rss-users)[^rss].
+1. [Take care of SEO](#take-care-of-seo).
+1. [Nits and Bits](#nits-and-bits).
 
 ## Redirect each page
 
@@ -72,7 +69,7 @@ We could also [redirect `www` to the apex
 domain](https://developers.cloudflare.com/pages/how-to/www-redirect/), but since
 it is not the 90s anymore, we won't do that.
 
-## Inform RSS users
+## Inform your RSS users
 
 Now, I'd like to transparently allow users to continue pulling the RSS feed from
 the new domain. Easy! The `301` redirect that we just configured seems to be the
@@ -98,6 +95,16 @@ I used before to verify my "property".
 
 The nice bonus was that, for the first time, Google accepted my `sitemap.xml`!
 
+{:.text-align-center}
+![A screnshot from Google Search console showing an error while trying to upload
+a sitemap.]({% link /images/sitemap_before.webp %}){:.centered}
+_"Impossible to fetch": I consistently got this before, most likely
+because of the subdomain._
+
+{:.text-align-center}
+![A screnshot from Google Search console successfully upload a sitemap.]({% link /images/sitemap_after.webp %}){:.centered}
+_Green success, even if you don't read Italian._
+
 ## Nits and bits
 
 {% include github_link.html
@@ -108,7 +115,7 @@ deploy the usual countermeasures.
 {% include github_link.html
 url="https://github.com/aldur/aldur.github.io/commit/23db5d54315f5e0a93da02bb8c375e9362a28dd6"
 text="This commit" %}, instead, redirects the old version at `aldur.github.io`
-directly here.
+directly here, avoiding an additional redirect.
 
 There are probably a few other things that I did not migrate (e.g., if you
 preferred a light/dark theme instead of using the OS preference, you will need
