@@ -125,7 +125,7 @@
             BUNDLE_PATH = "vendor/bundle";
 
             buildInputs = [ env ruby ]
-              ++ (with pkgs; [ bundix ]);
+              ++ (with pkgs; [ bundix libwebp ]);
           };
         };
       }
