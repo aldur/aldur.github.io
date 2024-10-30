@@ -156,9 +156,9 @@ welcome to my new digital garden 🪴
 [^rss]:
     Last I checked, I thought that nobody subscribed to the RSS feed. Then I
     remembered that I am a subscriber and my client requests should appear in
-    the logs. They don't, because Cloudflare injects a `js` snippet into a
-    page's HTML, which doesn't work for the feed XML. So, if you are reading
-    this through an RSS client: that's great, please let me know! If you aren't
-    yet: [give it a try](/feed.xml), I really like it.
+    the logs. They don't, because Cloudflare analytics inject a `js` snippet
+    into a page's HTML, which doesn't work for the feed XML. So, if you are
+    reading this through an RSS client: that's great, please let me know! If you
+    aren't yet: [give it a try](/feed.xml), I really like it.
 
 [^test_this]: At least with Miniflux, the RSS client I am using.
