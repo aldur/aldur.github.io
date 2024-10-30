@@ -51,7 +51,7 @@ modifications:
 - I chose _not_ to redirect subdomains in the configuration, since that allows
   me to see deployment previews that Cloudflare will publish on subdomains (e.g.
   `<branch>.aldur.pages.dev`) through GitHub integration.
-- It started with a `301` return code ("moved temporarily") and then turned it
+- I started with a `301` return code ("moved temporarily") and then turned it
   into a `302` after testing it for a while.
 
 {:.text-align-center}
@@ -82,7 +82,8 @@ Now, I'd like to transparently allow users to continue pulling the RSS feed from
 the new domain. Easy! The `301` redirect that we just configured seems to be the
 [standard approach](https://www.rssboard.org/redirect-rss-feed) to do that.
 
-I am subscribed to my own feed, so I was able to test this.
+I was able to test this[^test_this] by subscribing through my own feed _before_
+making the change.
 
 ### Take care of SEO
 
@@ -159,3 +160,5 @@ welcome to my new digital garden 🪴
     page's HTML, which doesn't work for the feed XML. So, if you are reading
     this through an RSS client: that's great, please let me know! If you aren't
     yet: [give it a try](/feed.xml), I really like it.
+
+[^test_this]: At least with Miniflux, the RSS client I am using.
