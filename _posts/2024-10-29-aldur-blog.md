@@ -7,11 +7,18 @@ excerpt: >
   readers.
 ---
 
-As a small reward for managing to write a bit more lately, I decided to set-up a
-proper domain: here comes [https://aldur.blog](https://aldur.blog)!
+As a small reward for managing to write a bit more lately, I decided to set up a
+proper domain: here comes [aldur.blog](https://aldur.blog)!
 
-It is time to migrate (again) and redirect readers from the previous domain to
-our new home. [Last
+This post details the few steps I took to migrate. If it all went as expected,
+you might already be there, and you won't notice a thing. If instead you find
+anything broken, please let me know (you will find my contact info in the
+footer).
+
+## Migrating
+
+We will have to migrate (again) and redirect readers from the previous domain to
+the new home. [Last
 year](https://aldur.blog/articles/2023/10/15/migrating-to-cloudflare-pages#preparing)
 I built some experience with it when migrating away from GitHub pages. This time
 it will be a bit easier, because the host (Cloudflare) is not changing. We just
@@ -26,7 +33,7 @@ To refresh things, we will need to:
 1. [Take care of SEO](#take-care-of-seo).
 1. [Nits and Bits](#nits-and-bits).
 
-## Redirect each page
+### Redirect each page
 
 Our goal here is to redirect each blog post (and the occasional additional page)
 to the corresponding item on the new domain.
@@ -69,7 +76,7 @@ We could also [redirect `www` to the apex
 domain](https://developers.cloudflare.com/pages/how-to/www-redirect/), but since
 it is not the 90s anymore, we won't do that.
 
-## Inform your RSS users
+### Inform your RSS users
 
 Now, I'd like to transparently allow users to continue pulling the RSS feed from
 the new domain. Easy! The `301` redirect that we just configured seems to be the
@@ -77,7 +84,7 @@ the new domain. Easy! The `301` redirect that we just configured seems to be the
 
 I am subscribed to my own feed, so I was able to test this.
 
-## Take care of SEO
+### Take care of SEO
 
 Lastly, we need to [inform search engines]({% post_url 2023-10-30-jekyll-seo %})
 about the change. This blog relies almost exclusively on relative links. It uses
@@ -93,7 +100,7 @@ In addition, having a root domain means that I could use DNS verification from
 the Google Search console. So I removed the custom `meta` tag in the HTML that
 I used before to verify my "property".
 
-The nice bonus was that, for the first time, Google accepted my `sitemap.xml`!
+As a nice bonus Google would not load my `sitemap.xml`.
 
 {:.text-align-center}
 ![A screnshot from Google Search console showing an error while trying to upload
@@ -105,7 +112,26 @@ because of the subdomain._
 ![A screnshot from Google Search console successfully upload a sitemap.]({% link /images/sitemap_after.webp %}){:.centered}
 _Green success, even if you don't read Italian._
 
-## Nits and bits
+Hopefully, search engines will now: pickup new posts from the new domain and
+redirect traffic and visitors directed to the old one.
+
+Out of abundance of caution, I also tried visiting my `robots.txt` page and
+noticed something unexpected:
+
+```bash
+$ curl https://aldur.blog/robots.txt
+< HTTP/2 301
+< date: Wed, 30 Oct 2024 07:32:26 GMT
+< content-type: text/html
+< location: https://aldur.blog/robots.txt
+```
+
+[A quick
+search](https://community.cloudflare.com/t/robots-txt-301-redirect-loop/602680)
+led me to configure strict SSL settings within Cloudflare (which doesn't hurt
+anyway) and seems to have fixed the issue.
+
+### Nits and bits
 
 {% include github_link.html
 url="https://github.com/aldur/aldur.github.io/pull/51" text="This PR" %} updates
@@ -123,6 +149,8 @@ to re-select it).
 
 But today was long enough, let's call it a day. Thank you for reading and
 welcome to my new digital garden 🪴
+
+#### Footnotes
 
 [^rss]:
     Last I checked, I thought that nobody subscribed to the RSS feed. Then I
