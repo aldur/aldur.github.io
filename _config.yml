@@ -104,3 +104,13 @@ exclude:
   - flake.lock
   - flake.nix
   - gemset.nix
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      categories:
+        - "articles"
