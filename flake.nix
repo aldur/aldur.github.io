@@ -19,8 +19,16 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ruby-nix,
+      nixpkgs-ruby,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         name = "aldur.github.io";
 
@@ -47,11 +55,15 @@
         # This returns a function, that accepts a set (having a `name`), etc.
         # The resulting function has a bunch of attributes. 
         # We are only interested in `env.
-        inherit ((ruby-nix.lib pkgs) {
-          inherit gemset name;
-          ruby = rubyUnwrapped;
-          gemConfig = pkgs.defaultGemConfig // gemConfig;
-        }) env ruby;
+        inherit
+          ((ruby-nix.lib pkgs) {
+            inherit gemset name;
+            ruby = rubyUnwrapped;
+            gemConfig = pkgs.defaultGemConfig // gemConfig;
+          })
+          env
+          ruby
+          ;
 
         jekyllArgs = "--trace --drafts --future";
         buildJekyll = pkgs.stdenv.mkDerivation {
@@ -65,6 +77,20 @@
             mv _site $out;
           '';
         };
+
+        newPost = pkgs.writeShellScriptBin "new" ''
+          slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
+          output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
+          echo "---
+          title: 'TODO'
+          excerpt: >
+            TODO
+          ---
+
+          #### Footnotes
+          " > $output
+          echo "Created file \"$output\"."
+        '';
       in
       {
         checks = {
@@ -93,25 +119,30 @@
             ${env}/bin/bundler exec -- jekyll clean \
                 ${jekyllArgs}
           '';
+
         };
 
-        apps =
-          {
-            default = {
-              type = "app";
-              program = "${self.packages.${system}.serveJekyll}";
-            };
-
-            lock = {
-              type = "app";
-              program = "${self.packages.${system}.lockGemset}";
-            };
-
-            clean = {
-              type = "app";
-              program = "${self.packages.${system}.cleanJekyll}";
-            };
+        apps = {
+          default = {
+            type = "app";
+            program = "${self.packages.${system}.serveJekyll}";
           };
+
+          lock = {
+            type = "app";
+            program = "${self.packages.${system}.lockGemset}";
+          };
+
+          clean = {
+            type = "app";
+            program = "${self.packages.${system}.cleanJekyll}";
+          };
+
+          new = {
+            type = "app";
+            program = newPost;
+          };
+        };
 
         devShells = {
           default = pkgs.mkShell {
@@ -124,8 +155,16 @@
             # Vendor gems locally instead of in Nix store.
             BUNDLE_PATH = "vendor/bundle";
 
-            buildInputs = [ env ruby ]
-              ++ (with pkgs; [ bundix libwebp ]);
+            buildInputs =
+              [
+                env
+                ruby
+                newPost
+              ]
+              ++ (with pkgs; [
+                bundix
+                libwebp
+              ]);
           };
         };
       }
