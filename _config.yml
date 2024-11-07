@@ -98,6 +98,8 @@ liquid:
 
 incremental         : false
 
+permalink: pretty
+
 exclude:
   - LICENSE
   - README.md
