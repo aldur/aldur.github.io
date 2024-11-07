@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Traveling knowledge'
-categories: articles
+categories: [articles]
 excerpt: >
   Knowledge in the head, in the world, in our genes.
 ---

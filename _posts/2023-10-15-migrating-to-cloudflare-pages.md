@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Migrating from GitHub Pages to Cloudflare Pages"
-categories: articles
+categories: [articles]
 ---
 
 I have recently moved this Jekyll blog from [GitHub
