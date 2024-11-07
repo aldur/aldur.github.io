@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Nix Hash Mishaps"
-categories: articles
+categories: [articles]
 excerpt: >
   Lesson learned: double-check your Nix hashes for fixed-output derivations.
 ---

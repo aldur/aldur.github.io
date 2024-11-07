@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Free markets and gene editing'
-categories: articles
+categories: [articles]
 excerpt: >
   The second-order effects of gene editing on mankind.
 ---

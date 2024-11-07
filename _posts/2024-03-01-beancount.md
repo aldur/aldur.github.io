@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "My neovim setup for Beancount accounting"
-categories: articles
+categories: [articles]
 date: 2024-03-01 18:00 +0100
 ---
 I recently started using

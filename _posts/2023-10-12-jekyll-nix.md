@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Jekyll + Nix'
-categories: articles
+categories: [articles]
 ---
 
 When I [started writing again]({% post_url 2023-10-07-reboot %}), re-building

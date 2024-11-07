@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Bare-minimum Google indexing for Jekyll'
-categories: articles
+categories: [articles]
 modified_date: 2024-02-26
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Migrating to aldur.blog"
-categories: articles
+categories: [articles]
 excerpt: >
   How I migrated this blog to its own domain and made it transparent for
   readers.
