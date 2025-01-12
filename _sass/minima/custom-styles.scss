@@ -4,138 +4,159 @@
  * Make post links in home more compact
  */
 .post-link {
-	margin-bottom: $spacing-unit * 0.25;
+  margin-bottom: $spacing-unit * 0.25;
 }
 
 img.centered {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.video-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.responsive-video {
+  width: 95%;
+}
+
+.video-caption {
+  text-align: center;
+  margin-top: 0px;
+  width: 95%;
 }
 
 .seventyfive {
-	max-width: 75%;
+  max-width: 75%;
 }
 
 .text-align-center {
-	text-align: center;
+  text-align: center;
 }
 
 /** --- Site header --- */
 .site-header {
-	border-top: none;
+  border-top: none;
 }
 
 .site-header-wrapper {
-	display: flex;
+  display: flex;
 }
 
 .right-header-wrapper {
-	margin-left: auto;
-	margin-right: $spacing-unit;
-	display: flex;
-	align-items: center;
+  margin-left: auto;
+  margin-right: $spacing-unit;
+  display: flex;
+  align-items: center;
 }
 
 .site-title {
-	float: none;
-	padding: 0px $spacing-unit;
+  float: none;
+  padding: 0px $spacing-unit;
 }
 
 .theme-mode-button {
-	background-color: $background-color;
-	border: 0px;
-	color: $text-color;
-	padding: 0 0;
-	padding-right: $spacing-unit;
-	@media screen and (min-width: $on-medium) {
-		padding-right: 0;
-	}
+  background-color: $background-color;
+  border: 0px;
+  color: $text-color;
+  padding: 0 0;
+  padding-right: $spacing-unit;
+
+  @media screen and (min-width: $on-medium) {
+    padding-right: 0;
+  }
 }
 
 .site-nav {
-	@media screen and (min-width: $on-medium) {
-		&:first-child {
-			padding-right: $spacing-unit * 0.5;
-		}
-	}
+  @media screen and (min-width: $on-medium) {
+    &:first-child {
+      padding-right: $spacing-unit * 0.5;
+    }
+  }
 }
+
 /** --- /Site header --- */
 
 /** --- Site footer --- */
 .site-footer {
-	padding: $spacing-unit * 0.25 0;
-	height: 50px;
+  padding: $spacing-unit * 0.25 0;
+  height: 50px;
 }
 
 .footer-heading {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .contact-list,
 .social-media-list {
-	list-style: none;
-	margin-left: 0;
+  list-style: none;
+  margin-left: 0;
 }
 
 .footer-col-wrapper,
 .social-links {
-	align-items: center;
-	display: flex;
-	justify-content: space-evenly;
-	flex-wrap: wrap;
+  align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
 
-	@media screen and (max-width: $on-tiny) {
-		flex-direction: column;
-	}
+  @media screen and (max-width: $on-tiny) {
+    flex-direction: column;
+  }
 }
 
 .social-media-list {
-	margin: 0 auto;
-	li {
-		margin: 5px 0 5px 0;
-		a {
-			border: unset;
-		}
-	}
+  margin: 0 auto;
+
+  li {
+    margin: 5px 0 5px 0;
+
+    a {
+      border: unset;
+    }
+  }
 }
 
 .footer-col {
-	margin-bottom: 0;
-	width: unset;
+  margin-bottom: 0;
+  width: unset;
 
-	a {
-		color: $text-color;
-	}
+  a {
+    color: $text-color;
+  }
 
-	@media screen and (min-width: $on-tiny) {
-		padding: 0 ($spacing-unit * 0.5);
+  @media screen and (min-width: $on-tiny) {
+    padding: 0 ($spacing-unit * 0.5);
 
-		&:first-child {
-			padding-right: $spacing-unit * 0.5;
-			padding-left: 0;
-		}
+    &:first-child {
+      padding-right: $spacing-unit * 0.5;
+      padding-left: 0;
+    }
 
-		&:last-child {
-			padding-right: 0;
-			padding-left: $spacing-unit * 0.5;
-		}
-	}
+    &:last-child {
+      padding-right: 0;
+      padding-left: $spacing-unit * 0.5;
+    }
+  }
 
-	@media screen and (max-width: $on-tiny) {
-		padding: 0 0;
-	}
+  @media screen and (max-width: $on-tiny) {
+    padding: 0 0;
+  }
 }
 
 .footer-col-desc {
-	text-align: right;
-	margin: 0;
+  text-align: right;
+  margin: 0;
 }
 
 .feed-subscribe {
-	// This aligns it with the right hand side.
-	// Don't know how to calculate this.
-	margin-bottom: 7px;
+  // This aligns it with the right hand side.
+  // Don't know how to calculate this.
+  margin-bottom: 7px;
 }
 
 /** --- /Site footer --- */
@@ -150,12 +171,12 @@ img.centered {
  */
 pre,
 code {
-	// Prevents `alerts` from messing with this.
-	color: $text-color;
+  // Prevents `alerts` from messing with this.
+  color: $text-color;
 }
 
 // _include/github_link.html
 .svg-icon-font-size {
-	width: $base-font-size;
-	height: $base-font-size;
+  width: $base-font-size;
+  height: $base-font-size;
 }
