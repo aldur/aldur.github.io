@@ -1,5 +1,5 @@
 ---
-title: 'QoL: smart select around single quotes in iTerm'
+title: 'QoL: Smart select around single quotes in iTerm'
 excerpt: >
   Small Quality of Life improvement to double-click on single-quoted strings and
   smart-select them on iTerm.
