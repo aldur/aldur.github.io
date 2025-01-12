@@ -12,7 +12,7 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
-    # More ergonomical fork of bundlerEnv 
+    # More ergonomical fork of bundlerEnv
     ruby-nix = {
       url = "github:inscapist/ruby-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -53,7 +53,7 @@
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
         # This returns a function, that accepts a set (having a `name`), etc.
-        # The resulting function has a bunch of attributes. 
+        # The resulting function has a bunch of attributes.
         # We are only interested in `env.
         inherit
           ((ruby-nix.lib pkgs) {
@@ -78,7 +78,7 @@
           '';
         };
 
-        newPost = pkgs.writeShellScriptBin "new" ''
+        newPost = pkgs.writeShellScript "new" ''
           slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
           output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
           echo "---
@@ -93,8 +93,9 @@
         '';
       in
       {
-        checks = {
+        checks = rec {
           jekyll-build = buildJekyll;
+          default = jekyll-build;
         };
 
         packages = {
@@ -140,7 +141,7 @@
 
           new = {
             type = "app";
-            program = newPost;
+            program = "${newPost}";
           };
         };
 
