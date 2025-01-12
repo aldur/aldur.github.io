@@ -78,7 +78,7 @@
           '';
         };
 
-        newPost = pkgs.writeShellScript "new" ''
+        newPost = pkgs.writeShellScriptBin "new" ''
           slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
           output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
           echo "---
