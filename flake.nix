@@ -77,20 +77,6 @@
             mv _site $out;
           '';
         };
-
-        newPost = pkgs.writeShellScriptBin "new" ''
-          slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
-          output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
-          echo "---
-          title: '$@'
-          excerpt: >
-            TODO
-          ---
-
-          #### Footnotes
-          " > $output
-          echo "Created file \"$output\"."
-        '';
       in
       {
         checks = rec {
@@ -121,6 +107,24 @@
                 ${jekyllArgs}
           '';
 
+          newPost = pkgs.writeShellScriptBin "new" ''
+            if [ "$#" -eq 0 ]; then
+              echo "Usage: $0 <title>"
+              exit 1
+            fi
+
+            slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
+            output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
+            echo "---
+            title: '$@'
+            excerpt: >
+              TODO
+            ---
+
+            #### Footnotes
+            " > $output
+            echo "Created file \"$output\"."
+          '';
         };
 
         apps = {
@@ -141,12 +145,12 @@
 
           new = {
             type = "app";
-            program = "${newPost}";
+            program = "${self.packages.${system}.newPost}/bin/new";
           };
         };
 
         devShells = {
-          default = pkgs.mkShell {
+          default = pkgs.mkShellNoCC {
             # Ignore the current machine's platform and install only ruby
             # platform gems. As a result, gems with native extensions will be
             # compiled from source.
@@ -156,11 +160,11 @@
             # Vendor gems locally instead of in Nix store.
             BUNDLE_PATH = "vendor/bundle";
 
-            buildInputs =
+            packages =
               [
                 env
                 ruby
-                newPost
+                self.packages.${system}.newPost
               ]
               ++ (with pkgs; [
                 bundix
