@@ -2,7 +2,7 @@
   description = "Package Jekyll and its gems for 'aldur.github.io'";
 
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
     # Up-to-date ruby versions
@@ -19,16 +19,8 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      flake-utils,
-      ruby-nix,
-      nixpkgs-ruby,
-    }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
+  outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby, }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         name = "aldur.github.io";
 
@@ -55,15 +47,12 @@
         # This returns a function, that accepts a set (having a `name`), etc.
         # The resulting function has a bunch of attributes.
         # We are only interested in `env.
-        inherit
-          ((ruby-nix.lib pkgs) {
-            inherit gemset name;
-            ruby = rubyUnwrapped;
-            gemConfig = pkgs.defaultGemConfig // gemConfig;
-          })
-          env
-          ruby
-          ;
+        inherit ((ruby-nix.lib pkgs) {
+          inherit gemset name;
+          ruby = rubyUnwrapped;
+          gemConfig = pkgs.defaultGemConfig // gemConfig;
+        })
+          env ruby;
 
         jekyllArgs = "--trace --drafts --future";
         buildJekyll = pkgs.stdenv.mkDerivation {
@@ -77,8 +66,7 @@
             mv _site $out;
           '';
         };
-      in
-      {
+      in {
         checks = rec {
           jekyll-build = buildJekyll;
           default = jekyll-build;
@@ -150,7 +138,7 @@
         };
 
         devShells = {
-          default = pkgs.mkShellNoCC {
+          default = pkgs.mkShell {
             # Ignore the current machine's platform and install only ruby
             # platform gems. As a result, gems with native extensions will be
             # compiled from source.
@@ -160,18 +148,9 @@
             # Vendor gems locally instead of in Nix store.
             BUNDLE_PATH = "vendor/bundle";
 
-            packages =
-              [
-                env
-                ruby
-                self.packages.${system}.newPost
-              ]
-              ++ (with pkgs; [
-                bundix
-                libwebp
-              ]);
+            packages = [ env ruby self.packages.${system}.newPost ]
+              ++ (with pkgs; [ bundix libwebp ]);
           };
         };
-      }
-    );
+      });
 }

@@ -2,6 +2,7 @@
 
 source "https://rubygems.org"
 
+gem 'logger'
 gem 'jekyll', '~> 4.3'
 gem "minima", github: "jekyll/minima", ref: '85374864e0311f544f49139078927b41ecbe8792'
 
