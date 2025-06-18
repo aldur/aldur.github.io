@@ -103,10 +103,11 @@ Crostini runs a Linux VM (booting a hardened kernel), which in turn runs `lxc`
 containers. By default, ChromeOS ships a `debian` container.
 
 What makes Crostini great (e.g., when compared to SSH into a remote system) is
-that it has first-class integration with ChromeOS: you can run Linux GUI apps
+that it has first-class integration with ChromeOS. You can run Linux GUI apps
 and they will show up alongside all other Chrome apps; you can open a URL in
 the Linux container and it will open in Chrome; you can copy to clipboard in
-Linux and it will populate ChromeOS' clipboard; etc.
+Linux and it will populate ChromeOS' clipboard; ChromeOS will even forward most
+ports from `localhost` to the container.
 
 The default `debian` container ships a few services that make that magic
 happen. Here are the two I have found the most useful:
@@ -402,7 +403,9 @@ We are now ready to deploy the image to the Chromebook.
 #### How-to: Deploying the image
 
 If you haven't done it yet, [configure
-Linux](https://support.google.com/chromebook/answer/9145439?hl=en).
+Linux](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
+choose the same username you will use within the container. I usually use 32GB
+of storage.
 
 Now open `crosh` (`ctrl`, `alt`, `t`), then:
 
@@ -449,6 +452,9 @@ through DHCP:
 ```bash
 lxc start lxc-nixos
 
+# Peek at the console logs, if you want
+lxc console --show-log lxc-nixos
+
 # Wait until `lxc list` shows an IP.
 lxc list
 ```
@@ -469,6 +475,7 @@ need to start the container from `crosh`. So:
 lxc stop --force lxc-nixos
 
 # From crosh (ctrl-d from `termina`)
+# This will ensure `/dev/.container_token` exists within the container
 vmc container termina lxc-nixos
 ```
 
@@ -516,8 +523,10 @@ Now open a new `crosh` shell and run the following:
 vmc usb-attach termina <bus>:<port> lxc-nixos
 ```
 
-Now running `lsusb` should show the device inside the container and it should
-be ready to use.
+Running `lsusb` within the container should show the device ready for use.
+Occasionally, the device was showing up in `lsusb` but the hardware key
+wouldn't work. In those cases, a reboot of the `termina` VM typically fixes
+things.
 
 #### How-to: SSH into the container
 
@@ -526,23 +535,17 @@ application to SSH into it. This is useful in case you want to use agent
 forwarding, for example, and because it leaves the USB hardware key usable from
 Chrome as well.
 
-First, note the IP address of your container (it helpfully tends to remain the
-same across restarts):
-
-```bash
-ip addr show eth0
-```
-
-Now open the Terminal application and configure a new SSH connection. Fill in
-`<username@<ip>` for the command. Add the following into the SSH relay server
-options field to enable authentication through the hardware key:
+Open the Terminal application and configure a new SSH connection. Fill in
+`<username>@lxc-nixos.termina.linux.test` for the command. Add the following
+to the SSH relay server options field to enable authentication through the
+hardware key:
 
 ```txt
 --ssh-agent=gsc --ssh-client-version=pnacl
 ```
 
-Connecting to this host should now trigger a prompt for your hardware key PIN.
-Insert it, touch the key if you need it, and you should be in.
+Connecting should trigger a prompt for your hardware key PIN. Insert it, touch
+the key if you need it, and you should be in.
 
 I have noticed this to be hit-or-miss. Sometimes it fails to authenticate
 transiently and I have to try re-connecting. Other times, it won't show the PIN
@@ -592,5 +595,8 @@ The ChromiumOS team is experimenting with a way (codename `baguette`) to run
 - [ChromeOS Security Whitepaper](https://www.chromium.org/chromium-os/developer-library/reference/security/security-whitepaper/#hardware-root-of-trust-and-verified-boot.md)
 - [Crostini Developer Guide](https://www.chromium.org/chromium-os/developer-library/guides/containers/crostini-developer-guide/)
 - [Running Custom Containers Under ChromeOS](https://www.chromium.org/chromium-os/developer-library/guides/containers/containers-and-vms/)
+- [Port forwarding and tunneling in ChromeOS](https://www.chromium.org/chromium-os/developer-library/reference/security/port-forwarding/)
+- [Crosh -- The ChromiumOS shell](https://www.chromium.org/chromium-os/developer-library/reference/device/crosh/)
 - [ArchLinux wiki: ChromeOS Devices](https://wiki.archlinux.org/title/Chrome_OS_devices/Crostini.md)
 - [NixOS wiki: Installing Nix on Crostini](https://wiki.nixos.org/wiki/Installing_Nix_on_Crostini.md)
+- [Chrome internals: DNS](chrome://net-internals/#dns)
