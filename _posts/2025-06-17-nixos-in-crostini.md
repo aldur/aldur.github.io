@@ -1,8 +1,8 @@
 ---
-title: "Zero to productive: NixOS environments in ChromeOS"
+title: "NixOS containers in ChromeOS"
 excerpt: >
-  How to turn a powerwashed Chromebook into a secure, productive environment within
-  minutes, through NixOS container and hardware keys.
+  Bring your own keys, here's the shell. How to turn a Chromebook
+  into a secure, productive environment.
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
