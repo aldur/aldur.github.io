@@ -20,9 +20,8 @@ And, worst case, a reboot shall return it to a clean state.
 
 On paper, this is awesome! It makes Chromebooks the go-to for most
 security-sensitive tasks. However, turning a powerwashed device into a
-productive environment typically involves going through an initial setup
-process, logging into each required online service, setting up all tools, and
-finally getting to work.
+productive environment requires an initial setup process, logging into each
+required online service, setting up all tools, and finally getting to work.
 
 Ideally, instead, I would like to skip all configuration and be productive as
 quickly as possible. That way, I could periodically throw away any persisted
@@ -31,7 +30,7 @@ one for personal life, one for work, or even one for each project), and even
 quickly get them running on multiple machines.
 
 This post describes my approach to this goal: reproducible, throwaway
-environments running securely under ChromeOS.
+containers running securely under ChromeOS.
 
 <!-- prettier-ignore-start -->
 
@@ -47,19 +46,19 @@ native or Electron apps), I prefer to rely on the browser to add defense in
 depth. The shell usually provides everything else I need, including an editor
 and access to other hosts.
 
-A productive environment should deliver as much of this as possible: for
-instance, `git` should know who I am and how I prefer to fetch branches. It
-should be easy to configure, audit, and (re)build from scratch. Deploying it to
-a clean device should be fast (minutes). Importantly, it should _not_ bundle
-any secret (e.g., passwords or cryptographic keys) or confidential information,
-nor should it have access to any long-lived credential either.
+A productive shell should come as ready as possible: for instance, `git` should
+know who I am and how I prefer to fetch branches. It should be easy to
+configure, audit, and (re)build from scratch. Deploying it to a clean device
+should be fast (minutes). Importantly, it should _not_ bundle any secret (e.g.,
+passwords or cryptographic keys) or confidential information, nor should it
+have access to any long-lived credential either.
 
-The lack of secrets and credentials is important for safety: if an environment
+The lack of secrets and credentials is important for safety: if the environment
 is compromised while at rest, there is nothing to exfiltrate. Plus, we do not
-need to worry about _how_ we deliver the environment, _where_ we store it, _if_
-it leaks, and _when_ to dispose it. If, instead, an environment gets
-compromised at runtime (e.g., through a malicious executable), then the
-attacker should not be able to access any long-lived credential (e.g., an SSH key).
+need to worry about _how_ we deliver the container image, _where_ we store it,
+_if_ it leaks, and _when_ to dispose it. If, instead, if the compromise happens
+at runtime (e.g., through a malicious executable), then the attacker should not
+be able to access any long-lived credential (e.g., an SSH key).
 
 ## The solution
 
@@ -93,7 +92,7 @@ services embrace passkeys, the need for passwords will hopefully become less
 frequent.
 
 Lastly, the hardware key holds SSH keys used both for authentication (`ssh`)
-and signing (e.g. on `git`) while in the shell.
+and signing (e.g., `git commit`) while in the shell.
 
 ### NixOS containers
 
@@ -376,7 +375,17 @@ After rebuilding the image to include this module, the only thing missing is
 uploading it somewhere so that we can later fetch it from the Chromebook. The
 simplest solution I have found is to host a ["Public" LXD
 image](https://documentation.ubuntu.com/lxd/stable-5.21/reference/remote_image_servers/#remote-server-types)
-server behind Tailscale.
+server, behind Tailscale (so that is _not_, in fact, public):
+
+> Public LXD servers
+> 
+> LXD servers that are used solely to serve images and do
+> not run instances themselves.
+>
+> To make a LXD server publicly available over the network on port 8443, set
+> the core.https_address configuration option to :8443 and do not configure any
+> authentication methods (see How to expose LXD to the network for more
+> information). Then set the images that you want to share to public.
 
 If you are using a NixOS host, enabling `lxd` is easy:
 
