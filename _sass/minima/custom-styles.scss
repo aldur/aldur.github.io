@@ -1,4 +1,4 @@
-@import 'minima/syntax_highlight';
+@use 'minima/syntax_highlight';
 
 /**
  * Make post links in home more compact
@@ -52,6 +52,7 @@ img.centered {
   margin-right: $spacing-unit;
   display: flex;
   align-items: center;
+  gap: $spacing-unit / 2;
 }
 
 .site-title {
@@ -64,18 +65,21 @@ img.centered {
   border: 0px;
   color: $text-color;
   padding: 0 0;
-  padding-right: $spacing-unit;
-
-  @media screen and (min-width: $on-medium) {
-    padding-right: 0;
-  }
 }
 
-.site-nav {
+code.highlighter-rouge {
+  font-size: inherit;
+}
+
+.site-nav-fixed {
   @media screen and (min-width: $on-medium) {
     &:first-child {
       padding-right: $spacing-unit * 0.5;
     }
+  }
+
+  .page-link {
+    color: var(--minima-text-color);
   }
 }
 
@@ -179,4 +183,29 @@ code {
 .svg-icon-font-size {
   width: $base-font-size;
   height: $base-font-size;
+}
+
+.post-navigation {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.nav-previous {
+  justify-self: end;
+  grid-column: 2;
+}
+
+.nav-next {
+  justify-self: start;
+  grid-column: 1;
+}
+
+.nav-previous a, .nav-next a {
+  display: flex;
+  gap: 7px
+}
+
+.nav-previous a {
+  text-align: right;
 }

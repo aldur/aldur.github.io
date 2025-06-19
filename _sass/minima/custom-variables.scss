@@ -1,5 +1,10 @@
-@import "minima/alerts";
+@use "minima/alerts";
 
 $on-tiny: 400px !default;
-
 $base-font-size: 18px;
+
+@media (prefers-color-scheme: dark) {
+:root {
+  --minima-text-color: #bbbbbb;
+}
+}

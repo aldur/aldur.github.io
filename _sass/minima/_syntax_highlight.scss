@@ -8,7 +8,7 @@
 .highlight,
 .highlight .w {
   color: #24292f;
-  background-color: #f6f8fa;
+  background-color: var(--minima-code-background-color);;
 }
 .highlight .k,
 .highlight .kd,
@@ -166,7 +166,7 @@
   .highlight,
   .highlight .w {
     color: #c9d1d9;
-    background-color: #161b22;
+    background-color: var(--minima-code-background-color);;
   }
   .highlight .k,
   .highlight .kd,

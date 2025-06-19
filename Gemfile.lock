@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/jekyll/minima.git
-  revision: 85374864e0311f544f49139078927b41ecbe8792
-  ref: 85374864e0311f544f49139078927b41ecbe8792
+  revision: 0b7ca6bbdb782a646f8e7b78b1a29fd5032ad4d3
+  ref: 0b7ca6bbdb782a646f8e7b78b1a29fd5032ad4d3
   specs:
     minima (3.0.0.dev)
       jekyll (>= 3.5, < 5.0)
@@ -100,4 +100,4 @@ DEPENDENCIES
   minima!
 
 BUNDLED WITH
-   2.4.19
+   2.6.7

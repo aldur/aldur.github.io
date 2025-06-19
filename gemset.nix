@@ -278,8 +278,8 @@
     platforms = [];
     source = {
       fetchSubmodules = false;
-      rev = "85374864e0311f544f49139078927b41ecbe8792";
-      sha256 = "0wq3vjbz6qqbwfyrsj4vibqk37j8ll9hpr5pqvilyw3wbmk3ja0g";
+      rev = "0b7ca6bbdb782a646f8e7b78b1a29fd5032ad4d3";
+      sha256 = "09r3ig4ajrsvs0jghc5rgf2y41bripfmyf77zqv10y21qb733bmq";
       type = "git";
       url = "https://github.com/jekyll/minima.git";
     };

@@ -13,12 +13,13 @@
 .note,
 .seealso,
 .todo {
-  @extend %vertical-rhythm;
+  @extend %vertical-rhythm !optional;
   border: 1px solid transparent;
 
   border-radius: .25rem;
 
   padding: 8px 12px;
+  margin-bottom: 12px;
 }
 
 .admonition > *:last-child,
