@@ -1,10 +1,11 @@
 @use 'minima/syntax_highlight';
+@use 'sass:math';
 
 /**
  * Make post links in home more compact
  */
 .post-link {
-  margin-bottom: $spacing-unit * 0.25;
+  margin-bottom: math.div($spacing-unit, 4);
 }
 
 img.centered {
@@ -47,17 +48,37 @@ img.centered {
   display: flex;
 }
 
+@media screen and (max-width: $on-tiny) {
+  .site-header-wrapper {
+    flex-direction: column;
+  }
+
+  .site-header {
+    line-height: normal;
+  }
+
+  .site-title {
+    padding-top: math.div($spacing-unit, 2);
+  }
+
+  .right-header-wrapper {
+    padding-bottom: math.div($spacing-unit, 2);
+  }
+}
+
 .right-header-wrapper {
   margin-left: auto;
   margin-right: $spacing-unit;
   display: flex;
   align-items: center;
-  gap: $spacing-unit / 2;
+  gap: math.div($spacing-unit, 2);
 }
 
 .site-title {
   float: none;
-  padding: 0px $spacing-unit;
+  padding-left: $spacing-unit;
+  padding-right: math.div($spacing-unit, 2);
+  white-space: nowrap;
 }
 
 .theme-mode-button {
@@ -67,14 +88,22 @@ img.centered {
   padding: 0 0;
 }
 
+.theme-mode-button svg {
+  width: 24px;
+  height: 24px;
+}
+
 code.highlighter-rouge {
   font-size: inherit;
 }
 
 .site-nav-fixed {
+  display: flex;
+  gap: math.div($spacing-unit, 2);
+
   @media screen and (min-width: $on-medium) {
     &:first-child {
-      padding-right: $spacing-unit * 0.5;
+      padding-right: math.div($spacing-unit, 2);
     }
   }
 
@@ -87,7 +116,7 @@ code.highlighter-rouge {
 
 /** --- Site footer --- */
 .site-footer {
-  padding: $spacing-unit * 0.25 0;
+  padding: math.div($spacing-unit, 4) 0;
   height: 50px;
 }
 
@@ -134,16 +163,16 @@ code.highlighter-rouge {
   }
 
   @media screen and (min-width: $on-tiny) {
-    padding: 0 ($spacing-unit * 0.5);
+    padding: 0 math.div($spacing-unit, 2);
 
     &:first-child {
-      padding-right: $spacing-unit * 0.5;
+      padding-right: math.div($spacing-unit, 2);
       padding-left: 0;
     }
 
     &:last-child {
       padding-right: 0;
-      padding-left: $spacing-unit * 0.5;
+      padding-left: math.div($spacing-unit, 2);
     }
   }
 
@@ -177,12 +206,6 @@ pre,
 code {
   // Prevents `alerts` from messing with this.
   color: $text-color;
-}
-
-// _include/github_link.html
-.svg-icon-font-size {
-  width: $base-font-size;
-  height: $base-font-size;
 }
 
 .post-navigation {
