@@ -3,15 +3,14 @@ short_title: U Bits
 
 about:
   long: >- # ignore line-breaks until next key.
-    I sometimes stumble on fundamental insights of knowledge have stood the
-    test of time and apply across various disciplines. They help me connect
+    I sometimes find knowledge that has stood the
+    test of time and applies across disciplines. It helps me connect
     the dots, make better decisions, or simply understand things more deeply. Some
-    call them "mental models"; I like to call them "Universal Bits". Whenever
-    this happens, I write my thoughts here. Additionally, I write about
-    computer science and all other topics that fascinate me.
+    call it "mental models"; I like to call it "Universal Bits". Whenever
+    this happens, I write my thoughts here. I also write about
+    computer science and whatever topic captures my curiosity.
   short: >-
-    Hi! 👋 Computer scientist exploring mental models, connecting the dots, and
-    writing about it.
+    Hi! 👋 Exploring mental models, connecting the dots, and writing about it.
 
 # --- Required by Jekyll SEO
 
@@ -65,21 +64,15 @@ minima:
 
   # Generate social links in footer.
   social_links:
-    - { platform: github, user_url: "https://github.com/aldur" }
-    - { platform: x, user_url: "https://x.com/AdrianoDiLuzio" }
-    #   - { platform: devto,          user_url: "https://dev.to/jekyll" }
-    #   - { platform: dribbble,       user_url: "https://dribbble.com/jekyll" }
-    #   - { platform: facebook,       user_url: "https://www.facebook.com/jekyll" }
-    #   - { platform: flickr,         user_url: "https://www.flickr.com/photos/jekyll" }
-    #   - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=qc6CJjYAAAAJ" }
-    #   - { platform: instagram,      user_url: "https://www.instagram.com/jekyll" }
-    #   - { platform: keybase,        user_url: "https://keybase.io/jekyll" }
-    #   - { platform: linkedin,       user_url: "https://www.linkedin.com/in/jekyll" }
-    #   - { platform: microdotblog,   user_url: "https://micro.blog/jekyll" }
-    #   - { platform: pinterest,      user_url: "https://www.pinterest.com/jekyll" }
-    #   - { platform: stackoverflow,  user_url: "https://stackoverflow.com/users/1234567/jekyll" }
-    #   - { platform: telegram,       user_url: "https://t.me/jekyll" }
-    #   - { platform: youtube,        user_url: "https://www.youtube.com/jekyll" }
+    - title: aldur on GitHub
+      icon: github
+      url: "https://github.com/aldur"
+    - title: AdrianoDiLuzio on X (formerly Twitter)
+      icon: x-twitter
+      url: "https://x.com/AdrianoDiLuzio"
+
+  show_excerpts: true
+  show_tags: false
 
 # If you want to link only specific pages in your header, uncomment this and
 # add the path to the pages in
@@ -87,9 +80,6 @@ minima:
 #
 # header_pages:
 #   - about.md
-
-show_excerpts: true
-show_tags: false
 
 strict_front_matter : true
 

@@ -1,7 +1,15 @@
 {% comment %}
-Extend 
-https://github.com/jekyll/minima/blob/10124515953527c8990a2de99ae4ddb2a81ffee3/_includes/social.html
-to add the email (and re-use config)
+  Extend `minima`'s `social.html` to add:
+
+  1. Email (which requires a different fontawesome pack and re-uses config)
+  2. Additional microformats.
+
+  In addition, minima has started using fontawesome, but we don't want to pull
+  it in its entirety, because it is heavy!
+
+  So, we have just downloaded it, extract the SVG paths and put them in the _include/
+  folder. We use the `path` instead of the full SVG so that we can easily add a class 
+  to it.
 {% endcomment %}
 {%- if site.about.short %}
   <data class="p-note" hidden value="{{ site.about.short | escape }}"></data>
@@ -16,14 +24,21 @@ to add the email (and re-use config)
 <ul class="social-media-list">
   {%- if site.author and site.author.email %}
     <li>
-      <a rel="me" class="u-email" href="mailto:{{ site.author.email }}" target="_blank" title="email">
-        <svg class="svg-icon grey">
-          <use xlink:href="{{ '/assets/icons.svg#email' | relative_url }}"></use>
-        </svg>
+      <a rel="me" href="mailto:{{ site.author.email }}" target="_blank" title="email">
+         <svg class="svg-icon grey" viewBox="0 0 512 512">
+           {% include social-icons/at.svg.path %}
+         </svg>
       </a>
     </li>
   {%- endif %}
   {%- for entry in site.minima.social_links -%}
-    {%- include social-item.html item = entry -%}
+    <li>
+      <a rel="me" href="{{ entry.url }}" target="_blank" title="{{ entry.title }}">
+        <!-- ! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. -->
+         <svg class="svg-icon grey" viewBox="0 0 512 512">
+           {% include social-icons/{{ entry.icon }}.svg.path %}
+         </svg>
+      </a>
+    </li>
   {%- endfor -%}
 </ul>
