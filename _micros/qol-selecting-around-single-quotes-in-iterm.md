@@ -1,8 +1,7 @@
 ---
 title: 'QoL: Smart select around single quotes in iTerm'
-excerpt: >
-  Small Quality of Life improvement to double-click on single-quoted strings and
-  smart-select them on iTerm.
+date: 2025-01-12
+redirect_from: /articles/2025/01/12/qol-selecting-around-single-quotes-in-iterm.html
 ---
 
 <div class="video-container">

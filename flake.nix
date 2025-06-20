@@ -66,6 +66,20 @@
             mv _site $out;
           '';
         };
+
+        slug = ''
+          slug=$(echo "$@" | \
+            ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | \
+            ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | \
+            ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
+        '';
+
+        usage = ''
+          if [ "$#" -eq 0 ]; then
+            echo "Usage: $0 <title>"
+            exit 1
+          fi
+        '';
       in {
         checks = rec {
           jekyll-build = buildJekyll;
@@ -96,12 +110,9 @@
           '';
 
           newPost = pkgs.writeShellScriptBin "new" ''
-            if [ "$#" -eq 0 ]; then
-              echo "Usage: $0 <title>"
-              exit 1
-            fi
+            ${usage}
 
-            slug=$(echo "$@" | ${pkgs.iconv}/bin/iconv -t ascii//TRANSLIT | ${pkgs.gnused}/bin/sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | ${pkgs.coreutils}/bin/tr '[:upper:]' '[:lower:]')
+            ${slug}
             output=_posts/$(${pkgs.coreutils}/bin/date +"%Y-%m-%d")-$slug.md
             echo "---
             title: '$@'
@@ -110,6 +121,20 @@
             ---
 
             #### Footnotes
+            " > $output
+            echo "Created file \"$output\"."
+          '';
+
+          newMicro = pkgs.writeShellScriptBin "micro" ''
+            ${usage}
+
+            ${slug}
+            output=_micros/$slug.md
+            echo "---
+            title: '$@'
+            date: $(${pkgs.coreutils}/bin/date +"%Y-%m-%d")
+            ---
+
             " > $output
             echo "Created file \"$output\"."
           '';
@@ -134,6 +159,11 @@
           new = {
             type = "app";
             program = "${self.packages.${system}.newPost}/bin/new";
+          };
+
+          micro = {
+            type = "app";
+            program = "${self.packages.${system}.newMicro}/bin/micro";
           };
         };
 

@@ -1,18 +1,17 @@
 ---
-title: 'Shell pipes and readline completion'
-excerpt: >
-  How I re-discovered that completion won't work if stdin is not a terminal (TTY).
+title: 'Shell pipes break readline completion'
+date: 2025-02-01
+modified_date: 2025-06-20
 ---
 
-On what seemed random occasions, `readline` completion would break in my
-terminal (e.g., when trying to use `pdb` after setting a Python `breakpoint()`),
-just to restart working later on.
+Seemingly at random I found myself without `readline` in my terminal,
+just for it to restart working later on. This seemed to happen especially when
+trying to use `pdb` after setting a Python `breakpoint()`.
 
 I originally thought about my `TERM` variables being misconfigured, the use of
-`direnv`, and so on. But it was none of that.
-
-On a closer look, it only happened when running `make extract` to process
-Beancount transactions from bank statements and financial documents. Why?
+`direnv`, and so on. But it was none of that. On a closer look, it only
+happened when running `make extract` to process Beancount transactions from
+bank statements and financial documents. Why?
 
 The Makefile `extract` target looks as follows:
 
@@ -21,16 +20,16 @@ extract:
   $(RUN) bean-extract -f $(INDEX).beancount -e $(INDEX).beancount $(INDEX).import "$(EXPANDED_TARGET)" | tee /tmp/extracted.beancount
 ```
 
-As you can see, it calls `bean-extract` and then pipes the result to a file. On
-occasions where the process would fail (under the hood, it calls a bunch of
-Python script that parse the different documents), I'd throw a `breakpoint()`,
-get into `pdb` and be annoyed by the lack of completion.
+It calls `bean-extract` and then pipes the result to a file. When this would
+fail (under the hood, it calls a bunch of Python script that parse the
+different documents), I'd throw a `breakpoint()`, get into `pdb` and be annoyed
+by the lack of completion.
 
 Other times, I'd run the command directly -- and readline completion would work,
 deepening the mystery.
 
-It then dawned on me. In retrospect, it is obvious, and I should have noticed
-earlier: well-behaved Unix processes will detect that their standard input is
+It then dawned on me and in retrospect it is obvious; I should have noticed
+earlier. Well-behaved Unix processes will detect that their standard input is
 not a terminal and disable shell completion (often implemented through GNU
 `readline`).
 

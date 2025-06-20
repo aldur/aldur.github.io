@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Migrating to aldur.blog"
-categories: [articles]
+modified_date: 2025-06-20
 excerpt: >
-  How I migrated this blog to its own domain and made it transparent for
-  readers.
+  Transparently migrating this blog to its own domain.
 ---
 
 As a small reward for managing to write a bit more lately, I decided to set up a
