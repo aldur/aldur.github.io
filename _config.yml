@@ -46,6 +46,7 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-redirect-from
   # This requires `url` being set.
   # Also, its effect depend on _where_ you position in in the plugins list.
   # See: https://github.com/jekyll/jekyll-sitemap
@@ -78,8 +79,9 @@ minima:
 # add the path to the pages in
 # order as they should show up.
 #
-# header_pages:
-#   - about.md
+header_pages:
+  - micro.md
+  - about.md
 
 strict_front_matter : true
 
@@ -91,11 +93,14 @@ incremental         : false
 exclude:
   - LICENSE
   - README.md
-  - flake.lock
+  - flake.*
   - flake.nix
   - gemset.nix
+    direnv/**
 
 defaults:
+  # When not specified, posts will have a `post` layout
+  # and have `articles` in the categories.
   -
     scope:
       path: ""
@@ -104,3 +109,21 @@ defaults:
       layout: "post"
       categories:
         - "articles"
+  # Same for `micros`
+  -
+    scope:
+      path: ""
+      type: "micros"
+    values:
+      layout: "post"
+      is_micro: true
+      categories:
+        - "micros"
+
+collections:
+  micros:
+    output: true
+    permalink: micros/:year/:month/:day/:title/
+
+redirect_from:
+  json: false

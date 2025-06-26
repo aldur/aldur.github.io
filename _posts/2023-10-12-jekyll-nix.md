@@ -1,11 +1,9 @@
 ---
-layout: post
 title: 'Jekyll + Nix'
-categories: [articles]
 ---
 
-When I [started writing again]({% post_url 2023-10-07-reboot %}), re-building
-this blog with [Jekyll](https://jekyllrb.com) hasn't been easy. Let's fix that
+When I [started writing again]({% post_url 2023-10-07-reboot %}), getting this
+blog to rebuild with [Jekyll](https://jekyllrb.com) wasn't easy. Let's fix that
 with [Nix](https://nixos.org).
 
 ### Building with Jekyll
