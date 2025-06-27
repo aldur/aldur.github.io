@@ -3,6 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
+modified_date: 2025-06-27
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -148,10 +149,10 @@ through `systemd`. The ChromeOS source code and the
 package](https://aur.archlinux.org/packages/cros-container-guest-tools-git)
 were invaluable in making this happen.
 
-<details>
-  <summary>Click to toggle the source for the Crostini NixOS module.</summary>
+<details markdown=1>
+  <summary markdown=span>Click to toggle the source for the Crostini NixOS module.</summary>
 
-{% highlight nix %}
+```nix
 {
   modulesPath,
   lib,
@@ -366,8 +367,7 @@ in
     "sommelier-x@1.service"
   ];
 }
-
-{% endhighlight %}
+```
 
 </details><br/>
 
@@ -560,6 +560,10 @@ I have noticed this to be hit-or-miss. Sometimes it fails to authenticate
 transiently and I have to try re-connecting. Other times, it won't show the PIN
 prompt. Disconnecting and re-connecting the hardware key sometimes helps
 (sigh!).
+
+#### How-to: Root login
+
+See [this post]({% link _posts/2025-06-27-yubikey-root-login.md %}).
 
 ## Conclusion
 
