@@ -8,7 +8,7 @@ excerpt: >
 When working in [NixOS containers under ChromeOS]({% link
 _posts/2025-06-19-nixos-in-crostini.md %}), the container users `root` and
 `aldur` have no password. This is very convenient, as it avoids managing
-secrets in the NixOS configuration. However, it makes securely escalate
+secrets in the NixOS configuration. However, it makes securely escalating
 privileges tricky: both `sudo` and `su` ask for the user password, which we
 can't provide.
 
