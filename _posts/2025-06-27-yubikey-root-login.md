@@ -137,8 +137,8 @@ running anyway, adding no new services. While I typically disable SSH for
 `root` to reduce attack surface, the container runs in a namespaced network
 connected only to the host, which mitigates the risk. 
 
-The main downside is usability. This approach leaves out `sudo` and the `root`
-shell comes with its own profile and environmental variables, with reduces
+The main downside is usability. This approach leaves out `sudo`; the `root`
+shell comes with its own profile and environmental variables, which reduces
 ergonomics with respect to a fully configured user shell.
 
 ### Bonus take: `ssh-agent`
