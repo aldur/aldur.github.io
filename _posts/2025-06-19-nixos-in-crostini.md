@@ -578,9 +578,8 @@ most, in addition to opening URLs in Chrome from the container through
 Hardware-wise, I feel that Chromebooks are great "couch-computing" or travel
 devices. They are underpowered with respect to other machines (e.g., an M4
 MacBook). But they are lighter, cheaper, and their battery is OK considering
-they are "Linux" devices (I can probably do at least 6 hours on mine). I wish
-the display was a bit brighter, especially under direct light, and for an
-illuminated keyboard.
+they are "Linux" devices (I can probably do 6 hours on mine). I wish
+the display was a bit brighter, especially under direct light.
 
 Overall, after using this setup for a few weeks I am satisfied with it -- I
 even wrote this blog post on a Chromebook! It does most of what I was looking

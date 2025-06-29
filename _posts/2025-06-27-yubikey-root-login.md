@@ -1,6 +1,6 @@
 ---
 title: 'Root login in NixOS containers'
-date: 2025-06-27 09:00:00 +0200
+date: 2025-06-29 17:25:00 +0200
 excerpt: >
   Finding a secure and usable privilege escalation method for NixOS containers.
 ---
@@ -26,10 +26,10 @@ lxc exec <container-name> fish
 ```
 
 This works well and requires no extra configuration. However, it's
-inconvenient. It requires ChromeOS, and relies on access to the host VM. This
-[might
-change](https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/vm_tools/baguette_image/)
-and break our workflow.
+inconvenient. It requires ChromeOS, and relies on access to the host VM. If
+[ChromeOS
+Baguette](https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/vm_tools/baguette_image/)
+graduates to production, this approach will not work anymore.
 
 ### Take 1: _insecure_, passwordless `sudo`
 
