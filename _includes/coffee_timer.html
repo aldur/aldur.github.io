@@ -260,8 +260,12 @@ I know, I know. Having two `head` section is not good. But it renders!
   {%- endunless -%}
   <div class="container">
     <div class="container">
-      <button type="button" class="collapsible">Preparation<span class="icon">&#9660;</span></button>
+      <button type="button" class="collapsible">Preparation<span class="icon">▼</span></button>
       <div class="preparation-content">
+        <div id="multiplierContainer" style="display: flex; align-items: center; gap: 10px; padding: 10px;">
+          <label for="quantityMultiplier" style="flex-shrink: 0;"><span id="multiplierValue">1.0</span>x</label>
+          <input type="range" id="quantityMultiplier" min="0.5" max="2" value="1" step="0.1" style="width: 100%;">
+         </div>
         <ul id="preparationSteps"></ul>
       </div>
     </div>
@@ -280,44 +284,39 @@ I know, I know. Having two `head` section is not good. But it renders!
   </div>
 
   <script>
-    const preparation = [
-      "Grind 15g of coffee beans",
-      "Rinse and pre-heat paper and cone",
-      "Put the coffee in",
-      "Dig a little volcano in it",
-      "Zero your scale",
-      "Boil the kettle",
+    let preparation = [];
+    let phases = [];
+    let end;
+
+    const baseCoffeeAmount = 15;
+    const basePreparation = [
+      { text: "Grind {}g of coffee beans", quantity: baseCoffeeAmount },
+      { text: "Rinse and pre-heat paper and cone" },
+      { text: "Put the coffee in" },
+      { text: "Dig a little volcano in it" },
+      { text: "Zero your scale" },
+      { text: "Boil the kettle" },
     ];
 
-    const phases = [
-      {action: "Pour 50g of water to bloom", duration: 10},
-      {action: "Gently Swirl", duration: 5},
-      {action: "Bloom", duration: 30},
-      {action: "Pour up to 100g total (40%)", duration: 15},
-      {action: "Pause", duration: 10},
-      {action: "Pour up to 150g total (60%)", duration: 10},
-      {action: "Pause", duration: 10},
-      {action: "Pour up to 200g total (80%)", duration: 10},
-      {action: "Pause", duration: 10},
-      {action: "Pour up to 250g total (100%)", duration: 10},
-      {action: "Gently swirl", duration: 5},
-      {action: "Drawdown", duration: 180 - 125}
+    const baseTotalWater = 250;
+    const basePhases = [
+      { action: "Pour {}g of water to bloom", quantity: baseTotalWater * 0.2, duration: 10 },
+      { action: "Gently Swirl", duration: 5 },
+      { action: "Bloom", duration: 30 },
+      { action: "Pour up to {}g (40%)", quantity: baseTotalWater * 0.4, duration: 15 },
+      { action: "Pause", duration: 10 },
+      { action: "Pour up to {}g (60%)", quantity: baseTotalWater * 0.6, duration: 10 },
+      { action: "Pause", duration: 10 },
+      { action: "Pour up to {}g (80%)", quantity: baseTotalWater * 0.8, duration: 10 },
+      { action: "Pause", duration: 10 },
+      { action: "Pour up to {}g (100%)", quantity: baseTotalWater, duration: 10 },
+      { action: "Gently swirl", duration: 5 },
+      { action: "Drawdown", duration: 180 - 125 }
     ];
-
-    for (let i = 0, len = phases.length; i < len; i++) {
-      if (i === 0) {
-        phases[i].time = 0;
-        continue;
-      }
-      phases[i].time = phases[i - 1].time + phases[i - 1].duration;
-    }
 
     let currentPhase = 0;
     let timer = null;
     let seconds = 0;
-
-    let lastPhase = phases[phases.length - 1]
-    let end = lastPhase.time + lastPhase.duration
 
     let isRunning = false;
     let isPaused = false;
@@ -341,24 +340,59 @@ I know, I know. Having two `head` section is not good. But it renders!
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      displayTimeline();
-      displayPreparation();
-      resetState();
+      setupCollapsible();
+      setupMultiplierSlider();
+      updateAndDisplayRecipe(1.0);
     });
 
-    function displayPreparation() {
+    function setupMultiplierSlider() {
+      const multiplierSlider = document.getElementById('quantityMultiplier');
+      const multiplierValue = document.getElementById('multiplierValue');
+
+      multiplierSlider.addEventListener('input', function () {
+        const multiplier = parseFloat(this.value);
+        multiplierValue.textContent = multiplier.toFixed(1);
+        updateAndDisplayRecipe(multiplier);
+      });
+    }
+
+    function updateAndDisplayRecipe(multiplier) {
+      // 1. Calculate new recipe data
+      preparation = basePreparation.map(step => {
+        if (step.quantity) {
+          return step.text.replace('{}', Math.round(step.quantity * multiplier));
+        }
+        return step.text;
+      });
+
+      phases = basePhases.map(p => ({
+        action: p.quantity ? p.action.replace('{}', Math.round(p.quantity * multiplier)) : p.action,
+        duration: p.duration
+      }));
+
+      for (let i = 0, len = phases.length; i < len; i++) {
+        if (i === 0) {
+          phases[i].time = 0;
+          continue;
+        }
+        phases[i].time = phases[i - 1].time + phases[i - 1].duration;
+      }
+
+      let lastPhase = phases[phases.length - 1]
+      end = lastPhase.time + lastPhase.duration
+
+      // 2. Update UI
+      displayTimeline();
+      displayPreparationSteps();
+      resetState();
+    }
+
+    function setupCollapsible() {
       var coll = document.querySelector(".collapsible");
       coll.addEventListener("click", function () {
         this.classList.toggle("active");
         var content = this.nextElementSibling;
         content.classList.toggle("active-preparation");
-      });
-
-      const prepSteps = document.getElementById('preparationSteps');
-      preparation.forEach(step => {
-        const li = document.createElement('li');
-        li.innerHTML = `<input type="checkbox">${step}`;
-        prepSteps.appendChild(li);
       });
     }
 
@@ -494,8 +528,19 @@ I know, I know. Having two `head` section is not good. But it renders!
       });
     }
 
+    function displayPreparationSteps() {
+      const prepSteps = document.getElementById('preparationSteps');
+      prepSteps.innerHTML = ''; // Clear old steps
+      preparation.forEach(step => {
+        const li = document.createElement('li');
+        li.innerHTML = `<input type="checkbox">${step}`;
+        prepSteps.appendChild(li);
+      });
+    }
+
     function displayTimeline() {
       const timeline = document.querySelector('.timeline');
+      timeline.innerHTML = '';
       phases.forEach((phase, index) => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
