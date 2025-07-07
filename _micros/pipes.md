@@ -2,6 +2,7 @@
 title: 'Shell pipes break readline completion'
 date: 2025-02-01
 modified_date: 2025-06-20
+redirect_from: /articles/2025/02/01/pipes.html
 ---
 
 Seemingly at random I found myself without `readline` in my terminal,
