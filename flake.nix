@@ -178,8 +178,12 @@
             # Vendor gems locally instead of in Nix store.
             BUNDLE_PATH = "vendor/bundle";
 
-            packages = [ env ruby self.packages.${system}.newPost ]
-              ++ (with pkgs; [ bundix libwebp ]);
+            packages = [
+              env
+              ruby
+              self.packages.${system}.newPost
+              self.packages.${system}.newMicro
+            ] ++ (with pkgs; [ bundix libwebp ]);
           };
         };
       });
