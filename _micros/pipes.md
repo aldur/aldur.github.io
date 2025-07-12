@@ -1,7 +1,7 @@
 ---
 title: 'Shell pipes break readline completion'
 date: 2025-02-01
-modified_date: 2025-06-20
+modified_date: 2025-07-10
 redirect_from: /articles/2025/02/01/pipes.html
 ---
 
@@ -39,7 +39,8 @@ For CPython, I _think_ the relevant code is
 Entering text into a terminal is [indeed
 complicated](https://jvns.ca/blog/2024/07/08/readline/).
 
-Mystery solved! Below you can see the behavior in action (you'll need Javascript
-enabled, or you can see it [here](https://asciinema.org/a/FpGU25luEC4q30STLGw4Lj0fX)):
+Mystery solved! Here the behavior in action:
 
-<script src="https://asciinema.org/a/FpGU25luEC4q30STLGw4Lj0fX.js" id="asciicast-FpGU25luEC4q30STLGw4Lj0fX" async="true"></script>
+{:.text-align-center}
+![A terminal screencast showing how pipes break completion]({% link /images/pipes.svg %}){:.centered}
+Also on [asciinema](https://asciinema.org/a/FpGU25luEC4q30STLGw4Lj0fX)
