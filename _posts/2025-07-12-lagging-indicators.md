@@ -116,7 +116,7 @@ but need to acknowledge how reality changes around us and the humans that
 compose the team. Endurance training can be another example. It takes weeks to
 build the aerobic skills required to compete and training and recovery interact
 in loops (with form and fitness). The heart rate on race day is a leading indicator,
-while VO2Max lags behind.
+while [VO₂ max](https://en.wikipedia.org/wiki/VO2_max) lags behind.
 
 I hope that while reading about delays and indicators you started picturing
 examples from your own fields where these thoughts apply. Reach out through the
