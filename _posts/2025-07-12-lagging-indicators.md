@@ -13,6 +13,9 @@ As it often happens when I do outdoor sports, my mind put together a few
 thoughts. This time, about systems, their delays, and lagging indicators. I
 think they generalize to more than kayaks 🛶, so I wrote about them here.
 
+{:.text-align-center}
+![The Ardèche river, its rocky borders, four kayaks navigating it and an angle of sky.]({% link images/GOPR3224.webp %}){:.centered}
+
 For most of day one (out of two), my kayak partner and I struggled to navigate
 in a straight line. We often found the kayak pointing at the wrong angle and
 had to bring it back on route. Then, we would find it pointing wrongly in the
@@ -20,6 +23,9 @@ _other_ direction. Unsurprisingly, we reached camp for the night tired and with
 low morale.
 
 _Why_ were we doing such a bad job? Because of _delays_! 
+
+{:.text-align-center}
+![A diagram of a kayak showing the effect of paddling (forward and to the side)]({% link /images/kayak.svg %}){:.centered.inverted}
 
 A kayak:
 
@@ -64,6 +70,9 @@ model of the kayak so that we could diagnose our troubles and figure out how to
 fix them. But we were failing, because delays were muddling the effects of our
 inputs and revealing them only after some time (when the kayak turned).
 
+{:.text-align-center}
+![A diagram of a kayak showing how delays and other forces make it harder to predict the effect of paddling.]({% link /images/kayak-delays.svg %}){:.centered.inverted}
+
 To get better, we had to first acknowledge that the system was _messier_ than
 what we were trying to picture in our minds. Both delays and external forces
 were contributing to the outcome. Once we learned that, we started to master
@@ -79,23 +88,23 @@ rapids. And, obviously, have a ton more fun!
 
 So, what did we learn?
 
-1. The map is not the territory. We have a natural tendency to build
-   _tidy_ mental models, but the world is sometimes messier than that.
-Acknowledge that to iteratively build a useful model.
+1. The map is not the territory. We have a natural tendency to build _tidy_
+   mental models, but the world is sometimes messier than that. Acknowledge
+   that to iteratively build a useful model.
 1. All systems have delays, since no reaction is truly instantaneous. Delays
    lead to oscillations and longer feedback loops, which make systems harder to
-"hold in the head". 
+   "hold in the head". 
 1. Delays are powerful leverage points. Controlling them can result in
    significant (sometimes surprising) changes to the system's behavior.
 1. A faster loop reduces the effect of delays, which makes it easier to
    understand the system.
 1. The shorter the loop, the faster we iteratively build system models. Strive
    for simplicity, get it working, then improve it through experience and
-insights.
+   insights.
 1. If something is hard to predict (or correct), you might be only looking at
    _lagging indicators_. They are more visible but less useful than _leading
-indicators_. A weaker signal _earlier_ on is useful: try looking for those
-leads.
+   indicators_. A weaker signal _earlier_ on is useful: try looking for those
+   leads.
 
 These lessons apply across disciplines. Software development, for instance,
 combines different loops (write, review, bugfix, or release, deploy, rollback)
