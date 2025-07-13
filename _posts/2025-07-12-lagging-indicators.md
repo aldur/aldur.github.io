@@ -1,7 +1,7 @@
 ---
 title: 'Paddling in circles: lagging indicators'
 excerpt: >
-  Thinking in systems through models, loops, and delays.
+  🛶 Thinking in systems through models, loops, and delays.
 ---
 
 Last weekend I went kayaking on the [Ardèche
