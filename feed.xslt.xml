@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom">
+  <xsl:output method="html" version="5.0" encoding="UTF-8" indent="yes"/>
+
+  <xsl:template match="/">
+    <html>
+      <head>
+        <title>
+          <xsl:value-of select="/atom:feed/atom:title"/>
+        </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="/assets/css/style.css" rel="stylesheet" />
+        <style type="text/css">
+          body {
+            margin: 0;
+            padding: 20px;
+          }
+          .post {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+          }
+          .post h2 {
+            margin-top: 0;
+            margin-bottom: 0;
+          }
+          .post-meta {
+            color: #777;
+            font-size: 0.9em;
+          }
+          .post-content {
+            margin-top: 10px;
+          }
+          .info {
+            text-align: center;
+            font-size: 0.9em;
+            color: var(--minima-brand-color-dimmed);
+          }
+          .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="wrapper">
+          <header>
+            <div class="info header">
+              This is a styled 
+              <svg class="svg-icon orange" viewbox="0 0 16 16">
+                <!-- 
+                  NOTE: We cannot use liquid tags here, so we will need to introduce some duplication.
+                  Leaving the include below to give ourselves a chance to find this through search and replace.
+                -->
+                <!-- {% include social-icons/rss.svg.path %} -->
+                <path d="M12.8 16C12.8 8.978 7.022 3.2 0 3.2V0c8.777 0 16 7.223 16 16h-3.2zM2.194
+                       11.61c1.21 0 2.195.985 2.195 2.196 0 1.21-.99 2.194-2.2 2.194C.98 16 0 15.017 0
+                       13.806c0-1.21.983-2.195 2.194-2.195zM10.606
+                       16h-3.11c0-4.113-3.383-7.497-7.496-7.497v-3.11c5.818 0 10.606 4.79 10.606 10.607z"
+                  />
+              </svg> RSS feed. To subscribe, copy the URL from the address bar into your favorite feed reader.
+            </div>
+            <h1>
+              <!-- 
+                atom:link points to the RSS feed itself, so we need atom:link[2] to point to homepage.
+
+                See: https://github.com/jekyll/jekyll-feed/blob/43cc5d51e30b59ab8d8ba970e42c8c437e2b233f/lib/jekyll-feed/feed.xml#L8
+              -->
+              <a href="{/atom:feed/atom:link[2]/@href}">
+                <xsl:value-of select="/atom:feed/atom:title"/>
+              </a>
+            </h1>
+            <p>
+              <xsl:value-of select="/atom:feed/atom:subtitle"/>
+            </p>
+          </header>
+
+          <xsl:for-each select="/atom:feed/atom:entry">
+            <div class="post">
+              <h2>
+                <a href="{atom:link/@href}">
+                  <xsl:value-of select="atom:title"/>
+                </a>
+              </h2>
+              <div class="post-meta">
+                <xsl:value-of select="substring(atom:published, 0, 11)"/> by <xsl:value-of select="atom:author/atom:name"/>
+              </div>
+              <div class="post-content">
+                <xsl:value-of select="atom:content" disable-output-escaping="yes"/>
+              </div>
+            </div>
+          </xsl:for-each>
+
+          <footer class="info">
+            <p>
+              To subscribe to this RSS feed, copy the URL from the address bar into your favorite feed reader.
+            </p>
+          </footer>
+        </div>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>
