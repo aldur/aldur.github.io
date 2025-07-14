@@ -3,23 +3,22 @@ layout: post
 title: macOS Emoji Chooser with Hammerspoon
 excerpt: >
     Search and select emojis by name with Hammerspoon.
-modified_date: 2023-10-03
+modified_date: 2025-07-14
 categories: [articles]
 tags: [hammerspoon, emoji]
 ---
 
-<div class="tip" markdown="1">
-💡
+<div class="tip" markdown="1"> 
+🌅 After 9 years of honorable service and
+[updates](https://github.com/aldur/dotfiles/commit/14b11f24a54a0d799f69dcf0da65cb34d15e35a5)
+all the way to [Unicode 15
+emojis](https://unicode.org/emoji/charts-15.0/emoji-released.html) 🪼, it has
+come time to sunset this in favor of the [built-in macOS picker]({% link _micros/sunsetting-my-hammerspoon-emoji-chooser.md  %}).
 
-I wrote this 7 years ago, but it is standing _my_ test of time: I continue using
-it daily and have
-[updated](https://github.com/aldur/dotfiles/commit/14b11f24a54a0d799f69dcf0da65cb34d15e35a5)
-it to support [Unicode 15
-emojis](https://unicode.org/emoji/charts-15.0/emoji-released.html) 🪼.
-
-The snippets below have evolved in time; I have left them as originally written,
-but you can find their up-to-date version on
-[GitHub](https://github.com/aldur/dotfiles/tree/master/osx/hammerspoon/Spoons/Emojis.spoon).
+You will find its last version archived {% include
+github_link.html
+url="https://github.com/aldur/dotfiles/tree/49b03cee63c52be55d92723ee9d583d51f90f81d/osx/hammerspoon/Spoons/Emojis.spoon"
+text="at this permalink" -%}.
 </div>
 
 I use the awesome [Hammerspoon](https://github.com/Hammerspoon/hammerspoon) to

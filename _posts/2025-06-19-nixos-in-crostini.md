@@ -416,7 +416,7 @@ Linux](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
 choose the same username you will use within the container. I usually use 32GB
 of storage.
 
-Now open `crosh` (`ctrl`, `alt`, `t`), then:
+Now open `crosh` (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd>), then:
 
 ```sh
 # Not strictly required, but better start clean.
