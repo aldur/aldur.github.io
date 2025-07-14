@@ -79,6 +79,11 @@
   color: #062c33;
 }
 
+.hint a:visited,
+.tip a:visited {
+  color: darken(#062c33, 15%);
+}
+
 .note {
   background-color: #e2e3e5;
   border-color: #d6d8db;
@@ -87,6 +92,10 @@
 
 .note a {
   color: #202326;
+}
+
+.note a:visited {
+  color: darken(#202326, 15%);
 }
 
 .todo {
@@ -99,6 +108,10 @@
   color: #002752;
 }
 
+.todo a:visited {
+  color: darken(#002752, 15%);
+}
+
 .seealso {
   background-color: #fff3cd;
   border-color: #ffeeba;
@@ -107,4 +120,8 @@
 
 .seealso a {
   color: #533f03;
+}
+
+.seealso a:visited {
+  color: darken(#533f03, 15%);
 }

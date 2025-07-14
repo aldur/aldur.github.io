@@ -238,3 +238,9 @@ code {
 .nav-previous a {
   text-align: right;
 }
+
+kbd {
+  padding: 1px 5px;
+  border: solid 1px var(--minima-border-color-02);
+  border-radius: 3px;
+}
