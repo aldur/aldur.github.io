@@ -127,3 +127,7 @@ collections:
 
 redirect_from:
   json: false
+
+feed:
+  collections:
+    - micros
