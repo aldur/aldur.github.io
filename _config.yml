@@ -127,3 +127,13 @@ collections:
 
 redirect_from:
   json: false
+
+feed:
+  collections:
+    - micros
+
+# Silence Saas deprecation warnings, to be removed after this is fixed upstream in minima:
+# https://github.com/jekyll/minima/issues/815#issuecomment-2440028795
+sass:
+  quiet_deps: true
+  silence_deprecations: ['import']
