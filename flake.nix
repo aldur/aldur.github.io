@@ -27,7 +27,9 @@
         #   development/ruby-modules/gem-config/default.nix
         gemConfig = { };
 
-        rubyUnwrapped = pkgs.ruby_3_4;
+        rubyUnwrapped = let p = pkgs.ruby_3_4;
+        in assert p.version.majMinTiny == (builtins.readFile ./.ruby-version);
+        p;
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.

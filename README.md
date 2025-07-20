@@ -16,6 +16,13 @@ Install [Nix](https://nixos.org) and enable
 - `nix run '.#lock'` generates `gemset.nix` from `Gemfile.lock`.
 - `nix flake check` tests the build and runs linters.
 
+## Ruby version
+
+The file `.ruby-version` is used by
+[Cloudflare](https://developers.cloudflare.com/pages/configuration/build-image/#languages-and-runtime).
+The Nix derivation will enforce that this version is in sync with the version
+of Ruby used by `nix build`. Use `echo -n VERSION > .ruby-version` to update it.
+
 ## License
 
 See [LICENSE](./LICENSE).
