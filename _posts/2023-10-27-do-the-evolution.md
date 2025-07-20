@@ -260,7 +260,7 @@ print(payoffs_matrix)
 # >>> Strategy.HAWK          -25.0           50.0
 ```
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 
 If you prefer to look at the code, you can find the full source
 {% include github_link.html url="https://github.com/aldur/hawks_and_doves" text="here" %}.

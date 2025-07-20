@@ -56,7 +56,7 @@ The behaviour of the sitemap plugin depends on the index at which we add it to
 Jekyll's `plugins` array in the site configuration.
 </div>
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 In my case, I added it _last_ -- it "knows" _not_ to add my RSS feed to the sitemap
 and I want it to index the rest of the content.
 </div>

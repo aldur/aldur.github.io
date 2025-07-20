@@ -123,7 +123,7 @@ new website.
 ![This blog has migrated, RSS entry]({% link /images/rss_migration.webp %}){:.centered}
 _The [RSS feed entry](https://aldur.github.io/feed.xml) showing the notification._
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 [This handy
 website](https://validator.w3.org/feed/) lets you validate the static RSS feed
 to prevent mistakes.
@@ -163,7 +163,7 @@ pushing our static code there, traffic will migrate to Cloudflare.
 The source code is {% include github_link.html
 url="https://github.com/aldur/aldur.github.io/tree/redirect_to_cloudflare" text="here" -%}.
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 It is also a good idea to stop ourselves from deleting the branch by mistake:
 GitHub allows setting branch protection rules and denoting branches as
 _read-only_. That should do it.

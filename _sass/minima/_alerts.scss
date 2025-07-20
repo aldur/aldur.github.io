@@ -1,36 +1,59 @@
 // Originally based on:
 // https://www.seanh.cc/jekyll-theme-oatcake/2019/09/09/alert-boxes/
 
+:root {
+  --color-link-visited-darken: 15%;
+
+  --color-code-darken: 5%;
+  --color-code-border-darken: 10%;
+
+  --color-admonition-bg: #d6d8d9;
+  --color-admonition-border: #c6c8ca;
+  --color-admonition-text: #1b1e21;
+  --color-admonition-link: #040505;
+
+  --color-warning-bg: #f8d7da;
+  --color-warning-border: #f5c6cb;
+  --color-warning-text: #721c24;
+  --color-warning-link: #491217;
+
+  --color-hint-bg: #d1ecf1;
+  --color-hint-border: #bee5eb;
+  --color-hint-text: #0c5460;
+  --color-hint-link: #062c33;
+
+  --color-note-bg: #e2e3e5;
+  --color-note-border: #d6d8db;
+  --color-note-text: #383d41;
+  --color-note-link: #202326;
+
+  --color-todo-bg: #cce5ff;
+  --color-todo-border: #b8daff;
+  --color-todo-text: #004085;
+  --color-todo-link: #002752;
+
+  --color-seealso-bg: #fff3cd;
+  --color-seealso-border: #ffeeba;
+  --color-seealso-text: #856404;
+  --color-seealso-link: #533f03;
+}
+
+
 .admonition,
-.attention,
-.caution,
-.danger,
-.error,
-.important,
 .warning,
 .hint,
-.tip,
 .note,
 .seealso,
 .todo {
-  @extend %vertical-rhythm !optional;
   border: 1px solid transparent;
-
-  border-radius: .25rem;
-
+  border-radius: 0.25rem;
   padding: 8px 12px;
   margin-bottom: 12px;
 }
 
 .admonition > *:last-child,
-.attention > *:last-child,
-.caution > *:last-child,
-.danger > *:last-child,
-.error > *:last-child,
-.important > *:last-child,
 .warning > *:last-child,
 .hint > *:last-child,
-.tip > *:last-child,
 .note > *:last-child,
 .seealso > *:last-child,
 .todo > *:last-child {
@@ -38,90 +61,176 @@
 }
 
 .admonition {
-  background-color: #d6d8d9;
-  border-color: #c6c8ca;
-  color: #1b1e21;
+  background-color: var(--color-admonition-bg);
+  border-color: var(--color-admonition-border);
+  color: var(--color-admonition-text);
 }
 
 .admonition a {
-  color: #040505;
+  color: var(--color-admonition-link);
 }
 
-.attention,
-.caution,
-.danger,
-.error,
-.important,
 .warning {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
+  background-color: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-text);
 }
 
-.attention a,
-.caution a,
-.danger a,
-.error a,
-.important a,
 .warning a {
-  color: #491217;
+  color: var(--color-warning-link);
 }
 
-.hint,
-.tip {
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-  color: #0c5460;
+.hint {
+  background-color: var(--color-hint-bg);
+  border-color: var(--color-hint-border);
+  color: var(--color-hint-text);
 }
 
-.hint a,
-.tip a {
-  color: #062c33;
+.hint a { 
+  color: var(--color-hint-link);
 }
 
-.hint a:visited,
-.tip a:visited {
-  color: darken(#062c33, 15%);
+.hint a:visited { 
+  color: color-mix(in srgb, var(--color-hint-link), black var(--color-link-visited-darken));
 }
 
 .note {
-  background-color: #e2e3e5;
-  border-color: #d6d8db;
-  color: #383d41;
+  background-color: var(--color-note-bg);
+  border-color: var(--color-note-border);
+  color: var(--color-note-text);
 }
 
 .note a {
-  color: #202326;
+  color: var(--color-note-link);
 }
 
 .note a:visited {
-  color: darken(#202326, 15%);
+  color: color-mix(in srgb, var(--color-note-link), black var(--color-link-visited-darken));
 }
 
 .todo {
-  background-color: #cce5ff;
-  border-color: #b8daff;
-  color: #004085;
+  background-color: var(--color-todo-bg);
+  border-color: var(--color-todo-border);
+  color: var(--color-todo-text);
 }
 
 .todo a {
-  color: #002752;
+  color: var(--color-todo-link);
 }
 
 .todo a:visited {
-  color: darken(#002752, 15%);
+  color: color-mix(in srgb, var(--color-todo-link), black var(--color-link-visited-darken));
 }
 
 .seealso {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
+  background-color: var(--color-seealso-bg);
+  border-color: var(--color-seealso-border);
+  color: var(--color-seealso-text);
 }
 
 .seealso a {
-  color: #533f03;
+  color: var(--color-seealso-link);
 }
 
 .seealso a:visited {
-  color: darken(#533f03, 15%);
+  color: color-mix(in srgb, var(--color-seealso-link), black var(--color-link-visited-darken));
+}
+
+.admonition,
+.warning,
+.hint,
+.note,
+.seealso,
+.todo {
+  code.highlighter-rouge,
+  code,
+  .highlight,
+  {
+    color: inherit;
+    border-radius: 3px;
+  }
+}
+
+.admonition,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-admonition-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-admonition-bg), black var(--color-code-border-darken));
+  }
+}
+
+.warning,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-warning-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-warning-bg), black var(--color-code-border-darken));
+  }
+}
+
+.hint,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-hint-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-hint-bg), black var(--color-code-border-darken));
+  }
+}
+
+.note,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-note-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-note-bg), black var(--color-code-border-darken));
+  }
+}
+
+.todo,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-todo-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-todo-bg), black var(--color-code-border-darken));
+  }
+}
+
+.seealso,
+{
+  code,
+  code.highlighter-rouge,
+  .highlight {
+    background-color: color-mix(in srgb, var(--color-seealso-bg), black var(--color-code-darken));
+  }
+
+  code.highlighter-rouge,
+  div.highlight {
+    border: 1px solid color-mix(in srgb, var(--color-seealso-bg), black var(--color-code-border-darken));
+  }
 }

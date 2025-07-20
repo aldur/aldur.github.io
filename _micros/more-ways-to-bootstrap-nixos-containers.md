@@ -69,7 +69,7 @@ the internet (e.g., from Dropbox, Google Drive, etc.).
 This approach simply replaces the Tailscale "public" LXD image server with
 another transport to retrieve the images.
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 In ChromeOS, use `crosh` to make the archives available to the `termina` VM:
 
 ```bash

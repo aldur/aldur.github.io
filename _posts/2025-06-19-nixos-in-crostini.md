@@ -431,7 +431,7 @@ lxc image list tropic:
 lxc init tropic:lxc-nixos lxc-nixos --config security.nesting=true
 ```
 
-<div class="tip" markdown="1">
+<div class="warning" markdown="1">
 
 I have seen a few guides recommending `--config security.privileged=true`.
 
@@ -589,7 +589,7 @@ agents in a `qemu` VM built using the same tools.
 
 Thanks for reading, and 'til next time!
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 The ChromiumOS team is experimenting with a way (codename `baguette`) to run
   containers without a KVM. If that happens and this guide becomes outdated,
   reach out! We will figure out how to make it work there as well.
