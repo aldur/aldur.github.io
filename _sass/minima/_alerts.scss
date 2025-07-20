@@ -2,42 +2,20 @@
 // https://www.seanh.cc/jekyll-theme-oatcake/2019/09/09/alert-boxes/
 
 :root {
-  --color-link-visited-darken: 15%;
-
-  --color-code-darken: 5%;
-  --color-code-border-darken: 10%;
-
-  --color-admonition-bg: #d6d8d9;
-  --color-admonition-border: #c6c8ca;
-  --color-admonition-text: #1b1e21;
-  --color-admonition-link: #040505;
-
-  --color-warning-bg: #f8d7da;
-  --color-warning-border: #f5c6cb;
-  --color-warning-text: #721c24;
-  --color-warning-link: #491217;
-
-  --color-hint-bg: #d1ecf1;
-  --color-hint-border: #bee5eb;
-  --color-hint-text: #0c5460;
-  --color-hint-link: #062c33;
-
-  --color-note-bg: #e2e3e5;
-  --color-note-border: #d6d8db;
-  --color-note-text: #383d41;
-  --color-note-link: #202326;
-
-  --color-todo-bg: #cce5ff;
-  --color-todo-border: #b8daff;
-  --color-todo-text: #004085;
-  --color-todo-link: #002752;
-
-  --color-seealso-bg: #fff3cd;
-  --color-seealso-border: #ffeeba;
-  --color-seealso-text: #856404;
-  --color-seealso-link: #533f03;
+  --alert-boxes-border-radius: 0.25rem;
+  --alert-boxes-padding: 8px 12px;
+  --alert-boxes-margin-bottom: 12px;
+  --code-border-radius: 3px;
+  --link-visited-darken-amount: 15%;
+  --code-bg-darken-amount: 5%;
+  --code-border-darken-amount: 10%;
 }
 
+/*
+ * =================================================================================
+ * Base Structure
+ * =================================================================================
+ */
 
 .admonition,
 .warning,
@@ -45,12 +23,16 @@
 .note,
 .seealso,
 .todo {
-  border: 1px solid transparent;
-  border-radius: 0.25rem;
-  padding: 8px 12px;
-  margin-bottom: 12px;
+  /* Base styles */
+  border: 1px solid var(--alert-boxes-border);
+  border-radius: var(--alert-boxes-border-radius);
+  padding: var(--alert-boxes-padding);
+  margin-bottom: var(--alert-boxes-margin-bottom);
+  background-color: var(--alert-boxes-bg);
+  color: var(--alert-boxes-text);
 }
 
+/* Remove bottom margin from the last element */
 .admonition > *:last-child,
 .warning > *:last-child,
 .hint > *:last-child,
@@ -60,177 +42,114 @@
   margin-bottom: 0;
 }
 
-.admonition {
-  background-color: var(--color-admonition-bg);
-  border-color: var(--color-admonition-border);
-  color: var(--color-admonition-text);
-}
+/*
+ * =================================================================================
+ * Color Theme Definitions
+ * =================================================================================
+ */
 
-.admonition a {
-  color: var(--color-admonition-link);
+.admonition {
+  --alert-boxes-bg: #d6d8d9;
+  --alert-boxes-border: #c6c8ca;
+  --alert-boxes-text: #1b1e21;
+  --alert-boxes-link: #040505;
 }
 
 .warning {
-  background-color: var(--color-warning-bg);
-  border-color: var(--color-warning-border);
-  color: var(--color-warning-text);
-}
-
-.warning a {
-  color: var(--color-warning-link);
+  --alert-boxes-bg: #f8d7da;
+  --alert-boxes-border: #f5c6cb;
+  --alert-boxes-text: #721c24;
+  --alert-boxes-link: #491217;
 }
 
 .hint {
-  background-color: var(--color-hint-bg);
-  border-color: var(--color-hint-border);
-  color: var(--color-hint-text);
-}
-
-.hint a { 
-  color: var(--color-hint-link);
-}
-
-.hint a:visited { 
-  color: color-mix(in srgb, var(--color-hint-link), black var(--color-link-visited-darken));
+  --alert-boxes-bg: #d1ecf1;
+  --alert-boxes-border: #bee5eb;
+  --alert-boxes-text: #0c5460;
+  --alert-boxes-link: #062c33;
 }
 
 .note {
-  background-color: var(--color-note-bg);
-  border-color: var(--color-note-border);
-  color: var(--color-note-text);
-}
-
-.note a {
-  color: var(--color-note-link);
-}
-
-.note a:visited {
-  color: color-mix(in srgb, var(--color-note-link), black var(--color-link-visited-darken));
+  --alert-boxes-bg: #e2e3e5;
+  --alert-boxes-border: #d6d8db;
+  --alert-boxes-text: #383d41;
+  --alert-boxes-link: #202326;
 }
 
 .todo {
-  background-color: var(--color-todo-bg);
-  border-color: var(--color-todo-border);
-  color: var(--color-todo-text);
-}
-
-.todo a {
-  color: var(--color-todo-link);
-}
-
-.todo a:visited {
-  color: color-mix(in srgb, var(--color-todo-link), black var(--color-link-visited-darken));
+  --alert-boxes-bg: #cce5ff;
+  --alert-boxes-border: #b8daff;
+  --alert-boxes-text: #004085;
+  --alert-boxes-link: #002752;
 }
 
 .seealso {
-  background-color: var(--color-seealso-bg);
-  border-color: var(--color-seealso-border);
-  color: var(--color-seealso-text);
+  --alert-boxes-bg: #fff3cd;
+  --alert-boxes-border: #ffeeba;
+  --alert-boxes-text: #856404;
+  --alert-boxes-link: #533f03;
 }
 
-.seealso a {
-  color: var(--color-seealso-link);
+/*
+ * =================================================================================
+ * Link Styling
+ * =================================================================================
+ */
+
+.admonition a,
+.warning a,
+.hint a,
+.note a,
+.seealso a,
+.todo a {
+  color: var(--alert-boxes-link);
 }
 
-.seealso a:visited {
-  color: color-mix(in srgb, var(--color-seealso-link), black var(--color-link-visited-darken));
+/* Visited links are darkened using the inherited link color */
+.admonition a:visited,
+.warning a:visited,
+.hint a:visited,
+.note a:visited,
+.seealso a:visited,
+.todo a:visited {
+  color: color-mix(in srgb, var(--alert-boxes-link), black var(--link-visited-darken-amount));
 }
 
-.admonition,
-.warning,
-.hint,
-.note,
-.seealso,
-.todo {
-  code.highlighter-rouge,
-  code,
-  .highlight,
-  {
-    color: inherit;
-    border-radius: 3px;
-  }
-}
+/*
+ * =================================================================================
+ * Code Block Styling
+ * =================================================================================
+ */
 
-.admonition,
+.admonition code,
+.warning code,
+.hint code,
+.note code,
+.seealso code,
+.todo code,
+.admonition .highlight,
+.warning .highlight,
+.hint .highlight,
+.note .highlight,
+.seealso .highlight,
+.todo .highlight
 {
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-admonition-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-admonition-bg), black var(--color-code-border-darken));
-  }
+  color: inherit;
+  border-radius: var(--code-border-radius);
+  background-color: color-mix(in srgb, var(--alert-boxes-bg), black var(--code-bg-darken-amount));
 }
 
-.warning,
-{
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-warning-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-warning-bg), black var(--color-code-border-darken));
-  }
-}
-
-.hint,
-{
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-hint-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-hint-bg), black var(--color-code-border-darken));
-  }
-}
-
-.note,
-{
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-note-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-note-bg), black var(--color-code-border-darken));
-  }
-}
-
-.todo,
-{
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-todo-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-todo-bg), black var(--color-code-border-darken));
-  }
-}
-
-.seealso,
-{
-  code,
-  code.highlighter-rouge,
-  .highlight {
-    background-color: color-mix(in srgb, var(--color-seealso-bg), black var(--color-code-darken));
-  }
-
-  code.highlighter-rouge,
-  div.highlight {
-    border: 1px solid color-mix(in srgb, var(--color-seealso-bg), black var(--color-code-border-darken));
-  }
+.admonition div.highlight,
+.warning div.highlight,
+.hint div.highlight,
+.note div.highlight,
+.seealso div.highlight,
+.todo div.highlight,
+.admonition code.highlighter-rouge,
+.warning code.highlighter-rouge,
+.hint code.highlighter-rouge,
+.note code.highlighter-rouge,
+.seealso code.highlighter-rouge,
+.todo code.highlighter-rouge {
+  border: 1px solid color-mix(in srgb, var(--alert-boxes-bg), black var(--code-border-darken-amount));
 }
