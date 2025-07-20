@@ -5,13 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    # Up-to-date ruby versions
-    nixpkgs-ruby = {
-      url = "github:bobvanderlinden/nixpkgs-ruby";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-    };
-
     # More ergonomical fork of bundlerEnv
     ruby-nix = {
       url = "github:inscapist/ruby-nix";
@@ -19,15 +12,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby, }:
+  outputs = { self, nixpkgs, flake-utils, ruby-nix, }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         name = "aldur.github.io";
 
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ nixpkgs-ruby.overlays.default ];
-        };
+        pkgs = import nixpkgs { inherit system; };
 
         # NOTE: We require this to exist.
         gemset = ./gemset.nix;
@@ -37,10 +27,7 @@
         #   development/ruby-modules/gem-config/default.nix
         gemConfig = { };
 
-        rubyUnwrapped = nixpkgs-ruby.lib.packageFromRubyVersionFile {
-          file = ./.ruby-version;
-          inherit system;
-        };
+        rubyUnwrapped = pkgs.ruby_3_4;
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
