@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
-modified_date: 2025-06-27
+modified_date: 2025-07-20
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -371,23 +371,16 @@ in
 
 </details><br/>
 
-After rebuilding the image to include this module, the only thing missing is
-uploading it somewhere so that we can later fetch it from the Chromebook. The
-simplest solution I have found is to host a ["Public" LXD
-image](https://documentation.ubuntu.com/lxd/stable-5.21/reference/remote_image_servers/#remote-server-types)
-server, behind Tailscale (so that is _not_, in fact, public):
+After rebuilding the image to include this module, we need to upload it
+somewhere so that we can later fetch it from the Chromebook. I have considered
+[different solutions]({% link
+_micros/more-ways-to-bootstrap-nixos-containers.md %}) and the simplest I have
+found is hosting an [LXD image
+server](https://ubuntu.com/tutorials/create-custom-lxd-images#6-making-images-public)
+[behind Tailscale]({% link
+_micros/more-ways-to-bootstrap-nixos-containers.md %}/#from-an-lxd-image-server-behind-tailscale).
 
-> Public LXD servers
-> 
-> LXD servers that are used solely to serve images and do
-> not run instances themselves.
->
-> To make a LXD server publicly available over the network on port 8443, set
-> the core.https_address configuration option to :8443 and do not configure any
-> authentication methods (see How to expose LXD to the network for more
-> information). Then set the images that you want to share to public.
-
-If you are using a NixOS host, enabling `lxd` is easy:
+On a NixOS server, enable `lxd`:
 
 ```nix
 virtualisation.lxd.enable = true;
@@ -400,14 +393,12 @@ Then, enable the image server as follows:
 sudo lxc config set core.https_address :8443
 ```
 
-You can now import the image with:
+You can now import the image with and get it ready for the Chromebook.
 
 ```bash
 # Replace `lxc-metadata` and `lxc` with the directories where you built the metadata and the RootFS.
 lxc image import --public --alias lxc-nixos ${lxc-metadata}/tarball/*.tar.xz ${lxc}/tarball/*.tar.xz
 ```
-
-We are now ready to deploy the image to the Chromebook.
 
 #### How-to: Deploying the image
 
@@ -430,9 +421,13 @@ to authenticate). Then, from inside `termina`:
 ```bash
 # Assuming `tropic` is the hostname of the `lxd` server we have configured before.
 lxc remote add tropic https://tropic:8443 --public
+
 # Ensure you can see the image listed.
 lxc image list tropic:
+
 # Download the image and setup the container
+# Transfer speed into `termina` caps at about 7MB/s for me. 
+# I try to keep the image small so that this is fast.
 lxc init tropic:lxc-nixos lxc-nixos --config security.nesting=true
 ```
 
@@ -450,10 +445,6 @@ container. It is part of the default configuration that Crostini uses to init
 containers, and it is the right choice.
 
 </div>
-
-Downloading the image will unfortunately take some time (`termina` seems to
-download it at about 1.25 MB/s). I try to keep the image size to a minimum to
-make this step fast.
 
 You can now start the container and, after a few seconds, it should get an IP
 through DHCP:
@@ -524,18 +515,20 @@ went the CLI way.
 
 Insert the device and then navigate to `chrome://usb-internals`. In the
 `devices` tab, note the Bus number and Port number of your device.
+`dmesg` in `crosh` will provide the same information, if you prefer.
 
-Now open a new `crosh` shell and run the following:
+Now open a new `crosh` shell and attach the USB to the container:
 
 ```bash
 # Replace <bus> and <port> with the Bus and Port number from above.
 vmc usb-attach termina <bus>:<port> lxc-nixos
 ```
 
-Running `lsusb` within the container should show the device ready for use.
-Occasionally, the device was showing up in `lsusb` but the hardware key
-wouldn't work. In those cases, a reboot of the `termina` VM typically fixes
-things.
+In the container, `lsusb` should show the device as ready for use.
+
+Occasionally, I could see the device in `lsusb` but the hardware key would not
+work. If that happens, try restarting the `pcscd` service and trying again.
+If that fails, try rebooting the `termina` VM.
 
 #### How-to: SSH into the container
 
