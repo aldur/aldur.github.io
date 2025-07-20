@@ -530,24 +530,48 @@ Occasionally, I could see the device in `lsusb` but the hardware key would not
 work. If that happens, try restarting the `pcscd` service and trying again.
 If that fails, try rebooting the `termina` VM.
 
+#### How-to: Add the container to ChromeOS
+
+ChromeOS ships an experimental UI for creating and managing multiple Crostini
+containers. When enabled, it significantly improves UX! It allows to:
+
+- Launch our container by clicking on its name in the terminal, instead of
+  going through `crosh`. If the VM is off, it will launch it as well.
+- Mount folders into the container from the Files application.
+- Browse the container user home directory through Files.
+
+To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
+the drop-down to "Enabled" and then restart.
+
+Now, navigate to: Settings → Linux → Manage extra containers → Create. Fill in
+the "Container name" and click on Create (importantly, do this _after_ you have
+created the container from `crosh`).
+
+{:.text-align-center}
+![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
+_The experimental UI makes it seamless to start and access the container from
+Terminal._
+
+{:.text-align-center}
+![A screenshot showing the `lxc-nixos` container available in the Files application.]({% link images/chromeos-files-lxc-nixos.webp %}){:.centered}
+_Use Files to browse the container home and mount directories into it._
+
 #### How-to: SSH into the container
 
-If your container ships an SSH server, you can also use the built-in Terminal
-application to SSH into it. This is useful in case you want to use agent
-forwarding, for example, and because it leaves the USB hardware key usable from
-Chrome as well.
+If your container ships an SSH server, you can use the built-in Terminal
+application to SSH into it. This is useful to leave the USB hardware key usable
+from Chrome and use agent forwarding to authenticate from the container.
 
 Open the Terminal application and configure a new SSH connection. Fill in
-`<username>@lxc-nixos.termina.linux.test` for the command. Add the following
-to the SSH relay server options field to enable authentication through the
-hardware key:
+`<username>@lxc-nixos.termina.linux.test` as the command. Add the following SSH
+relay server options to enable authentication through the hardware key:
 
 ```txt
 --ssh-agent=gsc --ssh-client-version=pnacl
 ```
 
-Connecting should trigger a prompt for your hardware key PIN. Insert it, touch
-the key if you need it, and you should be in.
+Connecting should trigger a prompt for your hardware key PIN. Insert it and touch
+the key if you need it to get in.
 
 I have noticed this to be hit-or-miss. Sometimes it fails to authenticate
 transiently and I have to try re-connecting. Other times, it won't show the PIN
@@ -556,7 +580,8 @@ prompt. Disconnecting and re-connecting the hardware key sometimes helps
 
 #### How-to: Root login
 
-See [this post]({% link _posts/2025-06-27-yubikey-root-login.md %}).
+SSH or `lxc exec` make it easy and safe. See [this post]({% link
+_posts/2025-06-27-yubikey-root-login.md %}).
 
 ## Conclusion
 
