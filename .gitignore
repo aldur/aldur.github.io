@@ -3,3 +3,4 @@ _site
 vendor/bundle
 .jekyll-metadata
 .direnv
+result
