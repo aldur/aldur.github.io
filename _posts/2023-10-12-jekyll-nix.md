@@ -66,7 +66,7 @@ consume.
 _Getting dependencies, versions and hashes._
 </div>
 
-<div class="tip" markdown="1">
+<div class="hint" markdown="1">
 🛑 Let's stop for a second.
 
 `bundix`, as all software here, is _open-source_. Volunteers (often only one)

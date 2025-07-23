@@ -1,127 +1,155 @@
 // Originally based on:
 // https://www.seanh.cc/jekyll-theme-oatcake/2019/09/09/alert-boxes/
 
+:root {
+  --alert-boxes-border-radius: 0.25rem;
+  --alert-boxes-padding: 8px 12px;
+  --alert-boxes-margin-bottom: 12px;
+  --code-border-radius: 3px;
+  --link-visited-darken-amount: 15%;
+  --code-bg-darken-amount: 5%;
+  --code-border-darken-amount: 10%;
+}
+
+/*
+ * =================================================================================
+ * Base Structure
+ * =================================================================================
+ */
+
 .admonition,
-.attention,
-.caution,
-.danger,
-.error,
-.important,
 .warning,
 .hint,
-.tip,
 .note,
 .seealso,
 .todo {
-  @extend %vertical-rhythm !optional;
-  border: 1px solid transparent;
-
-  border-radius: .25rem;
-
-  padding: 8px 12px;
-  margin-bottom: 12px;
+  /* Base styles */
+  border: 1px solid var(--alert-boxes-border);
+  border-radius: var(--alert-boxes-border-radius);
+  padding: var(--alert-boxes-padding);
+  margin-bottom: var(--alert-boxes-margin-bottom);
+  background-color: var(--alert-boxes-bg);
+  color: var(--alert-boxes-text);
 }
 
+/* Remove bottom margin from the last element */
 .admonition > *:last-child,
-.attention > *:last-child,
-.caution > *:last-child,
-.danger > *:last-child,
-.error > *:last-child,
-.important > *:last-child,
 .warning > *:last-child,
 .hint > *:last-child,
-.tip > *:last-child,
 .note > *:last-child,
 .seealso > *:last-child,
 .todo > *:last-child {
   margin-bottom: 0;
 }
 
+/*
+ * =================================================================================
+ * Color Theme Definitions
+ * =================================================================================
+ */
+
 .admonition {
-  background-color: #d6d8d9;
-  border-color: #c6c8ca;
-  color: #1b1e21;
+  --alert-boxes-bg: #d6d8d9;
+  --alert-boxes-border: #c6c8ca;
+  --alert-boxes-text: #1b1e21;
+  --alert-boxes-link: #040505;
 }
 
-.admonition a {
-  color: #040505;
-}
-
-.attention,
-.caution,
-.danger,
-.error,
-.important,
 .warning {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
+  --alert-boxes-bg: #f8d7da;
+  --alert-boxes-border: #f5c6cb;
+  --alert-boxes-text: #721c24;
+  --alert-boxes-link: #491217;
 }
 
-.attention a,
-.caution a,
-.danger a,
-.error a,
-.important a,
-.warning a {
-  color: #491217;
-}
-
-.hint,
-.tip {
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
-  color: #0c5460;
-}
-
-.hint a,
-.tip a {
-  color: #062c33;
-}
-
-.hint a:visited,
-.tip a:visited {
-  color: darken(#062c33, 15%);
+.hint {
+  --alert-boxes-bg: #d1ecf1;
+  --alert-boxes-border: #bee5eb;
+  --alert-boxes-text: #0c5460;
+  --alert-boxes-link: #062c33;
 }
 
 .note {
-  background-color: #e2e3e5;
-  border-color: #d6d8db;
-  color: #383d41;
-}
-
-.note a {
-  color: #202326;
-}
-
-.note a:visited {
-  color: darken(#202326, 15%);
+  --alert-boxes-bg: #e2e3e5;
+  --alert-boxes-border: #d6d8db;
+  --alert-boxes-text: #383d41;
+  --alert-boxes-link: #202326;
 }
 
 .todo {
-  background-color: #cce5ff;
-  border-color: #b8daff;
-  color: #004085;
-}
-
-.todo a {
-  color: #002752;
-}
-
-.todo a:visited {
-  color: darken(#002752, 15%);
+  --alert-boxes-bg: #cce5ff;
+  --alert-boxes-border: #b8daff;
+  --alert-boxes-text: #004085;
+  --alert-boxes-link: #002752;
 }
 
 .seealso {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
+  --alert-boxes-bg: #fff3cd;
+  --alert-boxes-border: #ffeeba;
+  --alert-boxes-text: #856404;
+  --alert-boxes-link: #533f03;
 }
 
-.seealso a {
-  color: #533f03;
+/*
+ * =================================================================================
+ * Link Styling
+ * =================================================================================
+ */
+
+.admonition a,
+.warning a,
+.hint a,
+.note a,
+.seealso a,
+.todo a {
+  color: var(--alert-boxes-link);
 }
 
-.seealso a:visited {
-  color: darken(#533f03, 15%);
+/* Visited links are darkened using the inherited link color */
+.admonition a:visited,
+.warning a:visited,
+.hint a:visited,
+.note a:visited,
+.seealso a:visited,
+.todo a:visited {
+  color: color-mix(in srgb, var(--alert-boxes-link), black var(--link-visited-darken-amount));
+}
+
+/*
+ * =================================================================================
+ * Code Block Styling
+ * =================================================================================
+ */
+
+.admonition code,
+.warning code,
+.hint code,
+.note code,
+.seealso code,
+.todo code,
+.admonition .highlight,
+.warning .highlight,
+.hint .highlight,
+.note .highlight,
+.seealso .highlight,
+.todo .highlight
+{
+  color: inherit;
+  border-radius: var(--code-border-radius);
+  background-color: color-mix(in srgb, var(--alert-boxes-bg), black var(--code-bg-darken-amount));
+}
+
+.admonition div.highlight,
+.warning div.highlight,
+.hint div.highlight,
+.note div.highlight,
+.seealso div.highlight,
+.todo div.highlight,
+.admonition code.highlighter-rouge,
+.warning code.highlighter-rouge,
+.hint code.highlighter-rouge,
+.note code.highlighter-rouge,
+.seealso code.highlighter-rouge,
+.todo code.highlighter-rouge {
+  border: 1px solid color-mix(in srgb, var(--alert-boxes-bg), black var(--code-border-darken-amount));
 }

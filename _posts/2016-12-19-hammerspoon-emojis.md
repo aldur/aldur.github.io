@@ -8,7 +8,7 @@ categories: [articles]
 tags: [hammerspoon, emoji]
 ---
 
-<div class="tip" markdown="1"> 
+<div class="hint" markdown="1"> 
 🌅 After 9 years of honorable service and
 [updates](https://github.com/aldur/dotfiles/commit/14b11f24a54a0d799f69dcf0da65cb34d15e35a5)
 all the way to [Unicode 15
