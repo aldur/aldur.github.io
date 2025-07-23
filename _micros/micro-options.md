@@ -70,15 +70,20 @@ fish/completions/openssl.fish
 5:        openssl list -options $cmd[2] | string replace -r -- '^(\S*)\s*.*' '-$1'
 ```
 
-Do you see it? There's a built-in `fish` completion for an executable called
-`micro`!
+Do you see it? There's a built-in `fish` completion for an [executable called
+`micro`](https://github.com/zyedidia/micro)!
 
 `fish` does in fact populate completion candidates for the executable, the
-first time it sees it, by calling it with `-options` – but it is a special case
-for `micro`, not general behaviour. Had I named my helper differently, I would
-have probably never encountered this bug.
+first time it sees it, by calling it with `-options` – but it is a special
+case, not general behaviour. Had I named my helper differently, I would have
+probably never encountered this bug.
 
 With this mystery solved, I'll have one less chance to procrastinate instead of
-writing. I have not thought how to solve it yet. I quite like the name `micro`,
-so I might just keep it as it, see if I can overwrite that completion function,
-or just have the helper handle command line flags better.
+writing. I have not thought how to solve it yet: I quite like the name `micro`,
+so I have just decided to keep it as it and simply make it exit when invoked
+with `-options`:
+
+```bash
+$ micro -options
+Ignoring '-options' and exiting: see https://aldur.blog/micros/2025/07/23/micro-options/
+```

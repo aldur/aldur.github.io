@@ -18,8 +18,11 @@ website and keep things neat and tidy made it better.
 You can take a look at the results yourself:
 
 <p><svg class="svg-icon orange" viewbox="0 0 16 16">{% include social-icons/rss.svg.path %}</svg> <a href="{{ site.feed.path | default: 'feed.xml' | absolute_url }}" target="_blank" title="Open the main syndication feed">{{ site.title }}</a></p>
-<p><svg class="svg-icon orange" viewbox="0 0 16 16">{% include social-icons/rss.svg.path %}</svg> <a href="{{ "/feed/micros.xml" absolute_url }}" target="_blank" title="Open the micros syndication feed">µ</a></p>
+<p><svg class="svg-icon orange" viewbox="0 0 16 16">{% include social-icons/rss.svg.path %}</svg> <a href="{{ "/feed/micros.xml" | absolute_url }}" target="_blank" title="Open the micros syndication feed">µ</a></p>
 
-Technically, the `jekyll-feed` plugin powering this blog's feeds supports
-styling. I added a `feed.xslt.xml` file to the site root and it automatically
-picked it up.
+Technically, the [`jekyll-feed`
+plugin](https://github.com/jekyll/jekyll-feed) powering this blog's feeds
+supports styling. I added a {% include github_link.html
+url="<https://github.com/aldur/aldur.github.io/pull/78/files>"
+text="`feed.xslt.xml` file" %} to the site root and it automatically picked it
+up.

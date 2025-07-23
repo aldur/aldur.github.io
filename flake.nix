@@ -79,6 +79,11 @@
             echo "Usage: $0 <title>"
             exit 1
           fi
+
+          if [[ "$1" == "-options" ]]; then
+            echo "Ignoring '-options' and exiting: see https://aldur.blog/micros/2025/07/23/micro-options/"
+            exit 0
+          fi
         '';
       in {
         checks = rec {
