@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
-modified_date: 2025-07-20
+modified_date: 2025-07-24
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -545,7 +545,8 @@ the drop-down to "Enabled" and then restart.
 
 Now, navigate to: Settings → Linux → Manage extra containers → Create. Fill in
 the "Container name" and click on Create (importantly, do this _after_ you have
-created the container from `crosh`).
+created the container from `crosh`). If the container was previously running,
+stop it with `lxc stop`. You can now start it from Terminal.
 
 {:.text-align-center}
 ![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
@@ -602,8 +603,7 @@ the display was a bit brighter, especially under direct light.
 Overall, after using this setup for a few weeks I am satisfied with it -- I
 even wrote this blog post on a Chromebook! It does most of what I was looking
 for, strikes a good security posture, and I like being able to go from _zero_
-to a productive environment in a few minutes (where most of the time is idle,
-waiting for the `lxc` image to download). Once the container boots, I
+to a productive environment in a couple minutes. Once the container boots, I
 immediately feel at home. I can quickly get ahead and write my thoughts,
 hack on a new project, or put off the occasional fire at work. Having a full
 system bottled-in and ready to go also gives me confidence I could somehow
