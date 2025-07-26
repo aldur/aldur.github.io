@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
-modified_date: 2025-07-24
+modified_date: 2025-07-26
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -425,8 +425,8 @@ lxc remote add tropic https://tropic:8443 --public
 # Ensure you can see the image listed.
 lxc image list tropic:
 
-# Download the image and setup the container
-# Transfer speed into `termina` caps at about 7MB/s for me. 
+# Download the image and setup the container.
+# NOTE: Transfer speed into `termina` depends on the Chromebook.
 # I try to keep the image small so that this is fast.
 lxc init tropic:lxc-nixos lxc-nixos --config security.nesting=true
 ```
@@ -525,6 +525,14 @@ vmc usb-attach termina <bus>:<port> lxc-nixos
 ```
 
 In the container, `lsusb` should show the device as ready for use.
+
+<div class="warning" markdown="1">
+
+The container name at the end of the `usb-attach` command is _fundamental_!
+Without it, the security key will show up in the container but you will not be
+able to use it.
+
+</div>
 
 Occasionally, I could see the device in `lsusb` but the hardware key would not
 work. If that happens, try restarting the `pcscd` service and trying again.
