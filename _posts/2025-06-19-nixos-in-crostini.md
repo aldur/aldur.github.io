@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
-modified_date: 2025-07-26
+modified_date: 2025-07-27
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -198,6 +198,7 @@ in
   networking.enableIPv6 = false;
   networking.dhcpcd.IPv6rs = false;
   networking.dhcpcd.wait = "background";
+  networking.dhcpcd.extraConfig = "noarp";
 
   # `boot.isContainer` implies NIX_REMOTE = "daemon"
   # (with the comment "Use the host's nix-daemon")
@@ -433,7 +434,7 @@ lxc init tropic:lxc-nixos lxc-nixos --config security.nesting=true
 
 <div class="warning" markdown="1">
 
-I have seen a few guides recommending `--config security.privileged=true`.
+I have sometimes seen `--config security.privileged=true` recommended as well.
 
 Don't do it! If you do, you will spend a couple hours (as I did) trying
 to figure out why USB devices correctly show up in `lsusb` but then error with
@@ -510,8 +511,28 @@ In order to use hardware keys within the container, we will also need to set up
 USB forwarding.
 
 Every time you plug a USB device in, ChromeOS should prompt you whether you
-want to connect it to Android or Linux. That has never worked for me, so I just
-went the CLI way.
+want to connect it to Android or Linux. Trying to connect to Linux this way has
+never worked for me, possibly because this method attach the device to the VM,
+but not to the container or gets confused when there exist multiple containers.
+Instead, I just use the CLI.
+
+<div class="warning" markdown="1">
+
+The [Smart Card
+Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
+app can hold a lock on the hardware key, making it unusable for USB forwarding.
+
+For this reason, I recommend keeping the Smart Card Connector app disabled.
+Temporarily enable it only when needed (e.g., for [SSH access through
+Terminal](#how-to-ssh-into-the-container)).
+
+<details markdown=1> <summary markdown=span>Symptoms</summary> If Smart Card
+Connector is holding a lock on the device, the `usb-attach` command below might
+fail and looking at `/var/log/messages` would show this message: `Verdict for
+/dev/bus/usb/002/004: DENY`.
+</details>
+
+</div>
 
 Insert the device and then navigate to `chrome://usb-internals`. In the
 `devices` tab, note the Bus number and Port number of your device.
@@ -524,19 +545,34 @@ Now open a new `crosh` shell and attach the USB to the container:
 vmc usb-attach termina <bus>:<port> lxc-nixos
 ```
 
-In the container, `lsusb` should show the device as ready for use.
-
 <div class="warning" markdown="1">
 
-The container name at the end of the `usb-attach` command is _fundamental_!
+The container name at the end of the `usb-attach` command is **fundamental**!
 Without it, the security key will show up in the container but you will not be
 able to use it.
 
+<details markdown=1>
+  <summary markdown=span>Under the hood</summary>
+It ensures that `lxc` will add the following to the container configuration:
+
+```
+/dev/bus/usb/001/011:
+  major: "189"
+  minor: "10"
+  mode: "0666"
+  path: /dev/bus/usb/001/011
+  type: unix-char
+```
+
+</details>
+
 </div>
 
-Occasionally, I could see the device in `lsusb` but the hardware key would not
-work. If that happens, try restarting the `pcscd` service and trying again.
-If that fails, try rebooting the `termina` VM.
+In the container, `lsusb` should show the device as ready for use.
+
+Occasionally, `lsusb` would detect the device, but the hardware key would not
+work when queried for keys. If that happens to you as well, try restarting the
+`pcscd` service and trying again.
 
 #### How-to: Add the container to ChromeOS
 
@@ -567,30 +603,29 @@ _Use Files to browse the container home and mount directories into it._
 
 #### How-to: SSH into the container
 
-If your container ships an SSH server, you can use the built-in Terminal
-application to SSH into it. This is useful to leave the USB hardware key usable
-from Chrome and use agent forwarding to authenticate from the container.
+If you your container ships an SSH server, you can connect to it through the
+built-in Terminal application. Use the container's IP (`ip addr show`) or the
+domain `lxc-nixos.termina.linux.test` (this is hit or miss, sometimes
+`cicerone` will not correctly detect the IP and the hostname won't resolve).
 
-Open the Terminal application and configure a new SSH connection. Fill in
-`<username>@lxc-nixos.termina.linux.test` as the command. Add the following SSH
-relay server options to enable authentication through the hardware key:
+[Getting SSH from ChromeOS to work]({% link
+_micros/ssh-from-chromeos-terminal.md %}) required me to jump through so many
+hoops that the effort is not worth the result. I do not recommend it, but I have
+left this here in case it is useful.
 
-```txt
---ssh-agent=gsc --ssh-client-version=pnacl
-```
+<div class="warning" markdown="1">
 
-Connecting should trigger a prompt for your hardware key PIN. Insert it and touch
-the key if you need it to get in.
+Remember! The [Smart Card
+Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
+app required for SSH through ChromeOS [conflicts with USB
+forwarding](#how-to-usb-forwarding). Disable it when not using it.
 
-I have noticed this to be hit-or-miss. Sometimes it fails to authenticate
-transiently and I have to try re-connecting. Other times, it won't show the PIN
-prompt. Disconnecting and re-connecting the hardware key sometimes helps
-(sigh!).
+</div>
 
 #### How-to: Root login
 
-SSH or `lxc exec` make it easy and safe. See [this post]({% link
-_posts/2025-06-27-yubikey-root-login.md %}).
+I either [SSH as `root` or use `lxc exec`](% link
+_posts/2025-06-27-yubikey-root-login.md %) to escalate privileges easily and safely.
 
 ## Conclusion
 
@@ -637,4 +672,4 @@ The ChromiumOS team is experimenting with a way (codename `baguette`) to run
 - [Crosh -- The ChromiumOS shell](https://www.chromium.org/chromium-os/developer-library/reference/device/crosh/)
 - [ArchLinux wiki: ChromeOS Devices](https://wiki.archlinux.org/title/Chrome_OS_devices/Crostini.md)
 - [NixOS wiki: Installing Nix on Crostini](https://wiki.nixos.org/wiki/Installing_Nix_on_Crostini.md)
-- [Chrome internals: DNS](chrome://net-internals/#dns)
+- [Chrome internals: DNS (copy/paste to your browser URL bar)](chrome://net-internals/#dns)
