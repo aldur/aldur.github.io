@@ -44,7 +44,7 @@ the following error:
 {:.text-align-center}
 ![A screenshot of the Terminal application failing to establish an SSH connection.]({% link images/failing-ssh-chromeos.webp %}){:.centered}
 > _Program exited with status code [object Object]._
-__
+
 For a while, I could work around the issue by using the old SSH client through
 `--ssh-client-version=pnacl`. New Chromebooks, however, do not ship NaCl
 anymore. This makes Terminal hang on "Loading pnacl program..." when trying to
