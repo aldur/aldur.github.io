@@ -624,8 +624,9 @@ forwarding](#how-to-usb-forwarding). Disable it when not using it.
 
 #### How-to: Root login
 
-I either [SSH as `root` or use `lxc exec`](% link
-_posts/2025-06-27-yubikey-root-login.md %) to escalate privileges easily and safely.
+I either [SSH as `root` or use `lxc exec`]({% link
+_posts/2025-06-27-yubikey-root-login.md %}) to escalate privileges easily and
+safely.
 
 ## Conclusion
 
