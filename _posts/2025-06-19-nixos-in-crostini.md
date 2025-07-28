@@ -416,8 +416,12 @@ vmc destroy termina
 vmc start termina
 ```
 
-Connect to Tailscale (install the app from the Play Store, use the hardware key
-to authenticate). Then, from inside `termina`:
+If you are using an image server behind Tailscale, install the Tailscale app
+from the Play Store and use the hardware key to authenticate. Otherwise, follow
+one of the approaches described [here to deploy the image to the Chromebook]({% link
+_micros/more-ways-to-bootstrap-nixos-containers.md %}).
+
+Then, from inside `termina`:
 
 ```bash
 # Assuming `tropic` is the hostname of the `lxd` server we have configured before.
@@ -630,7 +634,7 @@ safely.
 
 ## Conclusion
 
-Software-wise, my `crostini.nix` module does most of the heavy lifting for the
+Software-wise, my `crostini.nix` module does the heavy lifting and gets the
 things I actually need to work. I haven't tested hardware acceleration, audio,
 and there's probably a few more things that do not work yet (when compared to
 `debian`). But I can always add those things when the need arises. Clipboard
@@ -638,11 +642,11 @@ sharing between Chrome and Crostini is probably the feature I am using the
 most, in addition to opening URLs in Chrome from the container through
 `garcon`.
 
-Hardware-wise, I feel that Chromebooks are great "couch-computing" or travel
-devices. They are underpowered with respect to other machines (e.g., an M4
-MacBook). But they are lighter, cheaper, and their battery is OK considering
-they are "Linux" devices (I can probably do 6 hours on mine). I wish
-the display was a bit brighter, especially under direct light.
+Hardware-wise, Chromebooks are great "couch-computing" or travel devices. They
+are underpowered with respect to other machines (e.g., an M4 MacBook). But they
+are lighter, cheaper, and their battery is OK considering they are "Linux"
+devices (new Chromebooks can easily do 10 hours). I wish the display was a bit
+brighter, especially under direct light.
 
 Overall, after using this setup for a few weeks I am satisfied with it -- I
 even wrote this blog post on a Chromebook! It does most of what I was looking
