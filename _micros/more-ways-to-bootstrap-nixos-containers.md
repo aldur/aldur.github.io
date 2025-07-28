@@ -1,6 +1,7 @@
 ---
 title: 'Deploying NixOS container images'
 date: 2025-07-19
+modified_date: 2025-07-26
 ---
 
 This post extends the [one about NixOS containers in ChromeOS]({% post_url
@@ -138,7 +139,27 @@ Then: clone your repository, rebuild the container with `nixos-rebuild --flake`
 and you are good to go!
 
 The strength of this approach is that it has minimal dependencies. Here are the
-downsides: rebuilding NioOS withing the container can take time and resources.
-If you destroy the container, you will need to do it all again. It might be
-possible to image the container _after_ rebuilding NioOS, but I haven't tried
-it.
+downsides: rebuilding NixOS within the container takes time and resources
+(e.g., network, and CPU). If you destroy the container, you will need to do it
+all again. To avoid that, you can snapshot the container _after_ rebuilding
+NixOS and create an image from it.
+
+### From `penguin`
+
+`penguin` is the Debian container shipped in ChromeOS Crostini. You can get it
+running as usual, then install `nix` (I typically go for the [Determinate Nix
+Installer](https://github.com/DeterminateSystems/nix-installer)), clone the
+repository with your NixOS configuration and the build it.
+
+Once built, you can pull the files from the container into the `termina` VM as follows:
+
+```bash
+# From `crosh`
+vmc termina start
+# Now, within `termina`
+cd /tmp
+lxc file pull penguin//home/aldur/meta.tar.xz .
+lxc file pull penguin//home/aldur/image.tar.xz .
+```
+
+You can now deploy the image with [the local files](#from-local-files).
