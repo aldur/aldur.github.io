@@ -1,6 +1,6 @@
 ---
 title: 'SSH from ChromeOS'
-date: 2025-07-27
+date: 2025-07-28
 ---
 
 ChromeOS allows SSH authentication through either the built-in Terminal
@@ -86,6 +86,13 @@ Kinda. As long as the changes are pending, SSH from the Terminal requires to:
 
 If all the steps went correctly, this should result in the Yubikey PIN prompt.
 It works, and it is great that it does since it provides a fallback in case
-something else breaks and you need SSH from ChromeOS. But the UX _sucks_. It
-might be possible to improve it by packaging a patched version of the Secure
-Shell extension, but I have not tried it yet.
+something else breaks and you need SSH from ChromeOS. But the UX _sucks_.
+
+It _might_ be possible to make things less wonky by packaging a patched version
+of the Secure Shell extension and using it, but I have not tried that. But that
+might be just a temporary stopgap: ChromeOS will be deprecating Chrome Apps,
+including the Smart Card Connector. Instead, I think that a better solution can
+now just rely on
+[Fido2](https://fidoalliance.org/fido2-2/fido2-web-authentication-webauthn/)
+for SSH. That would allow re-using the browser support for WebAuthn and remove
+the need for the connector altogether.

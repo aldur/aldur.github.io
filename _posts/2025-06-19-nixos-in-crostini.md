@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   Bring your own keys, here's the shell. How to turn a Chromebook
   into a secure, productive environment.
-modified_date: 2025-07-27
+modified_date: 2025-07-28
 ---
 
 Chromebooks have a reputation of being _little, secure_ devices:
@@ -516,7 +516,7 @@ never worked for me, possibly because this method attach the device to the VM,
 but not to the container or gets confused when there exist multiple containers.
 Instead, I just use the CLI.
 
-<div class="warning" markdown="1">
+<div class="seealso" markdown="1">
 
 The [Smart Card
 Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
@@ -613,7 +613,7 @@ _micros/ssh-from-chromeos-terminal.md %}) required me to jump through so many
 hoops that the effort is not worth the result. I do not recommend it, but I have
 left this here in case it is useful.
 
-<div class="warning" markdown="1">
+<div class="admonition" markdown="1">
 
 Remember! The [Smart Card
 Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
