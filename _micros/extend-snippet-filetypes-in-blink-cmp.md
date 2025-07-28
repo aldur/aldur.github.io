@@ -24,7 +24,7 @@ It was there all along, just a bit undocumented!
 
 I figured this out by doing a quick code dive. Then, I updated my configuration
 to enable extended Markdown snippets in Jekyll and {% include github_link.html
-url="<https://github.com/Saghen/blink.cmp/pull/2041>" text="submitted a PR" %}
+url="https://github.com/Saghen/blink.cmp/pull/2041" text="submitted a PR" %}
 to improve the docs.
 
 Here is how to extend filetypes in [`lazy.nvim`](https://github.com/folke/lazy.nvim):
