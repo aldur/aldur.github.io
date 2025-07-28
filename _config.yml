@@ -96,7 +96,7 @@ exclude:
   - flake.*
   - flake.nix
   - gemset.nix
-    direnv/**
+  - .direnv/
 
 defaults:
   # When not specified, posts will have a `post` layout
