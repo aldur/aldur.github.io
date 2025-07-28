@@ -674,3 +674,5 @@ The ChromiumOS team is experimenting with a way (codename `baguette`) to run
 - [ArchLinux wiki: ChromeOS Devices](https://wiki.archlinux.org/title/Chrome_OS_devices/Crostini.md)
 - [NixOS wiki: Installing Nix on Crostini](https://wiki.nixos.org/wiki/Installing_Nix_on_Crostini.md)
 - [Chrome internals: DNS (copy/paste to your browser URL bar)](chrome://net-internals/#dns)
+- [Logging on ChromeOS](https://www.chromium.org/chromium-os/developer-library/reference/logging/logging/)
+- [`/var/log/messages` from Chrome](file:///var/log/messages)
