@@ -23,6 +23,6 @@ You can take a look at the results yourself:
 Technically, the [`jekyll-feed`
 plugin](https://github.com/jekyll/jekyll-feed) powering this blog's feeds
 supports styling. I added a {% include github_link.html
-url="<https://github.com/aldur/aldur.github.io/pull/78/files>"
+url="https://github.com/aldur/aldur.github.io/pull/78/files"
 text="`feed.xslt.xml` file" %} to the site root and it automatically picked it
 up.

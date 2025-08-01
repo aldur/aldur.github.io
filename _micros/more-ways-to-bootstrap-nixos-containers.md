@@ -135,8 +135,9 @@ This will get you into a minimal NixOS container. Add `git` to your path:
 nix --extra-experimental-features nix-command shell --extra-experimental-features flakes nixpkgs#git
 ```
 
-Then: clone your repository, rebuild the container with `nixos-rebuild --flake`
-and you are good to go!
+Then: clone the [repository with your NixOS
+configuration](https://github.com/aldur/nixos-crostini), rebuild the container
+with `nixos-rebuild --flake` and you are good to go!
 
 The strength of this approach is that it has minimal dependencies. Here are the
 downsides: rebuilding NixOS within the container takes time and resources
@@ -149,7 +150,8 @@ NixOS and create an image from it.
 `penguin` is the Debian container shipped in ChromeOS Crostini. You can get it
 running as usual, then install `nix` (I typically go for the [Determinate Nix
 Installer](https://github.com/DeterminateSystems/nix-installer)), clone the
-repository with your NixOS configuration and the build it.
+[repository with your NixOS
+configuration](https://github.com/aldur/nixos-crostini) and then build it.
 
 Once built, you can pull the files from the container into the `termina` VM as follows:
 

@@ -1,37 +1,36 @@
 ---
 title: "NixOS containers in ChromeOS"
 excerpt: >
-  Bring your own keys, here's the shell. How to turn a Chromebook
-  into a secure, productive environment.
-modified_date: 2025-07-28
+  How to turn a Chromebook into a secure and productive device through NixOS
+  containers and hardware keys.
+modified_date: 2025-08-01
 ---
 
-Chromebooks have a reputation of being _little, secure_ devices:
+Chromebooks have a reputation of being secure devices:
 
-- _Verified Boot_ ties the integrity of the OS to the underlying hardware:
-Google's marketing material describes it as "a read-only operating system".
-- Then, _defense in depth_ increases its robustness: The Chrome sandbox, the OS
-userspace, the kernel, the firmware, and lastly the hardware.
+- _Verified Boot_ ties the integrity of the OS to the underlying hardware.
+  Google's marketing material describes it as "a read-only operating system",
+  which reduces the chances of malware surviving a reboot.
+- _Defense in depth_ makes it hard to compromise the OS in the first place, by
+  stacking protections: the Chrome sandbox, the OS userspace,
+  the kernel, the firmware, and the hardware.
 
-In other words: the system should be clean at boot and remain clean while
-running. As a user, this means I can get a Chromebook and _powerwash_ it (lingo
-for a deep but fast wipe) to start from a _reasonably trustworthy_ computing
-base. Compromising it should be relatively hard (thanks to defense in depth).
-And, worst case, a reboot shall return it to a clean state.
+Because of all this, users cat get a _trustworthy_ computing environment by
+_powerwashing_ their Chromebook (lingo for a deep but fast wipe) back to a
+pristine state. On paper, this is awesome! It makes powerwashed Chromebooks
+ideal to handle security-sensitive tasks. The downside is that a powerwashed
+device lacks all tools and configuration. It requires going through initial
+setup, then logging into online services, configuring tools, and finally
+getting to work.
 
-On paper, this is awesome! It makes Chromebooks the go-to for most
-security-sensitive tasks. However, turning a powerwashed device into a
-productive environment requires an initial setup process, logging into each
-required online service, setting up all tools, and finally getting to work.
+I would like to skip all this and be productive as quickly as possible. Better yet,
+I'd like to periodically throw away any persisted state and restart from scratch,
+spinning up a new instance every time I need it (e.g., one for personal life,
+one for work, or even one for each project).
 
-Ideally, instead, I would like to skip all configuration and be productive as
-quickly as possible. That way, I could periodically throw away any persisted
-state and restart from scratch. I could spin up segregated environments (e.g.,
-one for personal life, one for work, or even one for each project), and even
-quickly get them running on multiple machines.
-
-This post describes my approach to this goal: reproducible, throwaway
-containers running securely under ChromeOS.
+This post describes my way to achieve that goal: through security keys,
+handling secrets and key material, and through secure, reproducible, throwaway
+containers.
 
 <!-- prettier-ignore-start -->
 
@@ -43,345 +42,124 @@ containers running securely under ChromeOS.
 
 I don't need much to be productive: a web browser and a shell. The browser is
 my gateway to most apps and services. Even when there are alternatives (e.g.
-native or Electron apps), I prefer to rely on the browser to add defense in
-depth. The shell usually provides everything else I need, including an editor
-and access to other hosts.
+native or Electron apps), I prefer to run things directly in the browser to add
+to defense in depth. The shell usually provides all the rest, including an
+editor and access to other hosts.
 
-A productive shell should come as ready as possible: for instance, `git` should
-know who I am and how I prefer to fetch branches. It should be easy to
-configure, audit, and (re)build from scratch. Deploying it to a clean device
-should be fast (minutes). Importantly, it should _not_ bundle any secret (e.g.,
-passwords or cryptographic keys) or confidential information, nor should it
-have access to any long-lived credential either.
+A good shell setup should feel like home: for instance, my text editor should
+be ready with all the plugins I use; `git` should know who I am and how I
+prefer to fetch branches or sign commits. It should be easy to update, audit,
+and (re)build the full configuration from scratch. Deploying it to a clean
+device should be fast (minutes). Importantly, the environment should _not_
+bundle any secret (e.g., passwords or cryptographic keys) or confidential
+information, nor should it have access to any long-lived credential.
 
-The lack of secrets and credentials is important for safety: if the environment
-is compromised while at rest, there is nothing to exfiltrate. Plus, we do not
-need to worry about _how_ we deliver the container image, _where_ we store it,
-_if_ it leaks, and _when_ to dispose it. If, instead, if the compromise happens
-at runtime (e.g., through a malicious executable), then the attacker should not
-be able to access any long-lived credential (e.g., an SSH key).
+The lack of secrets and credentials is important for safety: 
+
+- If the environment is compromised at rest, there is nothing to exfiltrate.
+  Plus, we do not need to worry about delivering it _privately_ to the
+  Chromebook, _where_ we store it, _if_ it leaks, and _when_ to dispose it.
+- Similarly, an attacker that compromise a running system (e.g., through a
+  malicious executable), will not find any long-lived credential (e.g., SSH
+  keys or passwords).
 
 ## The solution
 
-My solution largely relies on:
+My solution builds on:
 
 1. Hardware keys, holding login credentials and cryptographic keys.
-1. NixOS containers, running under ChromeOS' Crostini.
+1. NixOS containers, running under Linux on ChromeOS (Crostini).
 
 ### Hardware keys
 
-Hardware keys create a security boundary between the secrets and the
-environment. They allow me to securely "bring" secrets, while ensuring that
-they never leave the hardware device and are never exposed directly to the
-environment.
+Hardware keys place a security boundary between the secrets and the
+environment. They allow me to "bring" secrets while ensuring that they never
+leave the hardware device and are never directly exposed to the outside.
 
-Through hardware keys I can:
+Through hardware keys I:
 
 1. Login to online services (thanks to WebAuthn and passkeys).
 2. Prove second factors ("something I have").
 3. Authenticate to other hosts (through SSH) and sign messages.
 
-Some online services now allow passwordless login through passkeys. This means
-that I don't need to type my username or password: I just visit their website
-through Chrome, unlock the hardware key through its PIN, and login.
+A good number of online services allow passwordless login through passkeys.
+There is no need to type (or remember) my username and password. I visit their
+website through Chrome, unlock the hardware key through its PIN, and login.
 
-In some cases, a hardware key can only be used as a second factor (in the
-browser). When that happens, I can still leverage it to decrypt the password
-from a vault (e.g. using [`passage`](https://github.com/FiloSottile/passage) in
-the shell, or authenticating to a password manager with a passkey). As more
-services embrace passkeys, the need for passwords will hopefully become less
-frequent.
+In some cases, a hardware key can only be used as a second factor. When that
+happens, I use it to decrypt the password from a vault (e.g. using
+[`passage`](https://github.com/FiloSottile/passage) in the shell, or
+authenticating to a password manager with a passkey). As more services embrace
+passkeys, the need for passwords will hopefully become less frequent.
 
 Lastly, the hardware key holds SSH keys used both for authentication (`ssh`)
-and signing (e.g., `git commit`) while in the shell.
+and signing (e.g., `git commit`) from the shell.
 
 ### NixOS containers
 
 One of the killer features of Chromebooks is that they have good support for
 running Linux without compromising on security. Technically, a system called
 Crostini runs a Linux VM (booting a hardened kernel), which in turn runs `lxc`
-containers. By default, ChromeOS ships a `debian` container.
+containers. The default container is Debian.
 
-What makes Crostini great (e.g., when compared to SSH into a remote system) is
-that it has first-class integration with ChromeOS. You can run Linux GUI apps
-and they will show up alongside all other Chrome apps; you can open a URL in
-the Linux container and it will open in Chrome; you can copy to clipboard in
-Linux and it will populate ChromeOS' clipboard; ChromeOS will even forward most
-ports from `localhost` to the container.
+What makes Crostini great as opposed to SSH into a remote system is that it has
+first-class integration with ChromeOS. You can run Linux GUI apps and they will
+show up alongside all other Chrome apps; you can open a URL in Chrome from the
+Linux container; you can share the clipboard between Linux and ChromeOS;
+non-priveleged ports even foward from `localhost` to the container.
 
-The default `debian` container ships a few services that make that magic
-happen. Here are the two I have found the most useful:
+The default Debian container ships a few services that make that magic
+happen. Here are the most useful two:
 
-- `garcon` enables bidirectional communication between ChromeOS and the
-container. This allows using the Terminal to get to a container console,
-handling URLs, browsing container files through the Files app, etc.
-- `sommelier` allows the container to run GUI applications (and clipboard
-management).
+- `garcon` provides bidirectional communication between ChromeOS and the
+  container. The Terminal app uses it to connect to the container console, the
+  Files app to browse container files, and Chrome to open URLs from the
+  container.
+- `sommelier` implements clipboard sharing and lets the container launch GUI
+  applications in ChromeOS.
 
-The obvious downside of the `debian` container is that it is "vanilla" and it
-requires heavy customization. That's where NixOS makes a difference: it makes
-it easy to build a container that ships required tools (think `git`, `ssh`, but
-even the AWS CLI) and all their required configuration (`.dotfiles`, profiles,
-etc.).
+The obvious downside of the Debian container is that it is "vanilla" and
+requires customization before feeling like home. That's where NixOS makes a
+difference: it makes it easy to build a container image that includes all
+required tools (think `git`, `ssh`, `nvim`, even the AWS CLI) and their
+configuration (`.dotfiles`, profiles, etc.).
 
 To get NixOS running under Crostini:
 
-1. I first prepared a custom NixOS image that included my dotfiles and the
-   tools I usually need to be productive.
-2. I then added `garcon` and `sommelier`, to make it play nicely with ChromeOS.
-3. Lastly, I figured out how to ship it to the Chromebook and run it.
+1. I prepared a custom NixOS image that included my dotfiles and the tools I
+   usually need.
+2. I included and configured `garcon` and `sommelier` to integrate nicely
+   with ChromeOS.
+3. I figured out how to get the image on the Chromebook and run it.
 
 #### How-to: Preparing the image
 
-There are a few ways to prepare a `lxc` image shipping your NixOS
-configuration. I won't go into details here, since Nix itself is a pretty deep rabbit
-hole and it would take more than one blog post to do a good job at explaining
-it.
+Nix makes it relatively easy to build a custom `lxc` image. But Nix can also be
+a pretty deep rabbit hole, which would require more than one blog post to
+explain. Instead, I have prepared a simple {% include github_link.html
+url="https://github.com/aldur/nixos-crostini" text="quick start" %} that
+includes a sample configuration and can be useful to both new Nix users and
+veterans to get up and running.
 
-In my case, I applied
-[`nixos-generators`](https://github.com/nix-community/nixos-generators) to my
-Nix configuration to build the `lxc` RootFS and its associated metadata (both
-are `.tar.xz`) files.
-
-Then, I prepared a `crostini.nix` module to provide `garcon` and `sommelier`
-through `systemd`. The ChromeOS source code and the
-`cros-container-guest-tools-git` [AUR
+The repository also includes the magic glue that makes this work well: the {%
+include github_link.html
+url="https://github.com/aldur/nixos-crostini/crostini.nix"
+text="`crostini.nix`" %} module, which runs `garcon` and `sommelier` through
+`systemd`. The ChromeOS source code and the `cros-container-guest-tools-git`
+[AUR
 package](https://aur.archlinux.org/packages/cros-container-guest-tools-git)
 were invaluable in making this happen.
 
-<details markdown=1>
-  <summary markdown=span>Click to toggle the source for the Crostini NixOS module.</summary>
+Once you import this module in your configuration and build an image from it,
+you will need to get it on the Chromebook. There are [a few ways]({% link
+_micros/more-ways-to-bootstrap-nixos-containers.md %}) to do this, including
+building it in the default Debian container, copying it over through a USB
+stick, and uploading it to Drive.
 
-```nix
-{
-  modulesPath,
-  lib,
-  pkgs,
-  ...
-}:
-
-let
-  cros-container-guest-tools-src-version = "4ef17fb17e0617dff3f6e713c79ce89fee4e60f7";
-
-  cros-container-guest-tools-src = pkgs.fetchgit {
-    url = "https://chromium.googlesource.com/chromiumos/containers/cros-container-guest-tools";
-    rev = cros-container-guest-tools-src-version;
-    outputHash = "sha256-Loilew0gJykvOtV9gC231VCc0WyVYFXYDSVFWLN06Rw=";
-  };
-
-  cros-container-guest-tools = pkgs.stdenv.mkDerivation {
-    pname = "cros-container-guest-tools";
-    version = cros-container-guest-tools-src-version;
-
-    src = cros-container-guest-tools-src;
-    installPhase = ''
-      mkdir -p $out/{bin,share/applications}
-
-      install -m755 -D $src/cros-garcon/garcon-url-handler $out/bin/garcon-url-handler
-      install -m755 -D $src/cros-garcon/garcon-terminal-handler $out/bin/garcon-terminal-handler
-      install -m644 -D $src/cros-garcon/garcon_host_browser.desktop $out/share/applications/garcon_host_browser.desktop
-    '';
-  };
-
-in
-{
-  imports = [
-    # Load defaults for running in an lxc container.
-    # This is explained in: https://github.com/nix-community/nixos-generators/issues/79
-    "${modulesPath}/virtualisation/lxc-container.nix"
-  ];
-
-  # The eth0 interface in this container can only be accessed from the host.
-  networking.firewall.trustedInterfaces = [ "eth0" ];
-
-  # Disabling IPv6 makes the boot a bit faster (DHCPD)
-  networking.enableIPv6 = false;
-  networking.dhcpcd.IPv6rs = false;
-  networking.dhcpcd.wait = "background";
-  networking.dhcpcd.extraConfig = "noarp";
-
-  # `boot.isContainer` implies NIX_REMOTE = "daemon"
-  # (with the comment "Use the host's nix-daemon")
-  # We don't want to use the host's nix-daemon.
-  environment.variables.NIX_REMOTE = lib.mkForce "";
-
-  # Suppress daemons which will vomit to the log about their unhappiness
-  systemd.services."console-getty".enable = false;
-  systemd.services."getty@".enable = false;
-
-  # Disable nixos documentation because it is annoying to build.
-  documentation.nixos.enable = lib.mkForce false;
-
-  # Make sure documentation for NixOS programs are installed.
-  # This is disabled by lxc-container.nix in imports.
-  documentation.enable = lib.mkForce true;
-
-  environment.systemPackages = [
-    cros-container-guest-tools
-
-    pkgs.wl-clipboard # wl-copy / wl-paste
-    pkgs.xdg-utils # xdg-open
-  ];
-
-  environment.etc = {
-    # Required because `tremplin` will look for it.
-    # Without it, `vmc start termina <container>` will fail.
-    "gshadow" = {
-      mode = "0640";
-      text = "";
-      group = "shadow";
-    };
-
-    # TODO: Even empty, this will stop `sommelier` from erroring out.
-    "sommelierrc" = {
-      mode = "0644";
-      text = ''
-        exit 0
-      '';
-    };
-  };
-
-  system.activationScripts = {
-    # Activating sommelier-x will rely the bind-mount Xwailand executable. As
-    # far as I could debug, this path can't be controlled through env and would
-    # require re-compiling Xwayland (which is also dynamically loaded by the
-    # sommelier executable).
-    #
-    # Same for the `sftp-server` launched by `garcon`.
-    #
-    # These are ugly HACKs, but they work
-    xkb = "ln -sf ${pkgs.xkeyboard_config}/share/X11/ /usr/share/";
-    sftp-server = ''
-      mkdir -p /usr/lib/openssh/
-      ln -sf ${pkgs.openssh}/libexec/sftp-server /usr/lib/openssh/sftp-server
-    '';
-  };
-
-  # Load the environment populated from `sommelier`, e.g. `DISPLAY`.
-  environment.shellInit = builtins.readFile "${cros-container-guest-tools-src}/cros-sommelier/sommelier.sh";
-
-  # Taken from https://aur.archlinux.org/packages/cros-container-guest-tools-git
-  xdg.mime.defaultApplications = {
-    "text/html" = "garcon_host_browser.desktop";
-    "x-scheme-handler/http" = "garcon_host_browser.desktop";
-    "x-scheme-handler/https" = "garcon_host_browser.desktop";
-    "x-scheme-handler/about" = "garcon_host_browser.desktop";
-    "x-scheme-handler/unknown" = "garcon_host_browser.desktop";
-  };
-
-  systemd.user.services.garcon = {
-    # TODO: In the original service definition this only starts _after_ sommelier.
-    description = "Chromium OS Garcon Bridge";
-    wantedBy = [ "default.target" ];
-    serviceConfig = {
-      ExecStart = "/opt/google/cros-containers/bin/garcon --server";
-      Type = "simple";
-      ExecStopPost = "/opt/google/cros-containers/bin/guest_service_failure_notifier cros-garcon";
-      Restart = "always";
-    };
-    environment = {
-      BROWSER = (lib.getExe' cros-container-guest-tools "garcon-url-handler");
-      NCURSES_NO_UTF8_ACS = "1";
-      QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-      QT_QPA_PLATFORMTHEME = "gtk2";
-      XCURSOR_THEME = "Adwaita";
-      XDG_CONFIG_HOME = "%h/.config";
-      XDG_CURRENT_DESKTOP = "X-Generic";
-      XDG_SESSION_TYPE = "wayland";
-      # FIXME: These paths do not work under nixos
-      XDG_DATA_DIRS = "%h/.local/share:%h/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share";
-      # PATH = "/usr/local/sbin:/usr/local/bin:/usr/local/games:/usr/sbin:/usr/bin:/usr/games:/sbin:/bin";
-    };
-  };
-
-  systemd.user.services."sommelier@" = {
-    description = "Parent sommelier listening on socket wayland-%i";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [
-      systemd # systemctl
-      bash # sh
-    ];
-    serviceConfig = {
-      Type = "notify";
-      ExecStart = ''
-        /opt/google/cros-containers/bin/sommelier \
-                      --parent \
-                      --sd-notify="READY=1" \
-                      --socket=wayland-%i \
-                      --stable-scaling \
-                      --enable-linux-dmabuf \
-                      sh -c \
-                          "systemctl --user set-environment ''${WAYLAND_DISPLAY_VAR}=$''${WAYLAND_DISPLAY}; \
-                           systemctl --user import-environment SOMMELIER_VERSION"
-      '';
-      ExecStopPost = "/opt/google/cros-containers/bin/guest_service_failure_notifier sommelier";
-    };
-    environment = {
-      WAYLAND_DISPLAY_VAR = "WAYLAND_DISPLAY";
-      SOMMELIER_SCALE = "1.0";
-    };
-  };
-
-  systemd.user.services."sommelier-x@" = {
-    description = "Parent sommelier listening on socket wayland-%i";
-    wantedBy = [ "default.target" ];
-    path = with pkgs; [
-      systemd # systemctl
-      bash # sh
-      xorg.xauth
-      tinyxxd
-    ];
-    serviceConfig = {
-      Type = "notify";
-      ExecStart = ''
-        /opt/google/cros-containers/bin/sommelier \
-          -X \
-          --x-display=%i \
-          --sd-notify="READY=1" \
-          --no-exit-with-child \
-          --x-auth="''${HOME}/.Xauthority" \
-          --stable-scaling \
-          --enable-xshape \
-          --enable-linux-dmabuf \
-          sh -c \
-              "systemctl --user set-environment ''${DISPLAY_VAR}=$''${DISPLAY}; \
-               systemctl --user set-environment ''${XCURSOR_SIZE_VAR}=$''${XCURSOR_SIZE}; \
-               systemctl --user import-environment SOMMELIER_VERSION; \
-               touch ''${HOME}/.Xauthority; \
-               xauth -f ''${HOME}/.Xauthority add :%i . $(xxd -l 16 -p /dev/urandom); \
-               . /etc/sommelierrc"
-      '';
-      ExecStopPost = "/opt/google/cros-containers/bin/guest_service_failure_notifier sommelier-x";
-    };
-    environment = {
-      # TODO: Set `SOMMELIER_XFONT_PATH`
-      DISPLAY_VAR = "DISPLAY";
-      XCURSOR_SIZE_VAR = "XCURSOR_SIZE";
-      SOMMELIER_SCALE = "1.0";
-    };
-  };
-
-  systemd.user.targets.default.wants = [
-    "sommelier@0.service"
-    "sommelier@1.service"
-    "sommelier-x@0.service"
-    "sommelier-x@1.service"
-  ];
-}
-```
-
-</details><br/>
-
-After rebuilding the image to include this module, we need to upload it
-somewhere so that we can later fetch it from the Chromebook. I have considered
-[different solutions]({% link
-_micros/more-ways-to-bootstrap-nixos-containers.md %}) and the simplest I have
-found is hosting an [LXD image
+If you have another NixOS instance handy, you can push it to an [LXD image
 server](https://ubuntu.com/tutorials/create-custom-lxd-images#6-making-images-public)
-[behind Tailscale]({% link
-_micros/more-ways-to-bootstrap-nixos-containers.md %}/#from-an-lxd-image-server-behind-tailscale).
-
-On a NixOS server, enable `lxd`:
+[behind Tailscale]({% link _micros/more-ways-to-bootstrap-nixos-containers.md
+%}/#from-an-lxd-image-server-behind-tailscale). To do that, first enable `lxd`:
 
 ```nix
 virtualisation.lxd.enable = true;
@@ -404,15 +182,14 @@ lxc image import --public --alias lxc-nixos ${lxc-metadata}/tarball/*.tar.xz ${l
 #### How-to: Deploying the image
 
 If you haven't done it yet, [configure
-Linux](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
-choose the same username you will use within the container. I usually use 32GB
+Linux on ChromeOS](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
+choose the same username you will use within the container. I usually allocate 32GB
 of storage.
 
 Now open `crosh` (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>T</kbd>), then:
 
 ```sh
-# Not strictly required, but better start clean.
-vmc destroy termina
+vmc destroy termina  # Not strictly required, but better start clean.
 vmc start termina
 ```
 
@@ -421,10 +198,10 @@ from the Play Store and use the hardware key to authenticate. Otherwise, follow
 one of the approaches described [here to deploy the image to the Chromebook]({% link
 _micros/more-ways-to-bootstrap-nixos-containers.md %}).
 
-Then, from inside `termina`:
+From inside `termina`:
 
 ```bash
-# Assuming `tropic` is the hostname of the `lxd` server we have configured before.
+# Assuming `tropic` is the hostname of the `lxd` server you have configured before.
 lxc remote add tropic https://tropic:8443 --public
 
 # Ensure you can see the image listed.
@@ -440,7 +217,7 @@ lxc init tropic:lxc-nixos lxc-nixos --config security.nesting=true
 
 I have sometimes seen `--config security.privileged=true` recommended as well.
 
-Don't do it! If you do, you will spend a couple hours (as I did) trying
+Don't use it! If you do, you will spend a couple hours (as I did) trying
 to figure out why USB devices correctly show up in `lsusb` but then error with
 "permission denied" when you try accessing them. In my experience, there is
 no need for that flag.
@@ -448,6 +225,15 @@ no need for that flag.
 The `security.nesting=true`, instead, is required to run `nix` in the
 container. It is part of the default configuration that Crostini uses to init
 containers, and it is the right choice.
+
+</div>
+
+<div class="hint" markdown="1">
+
+At this point, if you want, you can skip directly to ["Add the container to
+ChromeOS"](#how-to-add-the-container-to-chromeos).
+
+Read on, instead, if you'd like to understand how this works under the hood.
 
 </div>
 
@@ -471,7 +257,7 @@ lxc exec lxc-nixos bash
 ```
 
 We are not done yet, though! First, we don't need to be logging in as root.
-Second, `garcon` will not work yet, because it is missing a required file:
+Second, `garcon` will not work yet, because it will be missing a required file:
 `/dev/.container_token`. As far as I can tell, to get `.container_token` we
 need to start the container from `crosh`. So:
 
@@ -509,34 +295,42 @@ echo "Clipboard works!" | wl-copy
 nix run nixpkgs#xorg.xeyes
 ```
 
+#### How-to: Add the container to ChromeOS
+
+ChromeOS ships an experimental UI for creating and managing multiple Crostini
+containers. When enabled, it significantly improves UX! It allows to:
+
+- Launch our container by clicking on its name in the terminal, instead of
+going through `crosh`. If the VM is off, it will launch it as well.
+- Mount folders into the container from the Files application.
+- Browse the container user home directory through Files.
+
+To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
+the drop-down to "Enabled" and then restart.
+
+Now, navigate to: Settings → Linux → Manage extra containers → Create. Fill in
+the "Container name" and click on Create (importantly, do this _after_ you have
+created the container from `crosh`). If the container was previously running,
+stop it with `lxc stop`. You can now start it from Terminal.
+
+{:.text-align-center}
+![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
+_The experimental UI makes it seamless to start and access the container from
+Terminal._
+
+{:.text-align-center}
+![A screenshot showing the `lxc-nixos` container available in the Files application.]({% link images/chromeos-files-lxc-nixos.webp %}){:.centered}
+_Use Files to browse the container home and mount directories into it._
+
 #### How-to: USB forwarding
 
-In order to use hardware keys within the container, we will also need to set up
+In order to use hardware keys within the container, you will also need to set up
 USB forwarding.
 
 Every time you plug a USB device in, ChromeOS should prompt you whether you
-want to connect it to Android or Linux. Trying to connect to Linux this way has
+want to connect it to Android or Linux. Connecting it to Linux this way has
 never worked for me, possibly because this method attach the device to the VM,
-but not to the container or gets confused when there exist multiple containers.
-Instead, I just use the CLI.
-
-<div class="seealso" markdown="1">
-
-The [Smart Card
-Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
-app can hold a lock on the hardware key, making it unusable for USB forwarding.
-
-For this reason, I recommend keeping the Smart Card Connector app disabled.
-Temporarily enable it only when needed (e.g., for [SSH access through
-Terminal](#how-to-ssh-into-the-container)).
-
-<details markdown=1> <summary markdown=span>Symptoms</summary> If Smart Card
-Connector is holding a lock on the device, the `usb-attach` command below might
-fail and looking at `/var/log/messages` would show this message: `Verdict for
-/dev/bus/usb/002/004: DENY`.
-</details>
-
-</div>
+but not to the container. Instead, I just use the CLI.
 
 Insert the device and then navigate to `chrome://usb-internals`. In the
 `devices` tab, note the Bus number and Port number of your device.
@@ -572,38 +366,29 @@ It ensures that `lxc` will add the following to the container configuration:
 
 </div>
 
-In the container, `lsusb` should show the device as ready for use.
+<div class="seealso" markdown="1">
 
-Occasionally, `lsusb` would detect the device, but the hardware key would not
-work when queried for keys. If that happens to you as well, try restarting the
-`pcscd` service and trying again.
+The [Smart Card
+Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
+app can hold a lock on the hardware key, making the above command fail. I
+recommend disabling it and only enable it when needed (e.g., for [SSH access
+through Terminal](#how-to-ssh-into-the-container)).
 
-#### How-to: Add the container to ChromeOS
+<details markdown=1> <summary markdown=span>Symptoms</summary> If Smart Card
+Connector is holding a lock on the device, the `usb-attach` command below might
+fail and looking at `/var/log/messages` would show this message: `Verdict for
+/dev/bus/usb/002/004: DENY`.
+</details>
 
-ChromeOS ships an experimental UI for creating and managing multiple Crostini
-containers. When enabled, it significantly improves UX! It allows to:
+</div>
 
-- Launch our container by clicking on its name in the terminal, instead of
-  going through `crosh`. If the VM is off, it will launch it as well.
-- Mount folders into the container from the Files application.
-- Browse the container user home directory through Files.
 
-To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
-the drop-down to "Enabled" and then restart.
+In the container, `lsusb` should show the device as ready for use. If you
+[configured it for SSH authentication]({% link
+_posts/2025-06-26-yubikey-agent.md %}), `ssh-add -L` should show your keys. 
 
-Now, navigate to: Settings → Linux → Manage extra containers → Create. Fill in
-the "Container name" and click on Create (importantly, do this _after_ you have
-created the container from `crosh`). If the container was previously running,
-stop it with `lxc stop`. You can now start it from Terminal.
-
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
-_The experimental UI makes it seamless to start and access the container from
-Terminal._
-
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Files application.]({% link images/chromeos-files-lxc-nixos.webp %}){:.centered}
-_Use Files to browse the container home and mount directories into it._
+If `lsusb` detects the device, but the hardware key does not work when queried
+for keys (e.g., with `ssh-add -L`), restart the `pcscd` service and try again.
 
 #### How-to: SSH into the container
 
@@ -615,7 +400,7 @@ domain `lxc-nixos.termina.linux.test` (this is hit or miss, sometimes
 [Getting SSH from ChromeOS to work]({% link
 _micros/ssh-from-chromeos-terminal.md %}) required me to jump through so many
 hoops that the effort is not worth the result. I do not recommend it, but I have
-left this here in case it is useful.
+left this note in case it is useful to you.
 
 <div class="admonition" markdown="1">
 
@@ -635,30 +420,28 @@ safely.
 ## Conclusion
 
 Software-wise, my `crostini.nix` module does the heavy lifting and gets the
-things I actually need to work. I haven't tested hardware acceleration, audio,
-and there's probably a few more things that do not work yet (when compared to
-`debian`). But I can always add those things when the need arises. Clipboard
-sharing between Chrome and Crostini is probably the feature I am using the
-most, in addition to opening URLs in Chrome from the container through
-`garcon`.
+things I need to work. I haven't tested hardware acceleration, audio, and
+there's probably a few more things that do not work yet (when compared to
+Debian). I can always add those things when the need arises. Clipboard sharing
+between Chrome and Crostini is probably my most used feature, in addition to
+opening URLs in Chrome from the container.
 
 Hardware-wise, Chromebooks are great "couch-computing" or travel devices. They
 are underpowered with respect to other machines (e.g., an M4 MacBook). But they
 are lighter, cheaper, and their battery is OK considering they are "Linux"
-devices (new Chromebooks can easily do 10 hours). I wish the display was a bit
-brighter, especially under direct light.
+devices (ARM Chromebooks can easily last 12 hours on battery). I wish the
+display was a bit brighter, especially under direct sunlight.
 
 Overall, after using this setup for a few weeks I am satisfied with it -- I
-even wrote this blog post on a Chromebook! It does most of what I was looking
-for, strikes a good security posture, and I like being able to go from _zero_
-to a productive environment in a couple minutes. Once the container boots, I
-immediately feel at home. I can quickly get ahead and write my thoughts,
-hack on a new project, or put off the occasional fire at work. Having a full
-system bottled-in and ready to go also gives me confidence I could somehow
-recover in case of disaster (think fire, natural disaster, theft, etc.),
-ensuring that I do not rely on a single point of failure. Lastly, this setup is
-trivial to deploy to a different system: I have had some fun playing with AI
-agents in a `qemu` VM built using the same tools.
+even wrote this blog post on a Chromebook! It does what I need, strikes a good
+security posture, and I like being able to go from _zero_ to _productive_ in a
+couple minutes. Once the container boots, I immediately feel at home. I can
+quickly get ahead and write my thoughts, hack on a new project, or put off the
+occasional fire at work. Having a full system bottled-in and ready to go also
+gives me confidence I could somehow recover in case of disaster (think fire,
+natural disaster, theft, etc.), removing reliance on single points of failure.
+Lastly, this setup is trivial to deploy to a different system: I have had some
+fun playing with AI agents in a `qemu` VM built using the same tools.
 
 Thanks for reading, and 'til next time!
 
