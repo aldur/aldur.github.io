@@ -28,9 +28,8 @@ I'd like to periodically throw away any persisted state and restart from scratch
 spinning up a new instance every time I need it (e.g., one for personal life,
 one for work, or even one for each project).
 
-This post describes my way to achieve that goal: through security keys,
-handling secrets and key material, and through secure, reproducible, throwaway
-containers.
+This post describes my way to achieve that goal through a combination of
+hardware security keys and secure, reproducible, throwaway containers.
 
 <!-- prettier-ignore-start -->
 
@@ -41,10 +40,10 @@ containers.
 ## The requirements
 
 I don't need much to be productive: a web browser and a shell. The browser is
-my gateway to most apps and services. Even when there are alternatives (e.g.
-native or Electron apps), I prefer to run things directly in the browser to add
-to defense in depth. The shell usually provides all the rest, including an
-editor and access to other hosts.
+my gateway to most apps and services. Even when native or Electron apps are
+available, I prefer to run things directly in the browser to leverage its
+sandbox, adding another layer to defense in depth. The shell usually provides
+all the rest, including an editor and access to other hosts.
 
 A good shell setup should feel like home: for instance, my text editor should
 be ready with all the plugins I use; `git` should know who I am and how I
@@ -54,14 +53,13 @@ device should be fast (minutes). Importantly, the environment should _not_
 bundle any secret (e.g., passwords or cryptographic keys) or confidential
 information, nor should it have access to any long-lived credential.
 
-The lack of secrets and credentials is important for safety: 
+The lack of secrets and credentials is important for safety:
 
 - If the environment is compromised at rest, there is nothing to exfiltrate.
   Plus, we do not need to worry about delivering it _privately_ to the
   Chromebook, _where_ we store it, _if_ it leaks, and _when_ to dispose it.
-- Similarly, an attacker that compromise a running system (e.g., through a
-  malicious executable), will not find any long-lived credential (e.g., SSH
-  keys or passwords).
+- Similarly, an attacker that compromises a running system (e.g., through a
+  malicious executable), will not find any long-lived credential to steal.
 
 ## The solution
 
@@ -72,9 +70,9 @@ My solution builds on:
 
 ### Hardware keys
 
-Hardware keys place a security boundary between the secrets and the
-environment. They allow me to "bring" secrets while ensuring that they never
-leave the hardware device and are never directly exposed to the outside.
+Hardware keys create a physical security boundary for secrets. They ensure that
+credentials and cryptographic keys never leave the hardware device and are
+never exposed to the host.
 
 Through hardware keys I:
 
@@ -106,7 +104,8 @@ What makes Crostini great as opposed to SSH into a remote system is that it has
 first-class integration with ChromeOS. You can run Linux GUI apps and they will
 show up alongside all other Chrome apps; you can open a URL in Chrome from the
 Linux container; you can share the clipboard between Linux and ChromeOS;
-non-priveleged ports even foward from `localhost` to the container.
+non-priveleged ports on the container are even forwarded from `localhost` on
+the host.
 
 The default Debian container ships a few services that make that magic
 happen. Here are the most useful two:
@@ -150,8 +149,8 @@ text="`crostini.nix`" %} module, which runs `garcon` and `sommelier` through
 package](https://aur.archlinux.org/packages/cros-container-guest-tools-git)
 were invaluable in making this happen.
 
-Once you import this module in your configuration and build an image from it,
-you will need to get it on the Chromebook. There are [a few ways]({% link
+After you import this module in your configuration and build the image,
+the next step is to get it on your Chromebook. There are [a few ways]({% link
 _micros/more-ways-to-bootstrap-nixos-containers.md %}) to do this, including
 building it in the default Debian container, copying it over through a USB
 stick, and uploading it to Drive.
@@ -181,7 +180,7 @@ lxc image import --public --alias lxc-nixos ${lxc-metadata}/tarball/*.tar.xz ${l
 
 #### How-to: Deploying the image
 
-If you haven't done it yet, [configure
+If you haven't already, [enable
 Linux on ChromeOS](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
 choose the same username you will use within the container. I usually allocate 32GB
 of storage.
@@ -270,10 +269,10 @@ lxc stop --force lxc-nixos
 vmc container termina lxc-nixos
 ```
 
-This will error out telling you that the container cannot be found. Fear not!
-The container has started in the background and you'll get a shell (by
-re-running the same command) once it gets an IP. Now you should be able to see
-`garcon` and `sommelier` running correctly.
+This command will likely error out, complaining that the container cannot be
+found. Fear not! The container has started in the background. Once it gets an
+IP, you'll get a shell by re-running the same command. You should then be
+able to check that `garcon` and `sommelier` are correctly running.
 
 ```bash
 vmc container termina lxc-nixos
@@ -297,8 +296,8 @@ nix run nixpkgs#xorg.xeyes
 
 #### How-to: Add the container to ChromeOS
 
-ChromeOS ships an experimental UI for creating and managing multiple Crostini
-containers. When enabled, it significantly improves UX! It allows to:
+ChromeOS provides an experimental UI for creating and managing multiple
+Crostini containers. When enabled, it significantly improves UX! It allows to:
 
 - Launch our container by clicking on its name in the terminal, instead of
 going through `crosh`. If the VM is off, it will launch it as well.
@@ -308,10 +307,11 @@ going through `crosh`. If the VM is off, it will launch it as well.
 To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
 the drop-down to "Enabled" and then restart.
 
-Now, navigate to: Settings → Linux → Manage extra containers → Create. Fill in
-the "Container name" and click on Create (importantly, do this _after_ you have
-created the container from `crosh`). If the container was previously running,
-stop it with `lxc stop`. You can now start it from Terminal.
+Now, go to: Settings → Linux → Manage extra containers → Create. Fill in
+the "Container name" with `lxc-nixos` and click on Create (importantly, do this
+_after_ you have created the container from `crosh`). If the container was
+previously running, stop it first with `lxc stop`. You can now start it from
+Terminal.
 
 {:.text-align-center}
 ![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
@@ -382,10 +382,9 @@ fail and looking at `/var/log/messages` would show this message: `Verdict for
 
 </div>
 
-
 In the container, `lsusb` should show the device as ready for use. If you
 [configured it for SSH authentication]({% link
-_posts/2025-06-26-yubikey-agent.md %}), `ssh-add -L` should show your keys. 
+_posts/2025-06-26-yubikey-agent.md %}), `ssh-add -L` should show your keys.
 
 If `lsusb` detects the device, but the hardware key does not work when queried
 for keys (e.g., with `ssh-add -L`), restart the `pcscd` service and try again.
@@ -419,7 +418,7 @@ safely.
 
 ## Conclusion
 
-Software-wise, my `crostini.nix` module does the heavy lifting and gets the
+Software-wise, my `crostini.nix` module handles the heavy lifting and gets the
 things I need to work. I haven't tested hardware acceleration, audio, and
 there's probably a few more things that do not work yet (when compared to
 Debian). I can always add those things when the need arises. Clipboard sharing
@@ -428,7 +427,7 @@ opening URLs in Chrome from the container.
 
 Hardware-wise, Chromebooks are great "couch-computing" or travel devices. They
 are underpowered with respect to other machines (e.g., an M4 MacBook). But they
-are lighter, cheaper, and their battery is OK considering they are "Linux"
+are lighter and cheaper, and their battery is OK considering they are "Linux"
 devices (ARM Chromebooks can easily last 12 hours on battery). I wish the
 display was a bit brighter, especially under direct sunlight.
 
@@ -437,11 +436,12 @@ even wrote this blog post on a Chromebook! It does what I need, strikes a good
 security posture, and I like being able to go from _zero_ to _productive_ in a
 couple minutes. Once the container boots, I immediately feel at home. I can
 quickly get ahead and write my thoughts, hack on a new project, or put off the
-occasional fire at work. Having a full system bottled-in and ready to go also
-gives me confidence I could somehow recover in case of disaster (think fire,
-natural disaster, theft, etc.), removing reliance on single points of failure.
-Lastly, this setup is trivial to deploy to a different system: I have had some
-fun playing with AI agents in a `qemu` VM built using the same tools.
+occasional fire at work. Having a full system bottled up and ready to deploy
+also gives me confidence that I could recover quickly in case of disaster
+(fire, natural disaster, theft, etc.), removing any specific machine as a
+single point of failure. Lastly, this setup is trivial to deploy to a different
+system: I have had some fun playing with AI agents in a `qemu` VM built using
+the same tools.
 
 Thanks for reading, and 'til next time!
 
