@@ -15,7 +15,7 @@ Chromebooks have a reputation of being secure devices:
   stacking protections: the Chrome sandbox, the OS userspace,
   the kernel, the firmware, and the hardware.
 
-Because of all this, users cat get a _trustworthy_ computing environment by
+Because of all this, users can get a _trustworthy_ computing environment by
 _powerwashing_ their Chromebook (lingo for a deep but fast wipe) back to a
 pristine state. On paper, this is awesome! It makes powerwashed Chromebooks
 ideal to handle security-sensitive tasks. The downside is that a powerwashed
