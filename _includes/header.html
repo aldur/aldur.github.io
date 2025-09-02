@@ -93,9 +93,26 @@ The source code is also available here:
     }
   }
 
+  function setPictureSource(skin) {
+    document.querySelectorAll('picture').forEach(picture => {
+      // Note: this selector matches on strings, 
+      // so it will continue working even when prefixed with `original-`
+      const sources = picture.querySelectorAll('source[media*="prefers-color-scheme"]');
+      const img = picture.querySelector('img');
+
+      sources.forEach(source => {
+        const media = source.getAttribute('media');
+        source.setAttribute('media', `original-${media}`);
+
+        if (media.includes(skin)) {
+          img.src = source.srcset;
+        }
+      });
+    });
+  }
+
   function applySkin(skin) {
-    // https://stackoverflow.com/questions/56300132/
-    // how-to-override-css-prefers-color-scheme-setting
+    // https://stackoverflow.com/questions/56300132/how-to-override-css-prefers-color-scheme-setting
     for (var s = 0; s < document.styleSheets.length; s++) {
       for (var i = 0; i < document.styleSheets[s].cssRules.length; i++) {
         rule = document.styleSheets[s].cssRules[i];
@@ -131,6 +148,16 @@ The source code is also available here:
         }
       }
     }
+
+    // Handle <picture> based on srcset
+    // We can only do that after DOM has loaded
+    if (document.readyState === "loading") {
+      // Loading hasn't finished yet
+      document.addEventListener("DOMContentLoaded", 
+        function() { setPictureSource(skin); });
+    } else {
+      setPictureSource(skin);
+    }
   }
 
   function setSkin(targetSkin) {
@@ -156,30 +183,7 @@ The source code is also available here:
     iconTag.setAttribute('xlink:href', iconRef.replace(currentIcon, iconForSkin(targetSkin)));
   }
 
-  function migrateSkinName() {
-    let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
-    switch (savedSkin) {
-      // -- before 1f93c2
-      case 'classic.css':
-        localStorage.setItem(SKIN_NAME_KEY, Skins.Light);
-        break;
-      case 'dark.css':
-        localStorage.setItem(SKIN_NAME_KEY, Skins.Dark);
-        break;
-      // -- /before 1f93c2
-      case Skins.Dark:
-      case Skins.Light:
-        break; // all good!
-      case undefined: // 1f93c2
-      case 'undefined': // 1f93c2
-      default: // sorry, skin reset
-        localStorage.removeItem(SKIN_NAME_KEY);
-    }
-  }
-
   function loadSkin() {
-    migrateSkinName();
-
     let savedSkin = localStorage.getItem(SKIN_NAME_KEY);
     if (savedSkin !== null) {
       setSkin(savedSkin); // Also takes care of the icon.
