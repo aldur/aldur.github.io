@@ -148,7 +148,7 @@ for any app I use there[^1p]. If, instead, someone serves me a malicious WhatsAp
 web-app, they will be able to read messages or send new ones, but will most
 likely not be able to also read my emails or steal my passwords.
 
-[^1p]: As [1Password puts it](https://blog.1password.com/local-threats-device-protections/):
+[^1p]: As [1Password puts it][10]:
 
      > There’s no password manager or other mainstream tool with the ability to
      guard your secrets on a fully compromised device.
@@ -196,3 +196,4 @@ Please, reach out! Meanwhile, thank you for reading and see you next time! 👋
 [7]: https://chromeos.dev/en/web/isolated-web-apps
 [8]: https://github.com/mozilla/standards-positions/issues/799
 [9]: https://github.com/mozilla/standards-positions/issues/799#issuecomment-2861412906
+[10]: https://blog.1password.com/local-threats-device-protections/
