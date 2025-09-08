@@ -41,11 +41,11 @@ hundreds. It is much easier to decide _not_ to pick and just watch another
 episode of that familiar show.
 
 When we do try picking something, we face uncertainty and we fear regret: "What
-if I pick a worse movie than the TV show?". Even if focusing exclusively on
-movies, comparing two or more options will make us evaluate them based on the
-features we care about (genre, duration, actors, etc.). Likely, no clear winner
-will emerge, but the act of weighting the options will be enough to frustrate
-us, so that we will be _less_ satisfied, regardless of what we choose.
+if I pick a worse movie than the TV show?". Even when exclusively focusing on
+movies, we will compare two or more options on multiple features (genre,
+duration, actors, etc.). No movie will clearly win across all dimensions, but
+the act of weighting the options will be enough to frustrate us, so that we
+will be _less_ satisfied, regardless of what we choose.
 
 Forcing people to make a decision along a trade-off will make them unhappy and
 indecisive. When applied to product management, this teaches us that _more
