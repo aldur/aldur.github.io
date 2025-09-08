@@ -16,7 +16,7 @@ we approach everyday tasks.
 This (living) post collects the nuggets of psychology I wish to remember and
 add to my _latticework_ of mental models. I have learned about them from
 different books: _Thinking Fast and Slow_, _The Paradox of Choice_, _Poor
-Charlie's Almanac_, and probably a lot more. In describing them here, I will
+Charlie's Almanack_, and probably a lot more. In describing them here, I will
 most likely make simplifications that will make experts shiver. If you have
 found something that interests you and you want to deep dive, check out those
 books – or better, the original research that produced these insights. And if
@@ -32,7 +32,7 @@ know!
 #### The paradox of choice
 
 It is much easier to spend several hours binge-watching a TV series than to
-pick a good movie and commit a couple hours to it. Why? Because freedom of
+pick a good movie and commit a couple of hours to it. Why? Because freedom of
 choice can lead to difficult decisions and, sometimes, to less happiness.
 
 If you have already watched a few episodes of a show, you know what to expect
@@ -227,14 +227,36 @@ missions).
 We rely on past experiences to make decisions about our future, but we often
 misremember and misjudge the past. Our memories of an event rely on:
 
-1. The absolute high (or low) we experienced.
-1. What we felt when it ended.
+1. The _absolute high_ (or low) we experienced.
+1. What we felt when the experience _ended_.
 
-[This study](https://pubmed.ncbi.nlm.nih.gov/12855328/) put this to test and
-found out that patients undergoing colonscopy which ended with an additional
-period in which
+[This study][0] ingeniously demonstrated this. Two sets of patients underwent a
+colonscopy. In one case, the exam was made artificially longer by leaving the
+probe still for a few minutes before ending the procedure. Because a still
+probe is less unpleasant, the patients fell _less discomfort_ when the
+colonscopy ended. As a result, they were _more likely_ to come back for
+additional checkups than those in the other group, despite the actual exam
+being _longer_ and the absolute discomfort being the same.
 
 #### Incentives
+
+Incentives are powerful system levers and keeping them in mind is fundamental
+in decision-making. According to Charlie Munger, we routinely underestimate
+their effects on behavior and forget that people will do what they are paid to
+do.
+
+In his almanack, Munger tells two stories about incentives. One is the story of
+a new Xerox product. Despite being _better_ than older products, it was selling
+a lot less. Why? Because salespeople were motivated by outdated incentives,
+rewarding them for each sale of an _old_ product.
+
+In another story, FedEx needed packages to move from A to B, every night. The
+task was not completed unless _all_ packages had moved. And they needed to move
+_fast_! FedEx management tried a whole set of things to incentivize workers.
+None worked, until someone realized that workers were paid _by the hour_ and
+were lacking incentives to complete their tasks quickly. When they started to
+be paid by _shift_, their incentives aligned with FedEx's: to quickly and
+effectively complete their tasks before going home.
 
 #### Interest, not reason
 
@@ -242,4 +264,33 @@ period in which
 >
 > Ben Franklin, Poor Richard's Almanack
 
-#### Shiny new things
+Rather than pure rationality, we are often motivated by self-interest and
+[incentives](#incentives). Sometimes all this happens subconsciously: we
+rationalize flawed reasoning without even noticing it.
+
+To change someone's behaviour through _product management_, we need to keep all
+this in mind. Instead of trying airtight logic or reasons, build products or
+systems that _support_ our users' interest. Only then their behavior will
+change.
+
+This has profound implications in business as well. Users won't buy a new
+technology because it is shinier, faster, or better than some legacy. They will
+only adopt it if it aligns with their interests by letting them save or gain
+money.
+
+#### Seven, plus or minus two
+
+Our _working memory_ can effectively hold _seven_ (± two) "items"_ before our
+performance starts declining. Once that happens, we are unable to effectively
+_remember_ all the options or even _differentiate_ between them. Grouping
+related items together by "chunking" them alleviates the burden on our brains.
+
+This cognitive limitation is also known as [Miller's law][1]. It should impact
+the design of products and features by ensuring that we do not overwhelm users
+with _more_ than they can effectively work with – remembering that, in the
+worst case, five choices will already push them to their limit. Structuring
+information in a hierarchy helps. Simplifying the user journey and reducing the
+number of choices will do even better.
+
+[0]: https://pubmed.ncbi.nlm.nih.gov/12855328/
+[1]: https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two
