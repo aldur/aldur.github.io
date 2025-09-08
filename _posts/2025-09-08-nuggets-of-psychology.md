@@ -56,11 +56,11 @@ to _satisficers_ won't settle for something "_good enough_".
 
 #### Availability bias
 
-Kahneman and Tversky originally termed it [availability _heuristic_][0] because
-it is a mental shortcut that we take to save energy: when something is readily
+Kahneman and Tversky originally termed it [availability _heuristic_][0]
+because we take this mental shortcut to save energy: when something is readily
 available or very vivid in our memory, we _think_ it is also _frequent_ or
-_important_. I prefer calling it a _bias_ because I believe it hinders our
-ability to make good decisions _unless_ we take measures to do better.
+_important_. I prefer calling it a _bias_ because it hinders our ability to
+make good decisions _unless_ we take measures to do better.
 
 I think of this bias also when we are blindsided by information or options that
 are in front of us, but fail to see that with a bit more digging we would find
@@ -88,15 +88,15 @@ in a negotiation sets a reference point and we judge what comes next against
 it. If someone successfully manages to place an artificial _anchor_, then they
 can bias the decision-maker into making that direction.
 
-Here are a few examples. Some stores seem to always offer a discount on
-merchandise. The original price is typically shown prominently and serves as an
-anchor which makes the discounted price look like a bargain. In a negotiation,
-an extreme "opening" has better odds to the desired outcome than a moderate
-proposal, closer to one's true value.
+Some stores seem to always offer a discount on merchandise. The original price
+is typically shown prominently and serves as an anchor which makes the
+discounted price look like a bargain. In a negotiation, an extreme "opening"
+has better odds to the desired outcome than a moderate proposal, closer to
+one's true value.
 
 #### Framing
 
-The way information gets presented will influence how we make decisions about
+The way information gets presented influences how we make decisions about
 it. This is why it is more effective to advertise "a discount on credit cards"
 instead of a "surcharge on cash". This is also why when juries are asked to
 choose _one_ parent for childcare, they will look for markedly _good_ traits.
@@ -166,10 +166,11 @@ is true.
 
 #### The man with the hammer
 
-A Munger's favorite, this fallacy warns about how having only a limited set of
-mental models will encourage you to use the _wrong_ one for the job. Somehow,
-this relates to [availability bias](#availability-bias) since "shinier", more
-available tools will lure you into thinking they are the most appropriate.
+A Charlie Munger's favorite, this fallacy warns about how having only a limited
+set of mental models will encourage you to use the _wrong_ one for the job.
+Somehow, this relates to [availability bias](#availability-bias) since
+"shinier", more available tools will lure you into thinking they are the most
+appropriate.
 
 This is the reason why I am collecting _several_ tools here and why I like
 learning from unfamiliar disciplines (e.g., biology, systems thinking,
@@ -197,18 +198,18 @@ makes it harder to find conflicting information and debate them with others.
 #### The hedonic treadmill
 
 As humans, we will adapt to everything. The hedonic treadmill conjectures that
-our levels of pleasure, happiness, sadness will return to a relatively stable
-level even after major life events. We "adapt" to those new levels. I think of
-it like "mean reversion" (described both in finance and mathematics) for our
-feelings.
+our levels of pleasure, happiness, and sadness will return to a relatively
+stable level even after major life events. We "adapt" to those new levels. I
+think of it like "mean reversion" (described both in finance and mathematics)
+for our feelings.
 
 A few studies have tested this conjecture, finding out that people would return
 to their "average" happiness after significant spikes (e.g., when winning the
 lottery) or downturns (e.g., falling victims of a debilitating accident).
 
-It has strong pragmatic implications: it will make [new things shine
-less](#shiny-new-things) over time and it might lead to exaggerate (or
-unconstrained) spending while seeking additional stimuli – always seeking more.
+It has strong pragmatic implications: it will make new things shine less over
+time and it might lead to exaggerate (or unconstrained) spending while seeking
+additional stimuli – always seeking more.
 
 Knowing about the hedonic treadmill is a powerful way to counteract it. We
 should not fool ourselves by thinking that a new purchase (or a promotion, or
