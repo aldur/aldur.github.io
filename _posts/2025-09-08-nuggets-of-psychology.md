@@ -1,27 +1,26 @@
 ---
 title: 'Nuggets of psychology'
 excerpt: >
-  TODO
+  A living collection of psychological mental models for making better decisions.
 ---
 
 Understanding the world requires seeking good explanations, not fooling
 oneself, and figuring out _why_ things truly happen. Only this way we can do
 better next time.
 
-In my quest to achieve all this, I have found that many mental models require a
-good understanding of psychology. They start right there and lean into
-marketing, behavioral economics, product management, negotiation, and even how
-we approach everyday tasks.
+In my quest to achieve this, I have found that many mental models are rooted in
+psychology. They start right there and lean into marketing, behavioral
+economics, product management, negotiation, and even how we approach everyday
+tasks.
 
-This (living) post collects the nuggets of psychology I wish to remember and
-add to my _latticework_ of mental models. I have learned about them from
-different books: _Thinking Fast and Slow_, _The Paradox of Choice_, _Poor
-Charlie's Almanack_, and probably a lot more. In describing them here, I will
-most likely make simplifications that will make experts shiver. If you have
-found something that interests you and you want to deep dive, check out those
-books – or better, the original research that produced these insights. And if
-you spot any mistake or over-simplification, please do reach out and let me
-know!
+This living post collects those _nuggets_ of psychology I wish to remember and
+add to my _latticework_ of mental models. I have learned them from multiple
+authors and books: _Thinking Fast and Slow_, _The Paradox of Choice_, _Poor
+Charlie's Almanack_, and more. In describing them here, I will make
+simplifications that might make experts shiver. If you find something that
+interests you and you want to dive into it, start out with those books – or
+better yet, the original research. And if you spot any mistake or
+over-simplification, please do reach out and let me know!
 
 <!-- prettier-ignore-start -->
 
@@ -44,10 +43,9 @@ episode of that familiar show.
 When we do try picking something, we face uncertainty and we fear regret: "What
 if I pick a worse movie than the TV show?". Even if focusing exclusively on
 movies, comparing two or more options will make us evaluate them based on the
-features we care about (genre, duration, actors, etc.). No clear winner will
-most likely emerge, but the act of weighting the options will be enough to
-frustrate us, so that we will be _less_ satisfied, regardless of what we
-choose.
+features we care about (genre, duration, actors, etc.). Likely, no clear winner
+will emerge, but the act of weighting the options will be enough to frustrate
+us, so that we will be _less_ satisfied, regardless of what we choose.
 
 Forcing people to make a decision along a trade-off will make them unhappy and
 indecisive. When applied to product management, this teaches us that _more
@@ -58,23 +56,22 @@ to _satisficers_ won't settle for something "_good enough_".
 
 #### Availability bias
 
-Kahneman and Tversky originally termed it availability _heuristic_ because it
-is a mental shortcut that we take to save energy: because something is
-readily available or very vivid in our memory, then we _think_ it is also
-_frequent_ or _important_. I prefer calling it a _bias_ because I believe it
-hinders our ability to make good decisions unless we take measures to do
-better.
+Kahneman and Tversky originally termed it [availability _heuristic_][0] because
+it is a mental shortcut that we take to save energy: when something is readily
+available or very vivid in our memory, we _think_ it is also _frequent_ or
+_important_. I prefer calling it a _bias_ because I believe it hinders our
+ability to make good decisions _unless_ we take measures to do better.
 
-I think of availability bias also when we are blindsided by information or
-options that are readily in front of us, but fail to see that with a bit more
-digging we would find much better options.
+I think of this bias also when we are blindsided by information or options that
+are in front of us, but fail to see that with a bit more digging we would find
+much better options.
 
 Availability bias is also why we misestimate facts. For instance:
 
 - That deadly car accidents are more frequent than disease-related deaths (they
   are not).
-- Why we tend to form judgements or stereotypes based on extremely small
-  samples (possibly non-representative).
+- Why we tend to form judgements or stereotypes based on extremely small (and
+  likely non-representative) samples.
 - Why we attribute to our egocentric self more merits or faults than we really
   should.
 
@@ -84,8 +81,6 @@ Availability bias is also why we misestimate facts. For instance:
 >
 > 80 dollars? What do you need 50 dollars for, kid? Here, take 10 and bring
   back some change.
-
-_Anchoring, when it doesn't work._
 
 We make decisions based on relativeness and reference points. That is why
 anchoring can be powerful or lead to biased decisions. The number we hear first
@@ -101,7 +96,7 @@ proposal, closer to one's true value.
 
 #### Framing
 
-They way information gets presented will influence how we make decisions about
+The way information gets presented will influence how we make decisions about
 it. This is why it is more effective to advertise "a discount on credit cards"
 instead of a "surcharge on cash". This is also why when juries are asked to
 choose _one_ parent for childcare, they will look for markedly _good_ traits.
@@ -137,13 +132,13 @@ place. This is the _endowment effect_.
 #### Sunk costs
 
 You are months into an expensive project at work, only to discover that you are
-not building the right thing, or that no one would use. Do you keep working on
-it or you scrap it for something else? All the work or money you have put into
-is already _sunk_. Dropping the project would be the right thing to do –
-completing it, would not benefit anyone. But loss aversion will sometimes trick
-us into continuing that work, worsening an already non-optimal situation.
+not building the right thing, or that no one will use it. Do you keep working
+on it, or do you scrap it? The work or money you have put into is already
+_sunk_. Dropping the project would be the right thing to do – completing it,
+would not benefit anyone. But loss aversion will sometimes trick us into
+continuing that work, worsening an already non-optimal situation.
 
-This happened to me, recently. I had invested significant time, money, and
+This recently happened to me. I had invested significant time, money, and
 effort into training for a bicycle competition. A few weeks before the race, I
 developed a small injury which prevented me from enjoying cycling and put
 competitiveness out of the picture. Due to the sunk costs, I considered racing
@@ -201,11 +196,11 @@ makes it harder to find conflicting information and debate them with others.
 
 #### The hedonic treadmill
 
-As humans, we will adapt to everything. The hedonic treadmill conjecture tells
-us that our levels of pleasure, happiness, sadness and of feelings in general
-will return to a relatively stable level even after major life events. We
-"adapt" to those new levels. I think of it as "mean reversion" (described both
-in finance and mathematics) related to feelings.
+As humans, we will adapt to everything. The hedonic treadmill conjectures that
+our levels of pleasure, happiness, sadness will return to a relatively stable
+level even after major life events. We "adapt" to those new levels. I think of
+it like "mean reversion" (described both in finance and mathematics) for our
+feelings.
 
 A few studies have tested this conjecture, finding out that people would return
 to their "average" happiness after significant spikes (e.g., when winning the
@@ -215,11 +210,11 @@ It has strong pragmatic implications: it will make [new things shine
 less](#shiny-new-things) over time and it might lead to exaggerate (or
 unconstrained) spending while seeking additional stimuli – always seeking more.
 
-Knowing about the hedonic treadmill is powerful to counteract it. By not
-fooling ourselves thinking that a new purchase (or a promotion, or more money)
-will make us happier, because we will quickly adapt to it. Instead, by focusing
-on those long-lasting things whose effect compound over time and bring us
-meaningfulness and purposefulness (e.g., social relationship or long-lasting
+Knowing about the hedonic treadmill is a powerful way to counteract it. We
+should not fool ourselves by thinking that a new purchase (or a promotion, or
+more money) will make us happier, because we will quickly adapt to it. Instead,
+we can focus on those long-lasting things whose effect compound over time and
+bring us meaningfulness and purpose (e.g., social relationship or long-term
 missions).
 
 #### Perception of past experiences
@@ -230,8 +225,8 @@ misremember and misjudge the past. Our memories of an event rely on:
 1. The _absolute high_ (or low) we experienced.
 1. What we felt when the experience _ended_.
 
-[This study][0] ingeniously demonstrated this. Two sets of patients underwent a
-colonscopy. In one case, the exam was made artificially longer by leaving the
+[This study][1] ingeniously demonstrated this. Two groups of patients underwent
+a colonscopy. In one group, the exam was made artificially longer by leaving the
 probe still for a few minutes before ending the procedure. Because a still
 probe is less unpleasant, the patients fell _less discomfort_ when the
 colonscopy ended. As a result, they were _more likely_ to come back for
@@ -280,17 +275,18 @@ money.
 
 #### Seven, plus or minus two
 
-Our _working memory_ can effectively hold _seven_ (± two) "items"_ before our
-performance starts declining. Once that happens, we are unable to effectively
-_remember_ all the options or even _differentiate_ between them. Grouping
+Our _working memory_ can hold roughly _seven (± two) "items"_ before
+performance declines. Once that happens, we become unable to effectively
+_remember_ all the options or even _differentiate_ among them. Grouping
 related items together by "chunking" them alleviates the burden on our brains.
 
-This cognitive limitation is also known as [Miller's law][1]. It should impact
+This cognitive limitation is also known as [Miller's law][2]. It should impact
 the design of products and features by ensuring that we do not overwhelm users
 with _more_ than they can effectively work with – remembering that, in the
 worst case, five choices will already push them to their limit. Structuring
 information in a hierarchy helps. Simplifying the user journey and reducing the
 number of choices will do even better.
 
-[0]: https://pubmed.ncbi.nlm.nih.gov/12855328/
-[1]: https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two
+[0]: https://en.wikipedia.org/wiki/Availability_heuristic
+[1]: https://pubmed.ncbi.nlm.nih.gov/12855328/
+[2]: https://en.wikipedia.org/wiki/The_Magical_Number_Seven,_Plus_or_Minus_Two
