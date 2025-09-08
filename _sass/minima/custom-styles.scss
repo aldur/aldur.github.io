@@ -244,3 +244,11 @@ kbd {
   border: solid 1px var(--minima-border-color-02);
   border-radius: 3px;
 }
+
+// Make it so that footnotes' superscripts do not make line height different 
+sup {
+  vertical-align: baseline;
+  position: relative;
+  top: -0.5em;
+  line-height: 0;
+}
