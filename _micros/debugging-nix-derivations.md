@@ -22,7 +22,7 @@ nativeBuildInputs = [ breakpointHook ];
 
 ## Tracing all commands
 
-Add `NIX_DEBUG=7` anywhere to your derivation (this [works by setting `-x` on
+Add `NIX_DEBUG = 7;` anywhere to your derivation (this [works by setting `-x` on
 `stdenv`][3] initialization). Can be very verbose.
 
 ## References
