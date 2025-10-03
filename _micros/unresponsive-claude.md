@@ -1,6 +1,7 @@
 ---
 title: 'Unresponsive Claude'
 date: 2025-10-02
+modified_date: 2025-10-03
 ---
 
 I recently spent a couple of hours debugging why `claude-code` was entirely
@@ -43,4 +44,8 @@ in `/etc/profile`:
 environment.loginShellInit = lib.mkForce "";
 ```
 
-[smoking_gun]: https://github.com/nix-community/nixos-generators/blob/master/formats/vm-nogui.nix#L2-10
+I also opened an
+[issue](https://github.com/nix-community/nixos-generators/issues/447) upstream
+in case someone else has the same problem.
+
+[smoking_gun]: https://github.com/nix-community/nixos-generators/blob/fb30cf1cbebe3f5100dbd605138b2eec44ad217f/formats/vm-nogui.nix#L2-L11
