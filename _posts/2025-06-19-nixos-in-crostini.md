@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   How to turn a Chromebook into a secure and productive device through NixOS
   containers and hardware keys.
-modified_date: 2025-08-01
+modified_date: 2025-10-19
 ---
 
 Chromebooks have a reputation of being secure devices:
@@ -447,8 +447,10 @@ Thanks for reading, and 'til next time!
 
 <div class="hint" markdown="1">
 The ChromiumOS team is experimenting with a way (codename `baguette`) to run
-  containers without a KVM. If that happens and this guide becomes outdated,
-  reach out! We will figure out how to make it work there as well.
+VM images directly, without going through LXC. The 
+{% include github_link.html url="https://github.com/aldur/nixos-crostini/issues/1#issuecomment-3418319309" text="`nixos-crostini`" %}
+repository provides experimental support for `baguette` images too. Give it a try and 
+let me know how it works for you!
 </div>
 
 ## References
