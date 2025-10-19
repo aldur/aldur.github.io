@@ -449,7 +449,8 @@ Thanks for reading, and 'til next time!
 The ChromiumOS team is experimenting with a way (codename `baguette`) to run
 VM images directly, without going through LXC. The 
 {% include github_link.html url="https://github.com/aldur/nixos-crostini/issues/1#issuecomment-3418319309" text="`nixos-crostini`" %}
-repository already provides experimental support for `baguette` images.
+repository provides experimental support for `baguette` images too. Give it a try and 
+let me know how it works for you!
 </div>
 
 ## References
