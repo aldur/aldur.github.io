@@ -188,7 +188,7 @@
               ruby
               self.packages.${system}.newPost
               self.packages.${system}.newMicro
-            ] ++ (with pkgs; [ bundix libwebp ]);
+            ] ++ (with pkgs; [ bundix libwebp html-proofer ]);
           };
         };
       });
