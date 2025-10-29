@@ -123,7 +123,7 @@ defaults:
 collections:
   micros:
     output: true
-    permalink: micros/:year/:month/:day/:title/
+    permalink: micros/:year/:month/:day/:title:output_ext
 
 redirect_from:
   json: false
