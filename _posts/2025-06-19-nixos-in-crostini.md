@@ -441,7 +441,7 @@ Thanks for reading, and 'til next time!
 
 The ChromiumOS team is experimenting with a way (codename `baguette`) to run VM
 images directly, without going through LXD. [This post]({% post_url
-2025-10-28-nixos-baguette-images-in-chromeos %}) describes how to build NixOS
+2025-10-29-nixos-baguette-images-in-chromeos %}) describes how to build NixOS
 `baguette` images too. Give it a try and let me know how it works for you!
 
 </div>

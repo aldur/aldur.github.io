@@ -1,28 +1,28 @@
 ---
 title: 'NixOS images in ChromeOS/Baguette'
 excerpt: >
-  TODO
+  Running NixOS VMs in ChromeOS, without LXC.
 ---
 
 <div class="hint" markdown="1">
 
   This post extends the [one about NixOS containers in ChromeOS]({% post_url
-  2025-06-19-nixos-in-crostini %}) to build secure and reproducible NixOS
-  Baguette images. I updated the {% include github_link.html
-  url="https://github.com/aldur/nixos-crostini" text="`nixos-crostini`" %}
-  repository with experimental Baguette support. Give it a try and let me know
-  how it works for you!
+  2025-06-19-nixos-in-crostini %}) to build Baguette images. I updated the {%
+  include github_link.html url="https://github.com/aldur/nixos-crostini"
+  text="`nixos-crostini`" %} repository with experimental Baguette support.
+  Give it a try and let me know how it works for you!
 
 </div>
 
-The ChromiumOS team is experimenting with a way (codename _Baguette_) for
+The ChromiumOS team is experimenting with a way (codename _Baguette_ 🥖) for
 Chromebooks to run VM images directly instead of going through LXC containers.
 
 The {% include github_link.html url="https://github.com/aldur/nixos-crostini"
 text="`nixos-crostini`" %} repository provides a NixOS module to build LXC
 container images for Crostini (the established way to run arbitrary Linux
 guests in ChromeOS). When [someone asked][0] if it would be possible to support
-Baguette as well, I started taking a look at what it would take.
+Baguette as well, I started taking a look at what it would take. This post 
+describes the results.
 
 ### ChromeOS VMs
 
@@ -31,8 +31,8 @@ machine monitor. We already met it when [investigating FIDO2 support in Linux
 ChromeOS guests]({% link _micros/fido2-almost-works-in-linux-on-chromeos.md
 %}).
 
-For Crostini, `crosvm` runs a stripped-down VM called [`termina`][2] that boots
-quickly and runs the user's containers. It also does a few more things:
+Crostini uses `crosvm` to run a stripped-down VM called [`termina`][2] that
+boots quickly and runs the user's containers. It also does a few more things:
 
 1. It mounts [`crosvm-tools`][5], made available by the host through `crosvm`,
    into a guest directory (and later into containers as well).
@@ -49,35 +49,33 @@ Crostini container very pleasant to use.
 
 ### Baguette NixOS images
 
-Our NixOS Baguette image will need to replicate the setup of the Debian image.
+Our NixOS Baguette image will need to replicate the Debian image setup.
 
-Typically, NixOS cannot run [non-Nix executables][8] (due to the lack of
-[FHS][9] and of a global library path. Luckily, we won't have to worry too much
-about that: `crosvm-tools` ship with their own libraries and dynamic linker and
-they will run without issues in NixOS.
+Typically, NixOS cannot run [non-Nix executables][8] due to the lack of
+[FHS][9] and of a global library path. Luckily, we won't have to worry about
+that: `crosvm-tools` include their own libraries and dynamic linker, so they
+run without issues in NixOS.
 
-When preparing NixOS LXC containers for Crostini, we already figured out how to
-run `garcon` and `sommelier` when the user logs in, so that part is solved.
+Back when preparing NixOS LXC images for Crostini, we already figured out how
+to run `garcon` and `sommelier` when the user logs in, so that part is solved.
 Mounting `crosvm-tools` and adding `systemd` units for `vshd` and `maitred` was
 straightforward as well.
 
-Next, I had to figure out how to package an image from a NixOS configuration.
-Baguette expects a BTRFS image like the one that the Debian image [creates][10]
-from a RootFS tarball. 
+Next, I had to figure out how to correctly build an image of the format
+Baguette expects from the NixOS configuration: a BTRFS image [built from][10] a
+RootFS tarball. To build the tarball, I took a page from the [`lxc-container`
+NixOS module][11]. Then, to package it: 
 
-To build the tarball, I took a page from the [`lxc-container` NixOS
-module][11]. Then, to package it: 
-
-- I first re-used the Debian Python script, which depends on
+- I initially re-used the Debian Python script, which depends on
   `libguestfs-appliance` and is not available for `aarch64-linux` in Nix[^arm].
-- Later on I switched to a QEMU-based approach that works with Nix and supports
+- I later switched to a QEMU-based approach that works with Nix and supports
   ARM[^kvm].
 
 [^arm]: I was running all experiments on the ARM-based Chromebook that I use for couch-computing.
 [^kvm]: Because I wanted the build scripts to run within the default `penguin` image, I also [overrode the derivation][12] so that, when `/dev/kvm` is missing, it will fallback to [emulation][13].
 
-I transferred the image to the Chromebook "Downloads" directory and figured out
-how to run it from `crosh`:
+After transferring the image to the Chromebook "Downloads" directory I figured
+out how to run it from `crosh`:
 
 ```bash
 vmc start --vm-type BAGUETTE \
@@ -86,25 +84,42 @@ vmc start --vm-type BAGUETTE \
   baguette
 ```
 
-Why such a weird CLI invocation, you might ask? Because `vmc create` doesn't
-recognize the option `--vm-type` described [in the `baguette_image` README][14]
-in ChromeOS 140 (it was added to the source [in August][15]).
-  
-To correctly get to a shell, I symlinked the `usermod` executable under
-`/usr/bin` and make sure that a few Unix groups existed, in addition to the
-user `chronos` (the default in `termina`). On _within_ the VM, I configured
-it to rely on the host for DNS and to read the environment variables 
-required by the `crosvm-tools`.
+
+<div class="todo" markdown="1">
+
+  Why such a weird CLI invocation? Because `vmc create` doesn't recognize yet (as
+  of ChromeOS 140) the option `--vm-type`, described [in the `baguette_image`
+  README][14]. That flag was added to the source [in August][15] and it will
+  probably need a bit more time before making it to production.
+
+</div>
+
+<div class="hint" markdown="1">
+
+  You might have heard about the [`#crostini-containerless` flag][16]. If you
+  are trying this at home, you can run `vmc start --vm-type BAGUETTE` even
+  without _setting_ it. It only affects what happens when you use the ChromeOS
+  UI to launch a Linux guest and, this way, you can try Baguette without
+  losing your Crostini containers.
+
+</div>
+
+In order to correctly land to a shell, I symlinked the `usermod` executable
+under `/usr/bin` and made sure that a few Unix groups existed, in addition to
+the user `chronos` (the default in `termina`). _Within_ the VM, I configured
+the DNS to rely on the host and a few environment variables required by the
+`crosvm-tools`.
 
 The last piece of the puzzle was how to enable X/Wayland forwarding, which was
-failing without a clear error. After some diving into the source code I 
-discovered that the device `/dev/wl0` was missing read/write permissions
-for non-root users. A quick `udev` rule fixed that.
+failing. By diving into the source code I discovered that the `/dev/wl0` device
+was missing read/write permissions for non-root users. A quick `udev` rule
+fixed that.
 
-The {% include github_link.html
+With that fixed as well, we are ready to shine! The {% include github_link.html
 url="https://github.com/aldur/nixos-crostini/blob/main/baguette.nix"
-text="`baguette.nix`" %} file includes what is required to get to the final
-result:
+text="`baguette.nix`" %} file includes all the configuration in details, if you
+are curious. Here is the final result: a `baguette-nixos` VM correctly
+forwarding a Wayland session to ChromeOS.
 
 {:.text-align-center}
 ![A screenshot showing the `baguette-nixos` VM running Featherpad]({% link images/baguette.webp %}){:.centered}
@@ -131,7 +146,7 @@ hardware. Meanwhile, I will keep hacking to iron out these last details,
 integrate NixOS Baguette into the UI, and allow ourselves to pick the usernames
 we like the best.
 
-Thanks for reading, and 'til next time!
+Thanks for reading, and 'til next time! 👋
 
 #### Footnotes
 
@@ -152,3 +167,4 @@ Thanks for reading, and 'til next time!
 [13]: https://www.qemu.org/docs/master/devel/index-tcg.html
 [14]: https://chromium.googlesource.com/chromiumos/platform2/+/HEAD/vm_tools/baguette_image?autodive=0
 [15]: https://chromium.googlesource.com/chromiumos/platform2/+/9a972c766c7
+[16]: https://chromium.googlesource.com/chromium/src/+/0d439926c092142a02d96d38cfbb6a68044f2382
