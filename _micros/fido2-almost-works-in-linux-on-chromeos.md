@@ -1,6 +1,7 @@
 ---
 title: 'FIDO2 almost works in Linux on ChromeOS'
 date: 2025-07-30
+tags: [ChromeOS]
 ---
 
 ChromeOS can run Linux containers on a virtual machine, in a system called

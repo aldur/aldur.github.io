@@ -3,12 +3,11 @@ short_title: U Bits
 
 about:
   long: >- # ignore line-breaks until next key.
-    I sometimes find knowledge that has stood the
-    test of time and applies across disciplines. It helps me connect
-    the dots, make better decisions, or simply understand things more deeply. Some
-    call it "mental models"; I like to call it "Universal Bits". Whenever
-    this happens, I write my thoughts here. I also write about
-    computer science and whatever topic captures my curiosity.
+    Sometimes, I'll find knowledge that has stood the test of time and applies
+    across disciplines. It helps me connect the dots, make better decisions, or
+    simply understand things more deeply. Some call it "mental models"; I like
+    to call it "Universal Bits" and I write about it here. You will also find me 
+    writing about computer science and any topic that captures my curiosity.
   short: >-
     Hi! 👋 Exploring mental models, connecting the dots, and writing about it.
 
@@ -73,7 +72,7 @@ minima:
       url: "https://x.com/AdrianoDiLuzio"
 
   show_excerpts: true
-  show_tags: false
+  show_tags: true
 
 # If you want to link only specific pages in your header, uncomment this and
 # add the path to the pages in
@@ -117,6 +116,7 @@ defaults:
     values:
       layout: "post"
       is_micro: true
+      show_excerpt: false  # Ensure no excerpts in tag pages
       categories:
         - "micros"
 
@@ -124,6 +124,7 @@ collections:
   micros:
     output: true
     permalink: micros/:year/:month/:day/:title/
+    show_excerpts: false
 
 redirect_from:
   json: false

@@ -2,6 +2,7 @@
 title: 'Deploying NixOS container images'
 date: 2025-07-19
 modified_date: 2025-07-26
+tags: [ChromeOS]
 ---
 
 This post extends the [one about NixOS containers in ChromeOS]({% post_url

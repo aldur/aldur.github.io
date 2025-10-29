@@ -1,7 +1,8 @@
 ---
-title: 'NixOS images in ChromeOS/Baguette'
+title: 'NixOS images in ChromeOS Baguette'
 excerpt: >
   Running NixOS VMs in ChromeOS, without LXC.
+tags: [ChromeOS]
 ---
 
 <div class="hint" markdown="1">
@@ -71,8 +72,12 @@ NixOS module][11]. Then, to package it:
 - I later switched to a QEMU-based approach that works with Nix and supports
   ARM[^kvm].
 
-[^arm]: I was running all experiments on the ARM-based Chromebook that I use for couch-computing.
-[^kvm]: Because I wanted the build scripts to run within the default `penguin` image, I also [overrode the derivation][12] so that, when `/dev/kvm` is missing, it will fallback to [emulation][13].
+[^arm]: I was running all experiments on the ARM-based Chromebook that I use
+    for couch-computing.
+
+[^kvm]: Because I wanted the build scripts to run within the default `penguin`
+    image, I also [overrode the derivation][12] so that, when `/dev/kvm` is
+    missing, it will fallback to [emulation][13].
 
 After transferring the image to the Chromebook "Downloads" directory I figured
 out how to run it from `crosh`:

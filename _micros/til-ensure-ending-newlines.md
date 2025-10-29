@@ -1,6 +1,7 @@
 ---
 title: 'TIL: Ensure ending newlines'
 date: 2025-10-09
+tags: [TIL]
 ---
 
 For two days in a row, a `git patch` wouldn't apply because it wasn't ending

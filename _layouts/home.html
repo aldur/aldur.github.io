@@ -10,34 +10,8 @@ layout: base
   {{ content }}
 
   {% assign posts = site.posts %}
-  {%- if posts.size > 0 -%}
-    {%- if page.list_title -%}
-      <h2 class="post-list-heading">{{ page.list_title }}</h2>
-    {%- endif -%}
-    <ul class="post-list">
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      {% assign postsByYear = posts | group_by_exp:"post", "post.date | date: '%Y'" %}
-      {% for year in postsByYear %}
-        <h2>{{ year.name }}</h1>
-          {% for post in year.items %}
-            <li>
-              <span class="post-meta">
-                {{ post.date | date: date_format }}
-                {% if post.modified_date %}
-                  ~ ✎ {{ post.modified_date | date_to_xmlschema | date: date_format }}
-                {% endif %}
-              </span>
-              <h3 class="post-link">
-                <a class="post-link" href="{{ post.url | relative_url }}">
-                  {{ post.title | escape }}
-                </a>
-              </h3>
-              {%- if site.minima.show_excerpts -%}
-                {{ post.excerpt }}
-              {%- endif -%}
-            </li>
-          {% endfor %}
-      {% endfor %}
-    </ul>
+  {%- if page.list_title -%}
+    <h2 class="post-list-heading">{{ page.list_title }}</h2>
   {%- endif -%}
+  {% include post_list.html posts=posts %}
 </div>

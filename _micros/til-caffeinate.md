@@ -1,6 +1,7 @@
 ---
 title: 'TIL: Caffeinate keeps macOS awake'
 date: 2025-10-24
+tags: [TIL]
 ---
 
 I am probably pretty late to this one, but on macOS you can use `caffeinate` to
