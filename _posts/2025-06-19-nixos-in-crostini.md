@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   How to turn a Chromebook into a secure and productive device through NixOS
   containers and hardware keys.
-modified_date: 2025-10-19
+modified_date: 2025-10-28
 ---
 
 Chromebooks have a reputation of being secure devices:
@@ -86,7 +86,7 @@ website through Chrome, unlock the hardware key through its PIN, and login.
 
 In some cases, a hardware key can only be used as a second factor. When that
 happens, I use it to decrypt the password from a vault (e.g. using
-[`passage`](https://github.com/FiloSottile/passage) in the shell, or
+[`passage`][0] in the shell, or
 authenticating to a password manager with a passkey). As more services embrace
 passkeys, the need for passwords will hopefully become less frequent.
 
@@ -140,14 +140,11 @@ url="https://github.com/aldur/nixos-crostini" text="quick start" %} that
 includes a sample configuration and can be useful to both new Nix users and
 veterans to get up and running.
 
-The repository also includes the magic glue that makes this work well: the {%
-include github_link.html
-url="https://github.com/aldur/nixos-crostini/crostini.nix"
-text="`crostini.nix`" %} module, which runs `garcon` and `sommelier` through
+The repository also includes the {% include github_link.html
+url="https://github.com/aldur/nixos-crostini/blob/main/common.nix" text="magic
+glue" %} that makes it work by running `garcon` and `sommelier` through
 `systemd`. The ChromeOS source code and the `cros-container-guest-tools-git`
-[AUR
-package](https://aur.archlinux.org/packages/cros-container-guest-tools-git)
-were invaluable in making this happen.
+[AUR package][11] were invaluable in making this happen.
 
 After you import this module in your configuration and build the image,
 the next step is to get it on your Chromebook. There are [a few ways]({% link
@@ -155,8 +152,7 @@ _micros/more-ways-to-bootstrap-nixos-containers.md %}) to do this, including
 building it in the default Debian container, copying it over through a USB
 stick, and uploading it to Drive.
 
-If you have another NixOS instance handy, you can push it to an [LXD image
-server](https://ubuntu.com/tutorials/create-custom-lxd-images#6-making-images-public)
+If you have another NixOS instance handy, you can push it to an [LXD image server][12]
 [behind Tailscale]({% link _micros/more-ways-to-bootstrap-nixos-containers.md
 %}/#from-an-lxd-image-server-behind-tailscale). To do that, first enable `lxd`:
 
@@ -180,8 +176,7 @@ lxc image import --public --alias lxc-nixos ${lxc-metadata}/tarball/*.tar.xz ${l
 
 #### How-to: Deploying the image
 
-If you haven't already, [enable
-Linux on ChromeOS](https://support.google.com/chromebook/answer/9145439?hl=en). When asked,
+If you haven't already, [enable Linux on ChromeOS][13]. When asked,
 choose the same username you will use within the container. I usually allocate 32GB
 of storage.
 
@@ -229,8 +224,7 @@ containers, and it is the right choice.
 
 <div class="hint" markdown="1">
 
-At this point, if you want, you can skip directly to ["Add the container to
-ChromeOS"](#how-to-add-the-container-to-chromeos).
+At this point, if you want, you can skip directly to ["Add the container to ChromeOS"](#how-to-add-the-container-to-chromeos).
 
 Read on, instead, if you'd like to understand how this works under the hood.
 
@@ -368,8 +362,7 @@ It ensures that `lxc` will add the following to the container configuration:
 
 <div class="seealso" markdown="1">
 
-The [Smart Card
-Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
+The [Smart Card Connector][14]
 app can hold a lock on the hardware key, making the above command fail. I
 recommend disabling it and only enable it when needed (e.g., for [SSH access
 through Terminal](#how-to-ssh-into-the-container)).
@@ -403,10 +396,9 @@ left this note in case it is useful to you.
 
 <div class="admonition" markdown="1">
 
-Remember! The [Smart Card
-Connector](https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco)
-app required for SSH through ChromeOS [conflicts with USB
-forwarding](#how-to-usb-forwarding). Disable it when not using it.
+Remember! The [Smart Card Connector][14] app required for SSH through ChromeOS
+[conflicts with USB forwarding](#how-to-usb-forwarding). Disable it when not
+using it.
 
 </div>
 
@@ -446,22 +438,39 @@ the same tools.
 Thanks for reading, and 'til next time!
 
 <div class="hint" markdown="1">
-The ChromiumOS team is experimenting with a way (codename `baguette`) to run
-VM images directly, without going through LXC. The 
-{% include github_link.html url="https://github.com/aldur/nixos-crostini/issues/1#issuecomment-3418319309" text="`nixos-crostini`" %}
-repository provides experimental support for `baguette` images too. Give it a try and 
-let me know how it works for you!
+
+The ChromiumOS team is experimenting with a way (codename `baguette`) to run VM
+images directly, without going through LXD. [This post]({% post_url
+2025-10-29-nixos-baguette-images-in-chromeos %}) describes how to build NixOS
+`baguette` images too. Give it a try and let me know how it works for you!
+
 </div>
 
 ## References
 
-- [ChromeOS Security Whitepaper](https://www.chromium.org/chromium-os/developer-library/reference/security/security-whitepaper/#hardware-root-of-trust-and-verified-boot.md)
-- [Crostini Developer Guide](https://www.chromium.org/chromium-os/developer-library/guides/containers/crostini-developer-guide/)
-- [Running Custom Containers Under ChromeOS](https://www.chromium.org/chromium-os/developer-library/guides/containers/containers-and-vms/)
-- [Port forwarding and tunneling in ChromeOS](https://www.chromium.org/chromium-os/developer-library/reference/security/port-forwarding/)
-- [Crosh -- The ChromiumOS shell](https://www.chromium.org/chromium-os/developer-library/reference/device/crosh/)
-- [ArchLinux wiki: ChromeOS Devices](https://wiki.archlinux.org/title/Chrome_OS_devices/Crostini.md)
-- [NixOS wiki: Installing Nix on Crostini](https://wiki.nixos.org/wiki/Installing_Nix_on_Crostini.md)
-- [Chrome internals: DNS (copy/paste to your browser URL bar)](chrome://net-internals/#dns)
-- [Logging on ChromeOS](https://www.chromium.org/chromium-os/developer-library/reference/logging/logging/)
-- [`/var/log/messages` from Chrome](file:///var/log/messages)
+- [ChromeOS Security Whitepaper][1]
+- [Crostini Developer Guide][2]
+- [Running Custom Containers Under ChromeOS][3]
+- [Port forwarding and tunneling in ChromeOS][4]
+- [Crosh -- The ChromiumOS shell][5]
+- [ArchLinux wiki: ChromeOS Devices][6]
+- [NixOS wiki: Installing Nix on Crostini][7]
+- [Chrome internals: DNS (copy/paste to your browser URL bar)][8]
+- [Logging on ChromeOS][9]
+- [`/var/log/messages` from Chrome][10]
+
+[0]: https://github.com/FiloSottile/passage
+[1]: https://www.chromium.org/chromium-os/developer-library/reference/security/security-whitepaper/#hardware-root-of-trust-and-verified-boot.md
+[2]: https://www.chromium.org/chromium-os/developer-library/guides/containers/crostini-developer-guide/
+[3]: https://www.chromium.org/chromium-os/developer-library/guides/containers/containers-and-vms/
+[4]: https://www.chromium.org/chromium-os/developer-library/reference/security/port-forwarding/
+[5]: https://www.chromium.org/chromium-os/developer-library/reference/device/crosh/
+[6]: https://wiki.archlinux.org/title/Chrome_OS_devices/Crostini
+[7]: https://wiki.nixos.org/wiki/Installing_Nix_on_Crostini
+[8]: chrome://net-internals/#dns
+[9]: https://www.chromium.org/chromium-os/developer-library/reference/logging/logging/
+[10]: file:///var/log/messages
+[11]: https://aur.archlinux.org/packages/cros-container-guest-tools-git
+[12]: https://ubuntu.com/tutorials/create-custom-lxd-images#6-making-images-public
+[13]: https://support.google.com/chromebook/answer/9145439?hl=en
+[14]: https://chromewebstore.google.com/detail/smart-card-connector/khpfeaanjngmcnplbdlpegiifgpfgdco

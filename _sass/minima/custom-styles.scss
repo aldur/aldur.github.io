@@ -214,6 +214,11 @@ code {
   color: $text-color;
 }
 
+// Preserve link colors for code inside links
+a code {
+  color: inherit;
+}
+
 .post-navigation {
   display: grid;
   grid-template-columns: 1fr 1fr;
