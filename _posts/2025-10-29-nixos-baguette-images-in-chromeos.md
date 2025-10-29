@@ -1,7 +1,8 @@
 ---
-title: 'NixOS images in ChromeOS/Baguette'
+title: 'NixOS images in ChromeOS Baguette'
 excerpt: >
   Running NixOS VMs in ChromeOS, without LXC.
+tags: [ChromeOS]
 ---
 
 <div class="hint" markdown="1">

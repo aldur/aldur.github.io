@@ -1,6 +1,7 @@
 ---
 title: 'SSH from ChromeOS'
 date: 2025-07-28
+tags: [ChromeOS]
 ---
 
 ChromeOS allows SSH authentication through either the built-in Terminal
