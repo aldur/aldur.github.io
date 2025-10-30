@@ -119,12 +119,24 @@ defaults:
       show_excerpt: false  # Ensure no excerpts in tag pages
       categories:
         - "micros"
+  # Same for `tag_indexes`
+  -
+    scope:
+      path: ""
+      type: "tag_indexes"
+    values:
+      layout: "tag_index"
+      categories:
+        - "tag_indexes"
 
 collections:
   micros:
     output: true
     permalink: micros/:year/:month/:day/:title:output_ext
     show_excerpts: false
+  tag_indexes:
+    output: true
+    permalink: tags/:name:output_ext
 
 redirect_from:
   json: false

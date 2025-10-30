@@ -7,19 +7,16 @@ Personal blog, powered by [Jekyll][0] and the [Minima][4] theme.
 ### Tags
 
 Tag posts in their frontmatter with `tags: [tag1, tag2]`. Tags only appear on
-posts if there exists a corresponding tag page.
-
-To create a tag page, create `tag/<tagname>.md` with:
+posts if there exists a corresponding tag index page. Create one at
+`tag_indexes/<tagname>.md` with:
 
 ```yaml
 ---
-layout: tag
 tag: tagname
 ---
 ```
 
-The tag layout filters all posts with that tag. The page title can be
-customized by adding `title: "Custom Title"` to the frontmatter.
+The tag layout filters all posts with that tag. 
 
 ### Excerpts
 
