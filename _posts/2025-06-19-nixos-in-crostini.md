@@ -3,7 +3,10 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   How to turn a Chromebook into a secure and productive device through NixOS
   containers and hardware keys.
-modified_date: 2025-10-28
+modified_date: 2025-10-29
+tags: [ChromeOS]
+redirect_from:
+  - /nixos-crostini
 ---
 
 Chromebooks have a reputation of being secure devices:

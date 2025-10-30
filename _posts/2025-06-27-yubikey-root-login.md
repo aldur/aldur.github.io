@@ -3,6 +3,7 @@ title: 'Root login in NixOS containers'
 date: 2025-06-29 17:25:00 +0200
 excerpt: >
   Finding a secure and usable privilege escalation method for NixOS containers.
+tags: [ChromeOS]
 ---
 
 When working in [NixOS containers under ChromeOS]({% link

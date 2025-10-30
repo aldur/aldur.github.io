@@ -1,6 +1,6 @@
 # Universal Bits
 
-Personal blog, powered by [Jekyll][0].
+Personal blog, powered by [Jekyll][0] and [Minima][4].
 
 ## Features
 
@@ -36,7 +36,10 @@ scrolling. The stylesheet is at `feed.xslt.xml`.
 
 ### View post as `.md`
 
-View the markdown source of any post by swapping `.html` for `.md` in the URL.
+View the markdown source of any post by:
+
+- Swapping `.html` for `.md` in the URL
+- Adding `.md` if there's no extension
 
 ### Custom redirects
 
@@ -77,3 +80,4 @@ Install [Nix][1] and enable [flakes][2]. Then, `nix run`. Optionally, enable
 [1]: https://nixos.org
 [2]: https://nixos.wiki/wiki/Flakes
 [3]: https://github.com/jekyll/jekyll-redirect-from
+[4]: https://github.com/jekyll/minima

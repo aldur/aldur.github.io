@@ -4,6 +4,7 @@ date: 2025-06-26 11:17:00 +0200
 excerpt: >
   I use a single Yubikey and two SSH keys in NixOS containers (under ChromeOS) to
   authenticate to remote hosts and sign commits.
+tags: [ChromeOS]
 ---
 
 With [NixOS containers in ChromeOS]({% link

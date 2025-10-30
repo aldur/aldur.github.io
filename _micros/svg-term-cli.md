@@ -1,6 +1,7 @@
 ---
 title: 'TIL: animated SVGs'
 date: 2025-07-10
+tags: [TIL]
 ---
 
 Just discovered [`svg-term-cli`](https://github.com/marionebl/svg-term-cli),
