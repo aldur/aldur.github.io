@@ -36,7 +36,7 @@ scrolling. The stylesheet is at `feed.xslt.xml`.
 View the markdown source of any post by:
 
 - Swapping `.html` for `.md` in the URL
-- Adding `.md` if there's no extension
+- Or adding `.md` (if there's no extension)
 
 ### Custom redirects
 
