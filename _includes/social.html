@@ -24,15 +24,12 @@
   <data class="u-key" hidden value="{{ site.author.pgp_pk_url }}"></data>
 {%- endif %}
 <data class="u-photo u-logo" hidden value="/assets/images/favicon.svg"></data>
-{%- if site.social and site.social.links %}
-  {%- for link in site.social.links %}
-    <data class="u-url" hidden value="{{ link }}"></data>
-  {%- endfor %}
-{%- endif %}
 <ul class="social-media-list">
   {%- if site.author and site.author.email %}
+    <!-- Make the email available without `mailto:` -->
+    <data class="u-email" rel="me" hidden value="{{ site.author.email }}"></data>
     <li>
-      <a class="u-email" rel="me" href="mailto:{{ site.author.email }}" target="_blank" title="email">
+      <a href="mailto:{{ site.author.email }}" target="_blank" title="email">
          <svg class="svg-icon grey" viewBox="0 0 512 512">
            {% include social-icons/at.svg.path %}
          </svg>
