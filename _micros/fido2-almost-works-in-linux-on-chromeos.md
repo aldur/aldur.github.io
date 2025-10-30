@@ -5,21 +5,19 @@ tags: [ChromeOS]
 ---
 
 ChromeOS can run Linux containers on a virtual machine, in a system called
-[Crostini](https://chromeos.dev/en/linux). I have recently gone through [a
-few]({% link _posts/2025-06-19-nixos-in-crostini.md %}) [rabbit holes]({% link
-_micros/more-ways-to-bootstrap-nixos-containers.md %}) [about it]({% link
-_micros/ssh-from-chromeos-terminal.md %}).
+[Crostini][0]. I have recently gone through [a few rabbit holes about it]({%
+link _tag_indexes/ChromeOS.md %}).
 
 #### USB security keys
 
 The VM and the containers add a layer of separation from the main operating
 system. That's great from a security point of view! But it limits what one can
 do inside the Linux environment. Specifically, [USB devices need to be
-forwarded]({% link _posts/2025-06-19-nixos-in-crostini.md
-%}#how-to-usb-forwarding) to the VM (first) and to the container (next). And,
-because the VM runs a hardened kernel, not all USB devices will work correctly.
+forwarded]({% link _posts/2025-06-19-nixos-in-crostini.md %}#how-to-usb-forwarding)
+to the VM (first) and to the container (next). And, because the VM runs a
+hardened kernel, not all USB devices will work correctly.
 
-After some trial and error, I [managed](({% link
+After some trial and error, I [managed]({% link
 _posts/2025-06-19-nixos-in-crostini.md %}#how-to-usb-forwarding)) to get
 Yubikeys to work reliably in Linux for SSH for authentication and signatures.
 Under the hood, the [`yubikey-agent`]({% link
@@ -155,7 +153,7 @@ Confirm user presence for key ED25519-SK SHA256:4ARi+YMB8t5EoquC/ZbNCfD62gI+/ObX
 
 I tried a few things around this: neither the `root` user nor giving the
 container full privileges helped. I also played around with
-[`go-libfido2`](https://github.com/keys-pub/go-libfido2) and peeked at the
+[`go-libfido2`][1] and peeked at the
 debug logs of `libfido2`, just to discover that the communication with the
 security key seems to get stuck at different, non-deterministic steps of the
 protocol.
@@ -168,3 +166,6 @@ mode. Bummer! Still, worth a try.
 
 I have not yet looked at the code that implements this features in `crosvm`,
 but I wonder how big a lift would it be to add support for FIDO2. One day, maybe!
+
+[0]: https://chromeos.dev/en/linux
+[1]: https://github.com/keys-pub/go-libfido2
