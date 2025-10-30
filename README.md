@@ -1,6 +1,6 @@
 # Universal Bits
 
-Personal blog, powered by [Jekyll][0] and [Minima][4].
+Personal blog, powered by [Jekyll][0] and the [Minima][4] theme.
 
 ## Features
 
@@ -52,7 +52,7 @@ redirect_from:
 
 ### Theme
 
-The theme's default color follows the user's system preference (light/dark).
+[Minima's][4] default color follows the user's system preference (light/dark).
 The toggle icon overrides it.
 
 ## Making changes
