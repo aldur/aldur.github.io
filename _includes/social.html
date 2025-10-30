@@ -15,16 +15,24 @@
   <data class="p-note" hidden value="{{ site.about.short | escape }}"></data>
 {%- endif %}
 {%- if site.author and site.author.nick %}
-  <data class="p-name p-nickname" hidden value="{{ site.author.nick | escape }}"></data>
+  <data class="p-nickname" hidden value="{{ site.author.nick | escape }}"></data>
+{%- endif %}
+{%- if site.author and site.author.name %}
+  <data class="p-name" hidden value="{{ site.author.name | escape }}"></data>
 {%- endif %}
 {%- if site.author and site.author.pgp_pk_url %}
   <data class="u-key" hidden value="{{ site.author.pgp_pk_url }}"></data>
 {%- endif %}
-<data class="u-photo" hidden value="/assets/images/favicon.svg"></data>
+<data class="u-photo u-logo" hidden value="/assets/images/favicon.svg"></data>
+{%- if site.social and site.social.links %}
+  {%- for link in site.social.links %}
+    <data class="u-url" hidden value="{{ link }}"></data>
+  {%- endfor %}
+{%- endif %}
 <ul class="social-media-list">
   {%- if site.author and site.author.email %}
     <li>
-      <a rel="me" href="mailto:{{ site.author.email }}" target="_blank" title="email">
+      <a class="u-email" rel="me" href="mailto:{{ site.author.email }}" target="_blank" title="email">
          <svg class="svg-icon grey" viewBox="0 0 512 512">
            {% include social-icons/at.svg.path %}
          </svg>
@@ -33,7 +41,7 @@
   {%- endif %}
   {%- for entry in site.minima.social_links -%}
     <li>
-      <a rel="me" href="{{ entry.url }}" target="_blank" title="{{ entry.title }}">
+      <a class="u-url" rel="me" href="{{ entry.url }}" target="_blank" title="{{ entry.title }}">
         <!-- ! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. -->
          <svg class="svg-icon grey" viewBox="0 0 512 512">
            {% include social-icons/{{ entry.icon }}.svg.path %}
