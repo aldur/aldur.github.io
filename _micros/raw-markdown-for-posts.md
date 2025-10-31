@@ -12,8 +12,18 @@ The Markdown layout is useful for LLMs (that can parse it while being more
 token-efficient), but also for those that want to consume content their own way
 (for instance, this now allows to quickly read posts through `curl`):
 
+{%- comment -%}Sorry, Liquid doesn't support regex replacements.{%- endcomment -%}
+{% assign last_char = page.url | slice: -1 %}
+{% if page.url contains ".html" %}
+  {% assign md_url = page.url | replace: ".html", ".md" %}
+{% elsif last_char == "/" %}
+  {% assign url_length = page.url | size | minus: 1 %}
+  {% assign md_url = page.url | slice: 0, url_length | append: ".md" %}
+{% else %}
+  {% assign md_url = page.url | append: ".md" %}
+{% endif %}
 ```bash
-curl {{ page.url | replace: ".html", ".md" | absolute_url }}
+curl {{ md_url | absolute_url }}
 ```
 
 I haven't done it yet, but it should also be pretty straightforward to add a
