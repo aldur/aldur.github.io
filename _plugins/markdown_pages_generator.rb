@@ -29,8 +29,8 @@ module Jekyll
 
       markdown_content = File.read(source_path, encoding: 'UTF-8')
 
-      # Swap .html for .md in the URL
-      url = doc.url.sub(/\.html$/, '.md')
+      # Swap / or .html for .md in the URL
+      url = doc.url.sub(/\.html|\/$/, '.md')
 
       static_file = MarkdownStaticFile.new(site, url, markdown_content)
       site.static_files << static_file

@@ -51,12 +51,13 @@ Configure whether excerpts show (by order of priority):
 RSS feeds are styled to mimic the main blog style and read through continuous
 scrolling.
 
-### Viewing posts as `.md`
+### Viewing posts as Markdown
 
-View the markdown source of any post by:
+View the markdown source of any post by changing its URL to end with `.md`:
 
-- Swapping `.html` for `.md` in the URL
-- Or adding `.md` (if there's no extension)
+- `page.html` → `page.md`
+- `page/` → `page.md`
+- `page` → `page.md`
 
 ### Custom redirects
 

@@ -132,7 +132,7 @@ defaults:
 collections:
   micros:
     output: true
-    permalink: micros/:year/:month/:day/:title:output_ext
+    permalink: micros/:year/:month/:day/:title/
     show_excerpts: false
   tag_indexes:
     output: true
