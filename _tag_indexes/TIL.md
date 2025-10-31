@@ -1,4 +1,3 @@
 ---
-layout: tag
 tag: TIL
 ---

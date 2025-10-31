@@ -1,0 +1,17 @@
+---
+layout: base
+---
+
+<div class="home">
+  <h1 class="page-heading">Posts tagged: {{ page.tag }}</h1>
+
+  {{ content }}
+
+  {% assign all_content = site.posts | concat: site.micros | sort: 'date' | reverse %}
+  {% assign filtered_posts = all_content | where_exp: "post", "post.tags contains page.tag" %}
+  {%- if filtered_posts.size > 0 -%}
+    {% include post_list.html posts=filtered_posts %}
+  {%- else -%}
+    <p>No posts found with tag "{{ page.tag }}".</p>
+  {%- endif -%}
+</div>

@@ -2,6 +2,8 @@
 title: 'QoL: Smart select around single quotes in iTerm'
 date: 2025-01-12
 redirect_from: /articles/2025/01/12/qol-selecting-around-single-quotes-in-iterm.html
+excerpt: >
+  Fixing iTerm's smart selection for single quotes
 ---
 
 <div class="video-container">
