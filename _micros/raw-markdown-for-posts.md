@@ -3,15 +3,6 @@ title: 'View posts as Markdown'
 date: 2025-10-30
 ---
 
-I have just added a small Jekyll plugin to this blog that allows viewing posts
-in Markdown (rather than HTML). To see it in action, add an `.md` extension to
-any post link to fetch the raw Markdwon. This is how it looks for [this
-post]({{ page.url | replace: ".html", ".md" | relative_url }}).
-
-The Markdown layout is useful for LLMs (that can parse it while being more
-token-efficient), but also for those that want to consume content their own way
-(for instance, this now allows to quickly read posts through `curl`):
-
 {%- comment -%}Sorry, Liquid doesn't support regex replacements.{%- endcomment -%}
 {% assign last_char = page.url | slice: -1 %}
 {% if page.url contains ".html" %}
@@ -22,6 +13,16 @@ token-efficient), but also for those that want to consume content their own way
 {% else %}
   {% assign md_url = page.url | append: ".md" %}
 {% endif %}
+
+I have just added a small Jekyll plugin to this blog that allows viewing posts
+in Markdown (rather than HTML). To see it in action, add an `.md` extension to
+any post link to fetch the raw Markdwon. This is how it looks for [this
+post]({{ md_url | absolute_url }}).
+
+The Markdown layout is useful for LLMs (that can parse it while being more
+token-efficient), but also for those that want to consume content their own way
+(for instance, this now allows to quickly read posts through `curl`):
+
 ```bash
 curl {{ md_url | absolute_url }}
 ```
