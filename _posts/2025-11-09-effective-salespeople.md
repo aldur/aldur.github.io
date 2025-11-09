@@ -123,4 +123,21 @@ a great fit or a good customer. If that happens, they'll have overcome any
 objection they might have had and convinced themselves that they want to work
 with you.
 
+##### Closing thoughts
+
+I find that sales, negotiations, and product management share these traits.
+They boil down to a few core principles: being upfront and providing true
+value. Forecasting what to expect and know what you don't know. Managing
+stakeholders' expectations by defusing the negatives and, as a result,
+reinforcing the positives. Not everyone will be your user, nor will every user
+be right for you. Change perspective and re-frame things to let the other party
+sell _to you_. You will learn what they really need and they will work with you
+to overcome objections and biases.
+
+How do you approach sales? Have you found yourself nodding along or violently
+shaking your head? I'd love to hear about it – shoot me [an email](mailto:{{
+site.author.email }}?subject=My thoughts on effective sales)!
+
+Thank you for reading and 'til next time! 👋
+
 [0]: https://en.wikipedia.org/wiki/Crossing_the_Chasm
