@@ -3,10 +3,9 @@ title: 'Unlimited tokens with llm-mlx'
 date: 2025-07-13
 ---
 
-I like playing with self-hosted LLMs on Apple hardware through
-[`llm-mlx`](https://github.com/simonw/llm-mlx/tree/main), because it doesn't
-require running any additional service (e.g., `ollama`) and produces tokens
-faster.
+I like playing with self-hosted LLMs on Apple hardware through [`llm-mlx`][0],
+because it doesn't require running any additional service (e.g., `ollama`) and
+produces tokens faster.
 
 When asking the model for longer outputs (e.g., when requesting a structured
 JSON conforming to a given schema), the model would sometimes stop in the
@@ -88,3 +87,5 @@ We can also make it permanent as follows:
 $ llm models options set mlx-community/gemma-3-12b-it-qat-4bit unlimited true
 Set default option unlimited=true for model mlx-community/gemma-3-12b-it-qat-4bit
 ```
+
+[0]: https://github.com/simonw/llm-mlx/tree/main
