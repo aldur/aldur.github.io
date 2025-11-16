@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   How to turn a Chromebook into a secure and productive device through NixOS
   containers and hardware keys.
-modified_date: 2025-10-29
+modified_date: 2025-11-16
 tags: [ChromeOS]
 redirect_from:
   - /nixos-crostini
@@ -291,33 +291,32 @@ echo "Clipboard works!" | wl-copy
 nix run nixpkgs#xorg.xeyes
 ```
 
-#### How-to: Add the container to ChromeOS
+#### How-to: Launch the container from "Terminal"
 
-ChromeOS provides an experimental UI for creating and managing multiple
-Crostini containers. When enabled, it significantly improves UX! It allows to:
+<div class="warning" markdown="1">
 
-- Launch our container by clicking on its name in the terminal, instead of
-going through `crosh`. If the VM is off, it will launch it as well.
-- Mount folders into the container from the Files application.
-- Browse the container user home directory through Files.
+ChromeOS 141 unfortunately deprecates the `#crostini-multi-container` flag that
+[allowed to manage multiple containers through the UI]({% link
+_micros/multiple-crostini-containers.md %}).
 
-To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
-the drop-down to "Enabled" and then restart.
+Integrating `lxc-nixos` with "Terminal" now requires replacing the original
+Debian container.
 
-Now, go to: Settings → Linux → Manage extra containers → Create. Fill in
-the "Container name" with `lxc-nixos` and click on Create (importantly, do this
-_after_ you have created the container from `crosh`). If the container was
-previously running, stop it first with `lxc stop`. You can now start it from
-Terminal.
+</div>
 
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
-_The experimental UI makes it seamless to start and access the container from
-Terminal._
+To launch the `lxc-nixos` from "Terminal", rename it to `penguin` as follows:
 
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Files application.]({% link images/chromeos-files-lxc-nixos.webp %}){:.centered}
-_Use Files to browse the container home and mount directories into it._
+```bash
+lxc stop --force penguin
+lxc stop --force lxc-nixos
+# Rename the original "penguin" to "debian"
+lxc rename penguin debian
+lxc rename lxc-nixos penguin
+lxc start penguin
+```
+
+From now on, use `penguin` instead of `lxc-nixos` in all `lxc`/`vmc`
+invocations.
 
 #### How-to: USB forwarding
 
