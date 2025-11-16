@@ -35,9 +35,9 @@ what that would take. This post describes the results:
 
 <div class="todo" markdown="1">
 
-  _tl;dr_: Build both LXC containers and Baguette images from your NixOS
-  configuration. They run in Crostini and provide the same features and UX
-  (e.g., clipboard sharing, Wayland/port forwarding, file browsing from
+  _tl;dr_: You can build both LXC containers and Baguette images to run your
+  NixOS configuration in Crostini. They provide the same features and
+  UX (e.g., clipboard sharing, Wayland/port forwarding, file browsing from
   ChromeOS).
 
 </div>
