@@ -2,8 +2,7 @@
 title: 'Two SSH keys on a Yubikey'
 date: 2025-06-26 11:17:00 +0200
 excerpt: >
-  I use a single Yubikey and two SSH keys in NixOS containers (under ChromeOS) to
-  authenticate to remote hosts and sign commits.
+  I use a single Yubikey and two SSH keys to authenticate to remote hosts and sign commits.
 tags: [ChromeOS]
 ---
 
@@ -12,9 +11,8 @@ _posts/2025-06-19-nixos-in-crostini.md %}), I use an SSH key in a Yubikey to
 authenticate to remote hosts and keep the key separated from the container.
 
 Creating keys on the Yubikey and ensuring good UX while using them can be
-tricky, but [`yubikey-agent`](https://github.com/FiloSottile/yubikey-agent)
-makes it seamless. There's a catch though! It supports one SSH key only,
-while I'd like to use two:
+tricky, but [`yubikey-agent`][0] makes it seamless. There's a catch though! It
+supports one SSH key only, while I'd like to use two:
 
 1. One to authenticate (e.g., to GitHub).
 2. The other to [sign `git` commits][sign_commits].
@@ -28,20 +26,18 @@ while I only need to support two keys. So, I decided to scratch my own itch and
 implement a solution.
 
 Luckily, the agent is written in Go, is easy to understand. The
-[`piv-go`](https://github.com/go-piv/piv-go) does the heavy lifting. Under the
+[`piv-go`][1] does the heavy lifting. Under the
 hood:
 
 - It asks the Yubikey to generate an elliptic curve (ECC256) key pair in the
-PIV Authentication slot. 
+PIV Authentication slot.
 - Then it creates a self-signed X509 certificate to wrap the public key and
-make it available to clients (our SSH agent) through the PKCS#11 interface. 
+make it available to clients (our SSH agent) through the PKCS#11 interface.
 
-[This Yubikey
-tutorial](https://developers.yubico.com/PIV/Guides/PIV_Walk-Through.html)
-describes roughly the same process, but I find the Go code easier to read
-and more precise. In addition, the setup guides the user through the PIN/PUK
-setup and removes the need for a management key by delegating its control to
-the PIN/PUK.
+[This Yubikey tutorial][2] describes roughly the same process, but I find the
+Go code easier to read and more precise. In addition, the setup guides the user
+through the PIN/PUK setup and removes the need for a management key by
+delegating its control to the PIN/PUK.
 
 To support two keys, I decided to go the simplest approach and make the minimum
 set of changes to the code to generate a new key (during the setup phase) and
@@ -49,7 +45,7 @@ then serve it through the SSH agent. I initially considered generating the key
 through the CLI, but the delegation of the management key made it hard to do,
 so I just went with code for the setup as well. By poking around the `piv-go`
 code and the PIV standard, I decided to use slot `9c`, which is used for
-Signature (the Yubikey docs even mention using it for `git commit`). 
+Signature (the Yubikey docs even mention using it for `git commit`).
 
 The result is in {% include github_link.html
 url="https://github.com/aldur/yubikey-agent" text="my fork of the project" %}.
@@ -60,7 +56,7 @@ the additional key. When running the agent, it will gracefully try loading both
 keys and ignore the one for Signatures if it cannot be found.
 
 I have also ensured that the ordering of the keys doesn't change and have
-configured my `git` client to sign with the _second_ key returned by the agent. 
+configured my `git` client to sign with the _second_ key returned by the agent.
 This is convenient to use and matches my configuration on other hosts.
 
 Here is the result:
@@ -97,3 +93,7 @@ To deploy my changes, I wrote a small Nix overlay that applies my patch:
     can be revoked, but come with other downsides.
 
 [sign_commits]: https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification#ssh-commit-signature-verification
+
+[0]: https://github.com/FiloSottile/yubikey-agent
+[1]: https://github.com/go-piv/piv-go
+[2]: https://developers.yubico.com/PIV/Guides/PIV_Walk-Through.html

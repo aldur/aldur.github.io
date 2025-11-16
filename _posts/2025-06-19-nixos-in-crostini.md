@@ -3,7 +3,7 @@ title: "NixOS containers in ChromeOS"
 excerpt: >
   How to turn a Chromebook into a secure and productive device through NixOS
   containers and hardware keys.
-modified_date: 2025-10-29
+modified_date: 2025-11-16
 tags: [ChromeOS]
 redirect_from:
   - /nixos-crostini
@@ -98,6 +98,14 @@ and signing (e.g., `git commit`) from the shell.
 
 ### NixOS containers
 
+<div class="hint" markdown="1">
+
+  If you are looking for containerless VMs, [this post implements the same
+  approach for `baguette`]({% post_url
+  2025-10-29-nixos-baguette-images-in-chromeos %}).
+
+</div>
+
 One of the killer features of Chromebooks is that they have good support for
 running Linux without compromising on security. Technically, a system called
 Crostini runs a Linux VM (booting a hardened kernel), which in turn runs `lxc`
@@ -144,8 +152,8 @@ includes a sample configuration and can be useful to both new Nix users and
 veterans to get up and running.
 
 The repository also includes the {% include github_link.html
-url="https://github.com/aldur/nixos-crostini/blob/main/common.nix" text="magic
-glue" %} that makes it work by running `garcon` and `sommelier` through
+url="https://github.com/aldur/nixos-crostini/blob/main/common.nix" text="magic glue" %}
+that makes it work by running `garcon` and `sommelier` through
 `systemd`. The ChromeOS source code and the `cros-container-guest-tools-git`
 [AUR package][11] were invaluable in making this happen.
 
@@ -227,7 +235,8 @@ containers, and it is the right choice.
 
 <div class="hint" markdown="1">
 
-At this point, if you want, you can skip directly to ["Add the container to ChromeOS"](#how-to-add-the-container-to-chromeos).
+At this point, if you want, you can skip directly to [launch the container from
+"Terminal"](#how-to-launch-the-container-from-terminal).
 
 Read on, instead, if you'd like to understand how this works under the hood.
 
@@ -291,33 +300,32 @@ echo "Clipboard works!" | wl-copy
 nix run nixpkgs#xorg.xeyes
 ```
 
-#### How-to: Add the container to ChromeOS
+#### How-to: Launch the container from "Terminal"
 
-ChromeOS provides an experimental UI for creating and managing multiple
-Crostini containers. When enabled, it significantly improves UX! It allows to:
+<div class="admonition" markdown="1">
 
-- Launch our container by clicking on its name in the terminal, instead of
-going through `crosh`. If the VM is off, it will launch it as well.
-- Mount folders into the container from the Files application.
-- Browse the container user home directory through Files.
+ChromeOS 141 unfortunately deprecates the `#crostini-multi-container` flag that
+[allowed to manage multiple containers through the UI]({% link
+_micros/multiple-crostini-containers.md %}).
 
-To enable it, navigate to: `chrome://flags/#crostini-multi-container`, switch
-the drop-down to "Enabled" and then restart.
+Integrating `lxc-nixos` with "Terminal" now requires replacing the original
+Debian container.
 
-Now, go to: Settings → Linux → Manage extra containers → Create. Fill in
-the "Container name" with `lxc-nixos` and click on Create (importantly, do this
-_after_ you have created the container from `crosh`). If the container was
-previously running, stop it first with `lxc stop`. You can now start it from
-Terminal.
+</div>
 
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Terminal application.]({% link images/chromeos-terminal-lxc-nixos.webp %}){:.centered}
-_The experimental UI makes it seamless to start and access the container from
-Terminal._
+To launch the `lxc-nixos` from "Terminal", rename it to `penguin` as follows:
 
-{:.text-align-center}
-![A screenshot showing the `lxc-nixos` container available in the Files application.]({% link images/chromeos-files-lxc-nixos.webp %}){:.centered}
-_Use Files to browse the container home and mount directories into it._
+```bash
+lxc stop --force penguin
+lxc stop --force lxc-nixos
+# Rename the original "penguin" to "debian"
+lxc rename penguin debian
+lxc rename lxc-nixos penguin
+lxc start penguin
+```
+
+From now on, use `penguin` instead of `lxc-nixos` in all `lxc`/`vmc`
+invocations.
 
 #### How-to: USB forwarding
 
@@ -438,14 +446,15 @@ single point of failure. Lastly, this setup is trivial to deploy to a different
 system: I have had some fun playing with AI agents in a `qemu` VM built using
 the same tools.
 
-Thanks for reading, and 'til next time!
+Thanks for reading, and 'til next time! 👋
 
 <div class="hint" markdown="1">
 
-The ChromiumOS team is experimenting with a way (codename `baguette`) to run VM
-images directly, without going through LXD. [This post]({% post_url
-2025-10-29-nixos-baguette-images-in-chromeos %}) describes how to build NixOS
-`baguette` images too. Give it a try and let me know how it works for you!
+  The ChromiumOS team is experimenting with a way (codename `baguette`) to run
+  containerless VM images. [This post describes how to use the approach
+  described here to build NixOS `baguette` images]({% post_url
+  2025-10-29-nixos-baguette-images-in-chromeos %}). Give it a try and let me
+  know how it works for you!
 
 </div>
 
