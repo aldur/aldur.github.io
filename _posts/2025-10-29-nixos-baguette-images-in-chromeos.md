@@ -199,7 +199,7 @@ vmc usb-attach baguette <bus>:<port>
 <div class="hint" markdown="1">
 
   This _does require_ setting the
-  [`#crostini-containerless` flag](chrome://flags/#crostini-containerless).
+  [`#crostini-containerless` flag][17].
 
 </div>
 
@@ -251,6 +251,26 @@ _posts/2025-06-27-yubikey-root-login.md %}) to passwordless `sudo`. This way, I
 can use a hardware key to prove my physical presence and login as `root`, but
 an attacker cannot automatically escalate privileges.
 
+## Conclusion
+
+Getting Baguette and NixOS to work together required a bit of trial and error
+to build the image in the right format, figure out a few quirks, and adapt to
+ChromeOS' CLI updates. I am now satisfied with the result: I wrote this blog
+post from Baguette and I couldn't tell the difference from LXC.
+
+I don't run Kubernetes (which seems to be one of the biggest pain point for LXC
+users), but Baguette improves a few things for me as well:
+
+1. Attaching a USB hardware key to a Baguette VM does [not hold an exclusive
+   lock]({% link _micros/fido2-almost-works-in-linux-on-chromeos.md %}) on it,
+   so I can use it _both_ in Baguette and in ChromeOS (as a passkey) at the
+   same time.
+1. Running a true VM might make it easier to implement [ephemeral storage][18].
+1. Using `crosh` + `vsh` as a terminal makes it easy to attach/detach USB
+   devices and manage the VM itself without breaking _flow_ when switching from
+   "Terminal". I could have done the same with LXC containers, but I didn't
+   know about the `vsh` command.
+
 Thanks for reading, and 'til next time! 👋
 
 ---
@@ -269,3 +289,5 @@ Thanks for reading, and 'til next time! 👋
 [12]: https://github.com/aldur/nixos-crostini/blob/2e3318ec0f72d775a22c35929887f93f1f17dbd7/baguette.nix#L236-L237
 [13]: https://www.qemu.org/docs/master/devel/index-tcg.html
 [16]: https://chromium.googlesource.com/chromium/src/+/0d439926c092142a02d96d38cfbb6a68044f2382
+[17]: chrome://flags/#crostini-containerless
+[18]: https://github.com/nix-community/impermanence

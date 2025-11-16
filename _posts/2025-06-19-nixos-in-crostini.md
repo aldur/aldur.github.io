@@ -446,7 +446,7 @@ single point of failure. Lastly, this setup is trivial to deploy to a different
 system: I have had some fun playing with AI agents in a `qemu` VM built using
 the same tools.
 
-Thanks for reading, and 'til next time!
+Thanks for reading, and 'til next time! 👋
 
 <div class="hint" markdown="1">
 
