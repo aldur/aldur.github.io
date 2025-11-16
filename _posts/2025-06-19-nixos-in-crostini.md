@@ -98,6 +98,14 @@ and signing (e.g., `git commit`) from the shell.
 
 ### NixOS containers
 
+<div class="hint" markdown="1">
+
+  If you are looking for containerless VMs, [this post implements the same
+  approach for `baguette`]({% post_url
+  2025-10-29-nixos-baguette-images-in-chromeos %}).
+
+</div>
+
 One of the killer features of Chromebooks is that they have good support for
 running Linux without compromising on security. Technically, a system called
 Crostini runs a Linux VM (booting a hardened kernel), which in turn runs `lxc`
@@ -144,8 +152,8 @@ includes a sample configuration and can be useful to both new Nix users and
 veterans to get up and running.
 
 The repository also includes the {% include github_link.html
-url="https://github.com/aldur/nixos-crostini/blob/main/common.nix" text="magic
-glue" %} that makes it work by running `garcon` and `sommelier` through
+url="https://github.com/aldur/nixos-crostini/blob/main/common.nix" text="magic glue" %}
+that makes it work by running `garcon` and `sommelier` through
 `systemd`. The ChromeOS source code and the `cros-container-guest-tools-git`
 [AUR package][11] were invaluable in making this happen.
 
@@ -227,7 +235,8 @@ containers, and it is the right choice.
 
 <div class="hint" markdown="1">
 
-At this point, if you want, you can skip directly to ["Add the container to ChromeOS"](#how-to-add-the-container-to-chromeos).
+At this point, if you want, you can skip directly to [launch the container from
+"Terminal"](#how-to-launch-the-container-from-terminal).
 
 Read on, instead, if you'd like to understand how this works under the hood.
 
@@ -293,7 +302,7 @@ nix run nixpkgs#xorg.xeyes
 
 #### How-to: Launch the container from "Terminal"
 
-<div class="warning" markdown="1">
+<div class="admonition" markdown="1">
 
 ChromeOS 141 unfortunately deprecates the `#crostini-multi-container` flag that
 [allowed to manage multiple containers through the UI]({% link
@@ -441,10 +450,11 @@ Thanks for reading, and 'til next time!
 
 <div class="hint" markdown="1">
 
-The ChromiumOS team is experimenting with a way (codename `baguette`) to run VM
-images directly, without going through LXD. [This post]({% post_url
-2025-10-29-nixos-baguette-images-in-chromeos %}) describes how to build NixOS
-`baguette` images too. Give it a try and let me know how it works for you!
+  The ChromiumOS team is experimenting with a way (codename `baguette`) to run
+  containerless VM images. [This post describes how to use the approach
+  described here to build NixOS `baguette` images]({% post_url
+  2025-10-29-nixos-baguette-images-in-chromeos %}). Give it a try and let me
+  know how it works for you!
 
 </div>
 
