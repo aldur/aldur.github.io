@@ -3,7 +3,7 @@ title: 'NixOS Baguette images in ChromeOS'
 excerpt: >
   Running containerless NixOS VMs in ChromeOS.
 tags: [ChromeOS]
-modified_date: 2025-11-16
+modified_date: 2025-11-18
 redirect_from:
   - /nixos-baguette
 ---
@@ -179,9 +179,21 @@ following error:
 
 ### How-to: USB forwarding
 
-Enabling USB forwarding in Baguette [simplifies the LXC approach]({% link
-_posts/2025-06-19-nixos-in-crostini.md %}#how-to-usb-forwarding) because it
-doesn't need a container name.
+<div class="hint" markdown="1">
+
+ With Baguette, you can easily configure USB devices from Settings → Linux →
+ _Manage USB devices_:
+
+ 1. Click on: _Enable persistent USB device sharing with guests_.
+ 2. Enable any USB device you'd like available to Baguette.
+
+Selected devices will automatically be forwarded to Baguette once plugged in.
+
+</div>
+
+If you want to enable USB forwarding through `crosh`, Baguette [simplifies the
+LXC approach]({% link _posts/2025-06-19-nixos-in-crostini.md
+%}#how-to-usb-forwarding) because it doesn't need a container name.
 
 Insert the device and then navigate to `chrome://usb-internals`. In the
 `devices` tab, note the Bus number and Port number of your device.
@@ -232,11 +244,17 @@ vmc start --vm-type BAGUETTE termina
 
 <div class="warning" markdown="1">
 
-  This process will request `maitred` to configure the VM using the _default_
-  username you get when "Configuring Linux" from the settings. I have not yet
-  managed to reliably make it work with a custom username.
+  Using Baguette in "Terminal" is a bit [wonky][19] and shows that it is
+  currently under development. The ChromeOS team will not consider it stable
+  until Chrome 143.
 
-  Instead, I ditched the terminal and [I use `crosh` directly](#how-to-additional-shell-sessions).
+  In my experiments, I noticed that `congierce` will request `maitred` to
+  configure the VM using a _default_ username (the one displayed when
+  "Configuring Linux" from the settings). Trying to use a custom username seems
+  to be hit or miss.
+
+  I typically rename the VM to `termina` and then ditch "Terminal" and just
+  [use `crosh`](#how-to-additional-shell-sessions).
 
 </div>
 
@@ -261,15 +279,19 @@ post from Baguette and I couldn't tell the difference from LXC.
 I don't run Kubernetes (which seems to be one of the biggest pain point for LXC
 users), but Baguette improves a few things for me as well:
 
-1. Attaching a USB hardware key to a Baguette VM does [not hold an exclusive
-   lock]({% link _micros/fido2-almost-works-in-linux-on-chromeos.md %}) on it,
-   so I can use it _both_ in Baguette and in ChromeOS (as a passkey) at the
-   same time.
-1. Running a true VM might make it easier to implement [ephemeral storage][18].
-1. Using `crosh` + `vsh` as a terminal makes it easy to attach/detach USB
-   devices and manage the VM itself without breaking _flow_ when switching from
-   "Terminal". I could have done the same with LXC containers, but I didn't
-   know about the `vsh` command.
+1. In addition to being able to automatically forward USB devices, Baguette
+   does [not hold an exclusive lock]({% link
+   _micros/fido2-almost-works-in-linux-on-chromeos.md %}) on USB hardware keys.
+   So I can use them _both_ in Baguette and in ChromeOS (as a passkey) at the
+   same time without having to fiddle with `crosh`.
+1. A containerless VM has better access to the underlying hardware and better
+   control of its `init`. This might make it easier to implement [ephemeral
+   storage][18] and seems to fix an issue with [`pcscd`][20] that would make it
+   fail reading from Yubikeys after some time, until restarted.
+1. Using `crosh` + `vsh` makes it easy to attach/detach USB devices and manage
+   the VM itself without breaking _flow_ when switching from "Terminal". I
+   could have done the same with LXC containers, but I didn't know about the
+   `vsh` command.
 
 Thanks for reading, and 'til next time! 👋
 
@@ -291,3 +313,5 @@ Thanks for reading, and 'til next time! 👋
 [16]: https://chromium.googlesource.com/chromium/src/+/0d439926c092142a02d96d38cfbb6a68044f2382
 [17]: chrome://flags/#crostini-containerless
 [18]: https://github.com/nix-community/impermanence
+[19]: https://issues.chromium.org/issues/458443474#comment3
+[20]: https://linux.die.net/man/8/pcscd
