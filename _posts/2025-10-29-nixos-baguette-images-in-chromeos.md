@@ -3,7 +3,7 @@ title: 'NixOS Baguette images in ChromeOS'
 excerpt: >
   Running containerless NixOS VMs in ChromeOS.
 tags: [ChromeOS]
-modified_date: 2025-11-16
+modified_date: 2025-11-18
 redirect_from:
   - /nixos-baguette
 ---
