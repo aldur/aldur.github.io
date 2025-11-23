@@ -25,8 +25,9 @@ It is only available in Linux.
 
 ## Tracing all commands
 
-Add `NIX_DEBUG = 7;` anywhere to your derivation (this [works by setting `-x`
-on `stdenv`][3] initialization). Can be very verbose.
+Set `NIX_DEBUG = 7;` anywhere in your derivation. This [sets `-x` on
+`stdenv`][3] initialization and can be very verbose. Experiment with lower
+values to reduce verbosity.
 
 ## Tracing a specific value
 
