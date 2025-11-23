@@ -28,6 +28,14 @@ It is only available in Linux.
 Add `NIX_DEBUG = 7;` anywhere to your derivation (this [works by setting `-x`
 on `stdenv`][3] initialization). Can be very verbose.
 
+## Tracing a specific value
+
+[`builtins.trace][4] takes a value, traces it, and returns its second value.
+
+The [`lib.debug`][5] library functions in Nixpkgs provide a few more tools,
+e.g. to trace a value based on a condition (`lib.debug.traceIf`) or to trace a
+value and return it (`lib.debug.traceVal`).
+
 ## References
 
 - [Debug a failed derivation with `breakpointHook` and `cntr`][1]
@@ -37,3 +45,5 @@ on `stdenv`][3] initialization). Can be very verbose.
 [1]: https://discourse.nixos.org/t/debug-a-failed-derivation-with-breakpointhook-and-cntr/8669
 [2]: https://nixos-and-flakes.thiscute.world/best-practices/debugging
 [3]: https://nixos.org/manual/nixpkgs/stable/#var-stdenv-NIX_DEBUG
+[4]: https://teu5us.github.io/nix-lib.html#builtins.trace
+[5]: https://ryantm.github.io/nixpkgs/functions/library/debug/#sec-functions-library-debug
