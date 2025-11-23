@@ -31,7 +31,7 @@ values to reduce verbosity.
 
 ## Tracing a specific value
 
-[`builtins.trace][4] takes a value, traces it, and returns its second value.
+[`builtins.trace`][4] takes a value, traces it, and returns its second value.
 
 The [`lib.debug`][5] library functions in Nixpkgs provide a few more tools,
 e.g. to trace a value based on a condition (`lib.debug.traceIf`) or to trace a
