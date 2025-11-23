@@ -3,7 +3,7 @@ title: 'Debugging Nix derivations'
 date: 2025-09-09
 ---
 
-A collection of tips I learned along the way to debug Nix derivations.
+A living collection of tips to debug Nix derivations.
 
 ## More verbose traces
 
@@ -12,18 +12,20 @@ It is helpful to run `nix build` with the flags `--show-trace
 
 ## `breakpointHook`
 
-Instead of stopping when a failure occurs, [`breakpointHook`][0] will allow you
-to attach to the build process (the last line of the logs will print the
-command to do that).
+Instead of stopping when a failure occurs, [`breakpointHook`][0] will let you
+attach to the build process (the last line of the logs will print the command
+to do that).
 
 ```nix
 nativeBuildInputs = [ breakpointHook ];
 ```
 
+It is only available in Linux.
+
 ## Tracing all commands
 
-Add `NIX_DEBUG = 7;` anywhere to your derivation (this [works by setting `-x` on
-`stdenv`][3] initialization). Can be very verbose.
+Add `NIX_DEBUG = 7;` anywhere to your derivation (this [works by setting `-x`
+on `stdenv`][3] initialization). Can be very verbose.
 
 ## References
 
