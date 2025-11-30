@@ -131,6 +131,20 @@
           '';
 
           newMicro = pkgs.writeShellScriptBin "micro" ''
+            # Check for -b flag
+            checkout_branch=false
+            args=()
+            for arg in "$@"; do
+              if [[ "$arg" == "-b" ]]; then
+                checkout_branch=true
+              else
+                args+=("$arg")
+              fi
+            done
+
+            # Use remaining args as title
+            set -- "''${args[@]}"
+
             ${usage}
 
             ${slug}
@@ -142,6 +156,12 @@
 
             " > $output
             echo "Created file \"$output\"."
+
+            # Checkout branch if -b flag was provided
+            if $checkout_branch; then
+              ${pkgs.git}/bin/git checkout -b "micro/$slug"
+              echo "Checked out new branch \"micro/$slug\"."
+            fi
           '';
         };
 
