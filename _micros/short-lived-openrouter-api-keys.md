@@ -16,10 +16,11 @@ is that, each time, I will need to re-authenticate to those services requiring
 local credentials (including `llm-openrouter`).
 
 Luckily, OpenRouter allows to [programmatically provision API keys][2], which
-makes re-authentication fast and easy. I wrote and host a simple
-`openrouter-provisioner` on one of my nodes, where it is only accessible
-through Tailscale (configured on the host, not the guest VM). By default, it
-will provision and return API keys expiring after 24h.
+makes re-authentication fast and easy. I wrote and host a simple {% include
+github_link.html url="https://github.com/aldur/openrouter-provisioner"
+text="openrouter-provisioner" %} on one of my nodes, where it is only
+accessible through Tailscale (configured on the host, not the guest VM). By
+default, it will provision and return API keys expiring after 24h.
 
 With that in place, I can quickly get things running on a new VM:
 
