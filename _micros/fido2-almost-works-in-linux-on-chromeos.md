@@ -18,7 +18,7 @@ to the VM (first) and to the container (next). And, because the VM runs a
 hardened kernel, not all USB devices will work correctly.
 
 After some trial and error, I [managed]({% link
-_posts/2025-06-19-nixos-in-crostini.md %}#how-to-usb-forwarding)) to get
+_posts/2025-06-19-nixos-in-crostini.md %}#how-to-usb-forwarding) to get
 Yubikeys to work reliably in Linux for SSH for authentication and signatures.
 Under the hood, the [`yubikey-agent`]({% link
 _posts/2025-06-26-yubikey-agent.md %}) and the `pcscd (8)` Linux processes
@@ -54,7 +54,7 @@ The other day, while poking around the `vmc` command used to setup Linux on
 ChromeOS, I noticed that it has special support for "security keys":
 
 ```bash
-crosh> vmc 
+crosh> vmc
 USAGE: vmc [
   # ...
   |  key-attach <vm name> <hidraw path>
@@ -109,9 +109,9 @@ Then, from the container:
 (termina) chronos@localhost ~ $ lxc exec lxc-nixos fish
 Welcome to fish, the friendly interactive shell
 Type help for instructions on how to use fish
-root@lxc-nixos ~# lsusb 
+root@lxc-nixos ~# lsusb
 unable to initialize usb specBus 001 Device 001: ID 1d6b:0002 Linux 6.6.76-08096-g300882a0a131 xhci-hcd xHCI Host Controller
-Bus 001 Device 003: ID 18d1:f1d0  
+Bus 001 Device 003: ID 18d1:f1d0
 Bus 002 Device 001: ID 1d6b:0003 Linux 6.6.76-08096-g300882a0a131 xhci-hcd xHCI Host Controller
 root@lxc-nixos ~#
 ```
@@ -125,12 +125,12 @@ I had previously created an SSH key in there. Let's retrieve it:
 
 ```fish
 [I] aldur@lxc-nixos ~ > ssh-keygen -K
-Enter PIN for authenticator: 
+Enter PIN for authenticator:
 You may need to touch your authenticator to authorize key download.
-Enter passphrase for "id_ed25519_sk_rk" (empty for no passphrase): 
-Enter same passphrase again: 
+Enter passphrase for "id_ed25519_sk_rk" (empty for no passphrase):
+Enter same passphrase again:
 Saved ED25519-SK key to id_ed25519_sk_rk
-[I] aldur@lxc-nixos ~> cat id_ed25519_sk_rk.pub 
+[I] aldur@lxc-nixos ~> cat id_ed25519_sk_rk.pub
 sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIALcxr05U12C5ice6vEPjHjvjnNsGb2ARcF2jLxDleyWAAAABHNzaDo= ssh:
 ```
 
@@ -146,7 +146,7 @@ checks for user presence (i.e., it blinks and wants you to touch it):
 ```bash
 [I] aldur@lxc-nixos ~> ssh -F /dev/null -i id_ed25519_sk_rk git@github.com
 Confirm user presence for key ED25519-SK SHA256:4ARi+YMB8t5EoquC/ZbNCfD62gI+/ObXwMa/TYj5oZo
-Enter PIN for ED25519-SK key id_ed25519_sk_rk: 
+Enter PIN for ED25519-SK key id_ed25519_sk_rk:
 Confirm user presence for key ED25519-SK SHA256:4ARi+YMB8t5EoquC/ZbNCfD62gI+/ObXwMa/TYj5oZo
 # Here the process freezes...
 ```
