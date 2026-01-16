@@ -5,13 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    # Up-to-date ruby versions
-    nixpkgs-ruby = {
-      url = "github:bobvanderlinden/nixpkgs-ruby";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-    };
-
     # More ergonomical fork of bundlerEnv
     ruby-nix = {
       url = "github:inscapist/ruby-nix";
@@ -19,15 +12,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby, }:
+  outputs = { self, nixpkgs, flake-utils, ruby-nix }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         name = "aldur.github.io";
 
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ nixpkgs-ruby.overlays.default ];
-        };
+        pkgs = import nixpkgs { inherit system; };
 
         # NOTE: We require this to exist.
         gemset = ./gemset.nix;
@@ -37,10 +27,12 @@
         #   development/ruby-modules/gem-config/default.nix
         gemConfig = { };
 
-        rubyUnwrapped = nixpkgs-ruby.lib.packageFromRubyVersionFile {
-          file = ./.ruby-version;
-          inherit system;
-        };
+        expectedRubyVersion = pkgs.lib.trim (builtins.readFile ./.ruby-version);
+        actualRubyVersion = toString pkgs.ruby_3_4.version;
+        rubyUnwrapped = assert pkgs.lib.assertMsg
+          (expectedRubyVersion == actualRubyVersion)
+          "Ruby version mismatch: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}";
+          pkgs.ruby_3_4;
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
@@ -85,6 +77,12 @@
             exit 0
           fi
         '';
+
+        mkApp = description: program: {
+          type = "app";
+          inherit program;
+          meta = { inherit description; };
+        };
       in {
         checks = rec {
           jekyll-build = buildJekyll;
@@ -166,30 +164,11 @@
         };
 
         apps = {
-          default = {
-            type = "app";
-            program = "${self.packages.${system}.serveJekyll}";
-          };
-
-          lock = {
-            type = "app";
-            program = "${self.packages.${system}.lockGemset}";
-          };
-
-          clean = {
-            type = "app";
-            program = "${self.packages.${system}.cleanJekyll}";
-          };
-
-          new = {
-            type = "app";
-            program = "${self.packages.${system}.newPost}/bin/new";
-          };
-
-          micro = {
-            type = "app";
-            program = "${self.packages.${system}.newMicro}/bin/micro";
-          };
+          default = mkApp "Serve Jekyll site with live reload" "${self.packages.${system}.serveJekyll}";
+          lock = mkApp "Lock Gemfile and update gemset.nix" "${self.packages.${system}.lockGemset}";
+          clean = mkApp "Clean Jekyll build artifacts" "${self.packages.${system}.cleanJekyll}";
+          new = mkApp "Create a new blog post" "${self.packages.${system}.newPost}/bin/new";
+          micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
         };
 
         devShells = {
