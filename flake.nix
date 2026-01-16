@@ -12,8 +12,15 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ruby-nix }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ruby-nix,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         name = "aldur.github.io";
 
@@ -29,22 +36,45 @@
 
         expectedRubyVersion = pkgs.lib.trim (builtins.readFile ./.ruby-version);
         actualRubyVersion = toString pkgs.ruby_3_4.version;
-        rubyUnwrapped = assert pkgs.lib.assertMsg
-          (expectedRubyVersion == actualRubyVersion)
-          "Ruby version mismatch: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}";
-          pkgs.ruby_3_4;
+        parseVersion =
+          v:
+          let
+            parts = pkgs.lib.splitVersion v;
+          in
+          {
+            major = builtins.elemAt parts 0;
+            minor = builtins.elemAt parts 1;
+            patch = builtins.elemAt parts 2;
+          };
+        expected = parseVersion expectedRubyVersion;
+        actual = parseVersion actualRubyVersion;
+        majorMinorMatch = expected.major == actual.major && expected.minor == actual.minor;
+        patchMatch = expected.patch == actual.patch;
+        rubyUnwrapped =
+          assert pkgs.lib.assertMsg majorMinorMatch
+            "Ruby version mismatch: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}";
+          if patchMatch then
+            pkgs.ruby_3_4
+          else
+            # Rationale:
+            # Pinning to a version outside of nixpkgs would require
+            # low-powered machines to compile Ruby from source
+            (builtins.trace ''warning: Ruby patch version differs: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}'' pkgs.ruby_3_4);
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
         # This returns a function, that accepts a set (having a `name`), etc.
         # The resulting function has a bunch of attributes.
         # We are only interested in `env.
-        inherit ((ruby-nix.lib pkgs) {
-          inherit gemset name;
-          ruby = rubyUnwrapped;
-          gemConfig = pkgs.defaultGemConfig // gemConfig;
-        })
-          env ruby;
+        inherit
+          ((ruby-nix.lib pkgs) {
+            inherit gemset name;
+            ruby = rubyUnwrapped;
+            gemConfig = pkgs.defaultGemConfig // gemConfig;
+          })
+          env
+          ruby
+          ;
 
         jekyllArgs = "--trace --drafts --future";
         buildJekyll = pkgs.stdenv.mkDerivation {
@@ -83,7 +113,8 @@
           inherit program;
           meta = { inherit description; };
         };
-      in {
+      in
+      {
         checks = rec {
           jekyll-build = buildJekyll;
           default = jekyll-build;
@@ -164,9 +195,9 @@
         };
 
         apps = {
-          default = mkApp "Serve Jekyll site with live reload" "${self.packages.${system}.serveJekyll}";
+          default = mkApp "Serve Jekyll" "${self.packages.${system}.serveJekyll}";
           lock = mkApp "Lock Gemfile and update gemset.nix" "${self.packages.${system}.lockGemset}";
-          clean = mkApp "Clean Jekyll build artifacts" "${self.packages.${system}.cleanJekyll}";
+          clean = mkApp "Clean build artifacts" "${self.packages.${system}.cleanJekyll}";
           new = mkApp "Create a new blog post" "${self.packages.${system}.newPost}/bin/new";
           micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
         };
@@ -187,8 +218,14 @@
               ruby
               self.packages.${system}.newPost
               self.packages.${system}.newMicro
-            ] ++ (with pkgs; [ bundix libwebp html-proofer ]);
+            ]
+            ++ (with pkgs; [
+              bundix
+              libwebp
+              html-proofer
+            ]);
           };
         };
-      });
+      }
+    );
 }
