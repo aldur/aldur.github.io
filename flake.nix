@@ -5,13 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
-    # Up-to-date ruby versions
-    nixpkgs-ruby = {
-      url = "github:bobvanderlinden/nixpkgs-ruby";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-    };
-
     # More ergonomical fork of bundlerEnv
     ruby-nix = {
       url = "github:inscapist/ruby-nix";
@@ -19,15 +12,19 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ruby-nix, nixpkgs-ruby, }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ruby-nix,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         name = "aldur.github.io";
 
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ nixpkgs-ruby.overlays.default ];
-        };
+        pkgs = import nixpkgs { inherit system; };
 
         # NOTE: We require this to exist.
         gemset = ./gemset.nix;
@@ -37,22 +34,47 @@
         #   development/ruby-modules/gem-config/default.nix
         gemConfig = { };
 
-        rubyUnwrapped = nixpkgs-ruby.lib.packageFromRubyVersionFile {
-          file = ./.ruby-version;
-          inherit system;
-        };
+        expectedRubyVersion = pkgs.lib.trim (builtins.readFile ./.ruby-version);
+        actualRubyVersion = toString pkgs.ruby_3_4.version;
+        parseVersion =
+          v:
+          let
+            parts = pkgs.lib.splitVersion v;
+          in
+          {
+            major = builtins.elemAt parts 0;
+            minor = builtins.elemAt parts 1;
+            patch = builtins.elemAt parts 2;
+          };
+        expected = parseVersion expectedRubyVersion;
+        actual = parseVersion actualRubyVersion;
+        majorMinorMatch = expected.major == actual.major && expected.minor == actual.minor;
+        patchMatch = expected.patch == actual.patch;
+        rubyUnwrapped =
+          assert pkgs.lib.assertMsg majorMinorMatch
+            "Ruby version mismatch: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}";
+          if patchMatch then
+            pkgs.ruby_3_4
+          else
+            # Rationale:
+            # Pinning to a version outside of nixpkgs would require
+            # low-powered machines to compile Ruby from source
+            (builtins.trace ''warning: Ruby patch version differs: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}'' pkgs.ruby_3_4);
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
         # This returns a function, that accepts a set (having a `name`), etc.
         # The resulting function has a bunch of attributes.
         # We are only interested in `env.
-        inherit ((ruby-nix.lib pkgs) {
-          inherit gemset name;
-          ruby = rubyUnwrapped;
-          gemConfig = pkgs.defaultGemConfig // gemConfig;
-        })
-          env ruby;
+        inherit
+          ((ruby-nix.lib pkgs) {
+            inherit gemset name;
+            ruby = rubyUnwrapped;
+            gemConfig = pkgs.defaultGemConfig // gemConfig;
+          })
+          env
+          ruby
+          ;
 
         jekyllArgs = "--trace --drafts --future";
         buildJekyll = pkgs.stdenv.mkDerivation {
@@ -85,7 +107,14 @@
             exit 0
           fi
         '';
-      in {
+
+        mkApp = description: program: {
+          type = "app";
+          inherit program;
+          meta = { inherit description; };
+        };
+      in
+      {
         checks = rec {
           jekyll-build = buildJekyll;
           default = jekyll-build;
@@ -166,30 +195,11 @@
         };
 
         apps = {
-          default = {
-            type = "app";
-            program = "${self.packages.${system}.serveJekyll}";
-          };
-
-          lock = {
-            type = "app";
-            program = "${self.packages.${system}.lockGemset}";
-          };
-
-          clean = {
-            type = "app";
-            program = "${self.packages.${system}.cleanJekyll}";
-          };
-
-          new = {
-            type = "app";
-            program = "${self.packages.${system}.newPost}/bin/new";
-          };
-
-          micro = {
-            type = "app";
-            program = "${self.packages.${system}.newMicro}/bin/micro";
-          };
+          default = mkApp "Serve Jekyll" "${self.packages.${system}.serveJekyll}";
+          lock = mkApp "Lock Gemfile and update gemset.nix" "${self.packages.${system}.lockGemset}";
+          clean = mkApp "Clean build artifacts" "${self.packages.${system}.cleanJekyll}";
+          new = mkApp "Create a new blog post" "${self.packages.${system}.newPost}/bin/new";
+          micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
         };
 
         devShells = {
@@ -208,8 +218,14 @@
               ruby
               self.packages.${system}.newPost
               self.packages.${system}.newMicro
-            ] ++ (with pkgs; [ bundix libwebp html-proofer ]);
+            ]
+            ++ (with pkgs; [
+              bundix
+              libwebp
+              html-proofer
+            ]);
           };
         };
-      });
+      }
+    );
 }

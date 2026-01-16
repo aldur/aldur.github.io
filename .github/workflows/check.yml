@@ -1,8 +1,11 @@
 name: nix flake check
 
 on:
-  push:
   pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
   schedule:
     - cron: "0 0 * * MON"
@@ -20,9 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: DeterminateSystems/nix-installer-action@786fff0690178f1234e4e1fe9b536e94f5433196 # v20
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 #v6.0.1
+        with: 
+          persist-credentials: false
+      - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a # v21
       - uses: DeterminateSystems/magic-nix-cache-action@565684385bcd71bad329742eefe8d12f2e765b39 # v13
+        with:
+          use-flakehub: false  # Remove error when trying to authenticate without credentials
+          use-gha-cache: false # Disable uploading cache to gha cache
       - run: nix flake check -L
       # This needs to run outside of nix checks because it downloads new packages (gems)
       - run: nix run '.#lock'

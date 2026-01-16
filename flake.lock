@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1747046372,
-        "narHash": "sha256-CIVLLkVgvHYbgI2UpXvIIBJ12HWgX+fjA8Xf8PUmqCY=",
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "rev": "9100a0f413b0c601e0533d1d94ffd501ce2e7885",
-        "type": "github"
-      },
-      "original": {
-        "owner": "edolstra",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -36,11 +20,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1753549186,
-        "narHash": "sha256-Znl7rzuxKg/Mdm6AhimcKynM7V3YeNDIcLjBuoBcmNs=",
+        "lastModified": 1768305791,
+        "narHash": "sha256-AIdl6WAn9aymeaH/NvBj0H9qM+XuAuYbGMZaP0zcXAQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "17f6bd177404d6d43017595c5264756764444ab8",
+        "rev": "1412caf7bf9e660f2f962917c14b1ea1c3bc695e",
         "type": "github"
       },
       "original": {
@@ -50,35 +34,10 @@
         "type": "github"
       }
     },
-    "nixpkgs-ruby": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "flake-utils": [
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1753509576,
-        "narHash": "sha256-IAedv/KgGY2yE0aqBtmnGeaM5hPkH7YxzFBsd+8kQsE=",
-        "owner": "bobvanderlinden",
-        "repo": "nixpkgs-ruby",
-        "rev": "fbcbf5a569f22e9452dba1dec68c15d7b9bce797",
-        "type": "github"
-      },
-      "original": {
-        "owner": "bobvanderlinden",
-        "repo": "nixpkgs-ruby",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-ruby": "nixpkgs-ruby",
         "ruby-nix": "ruby-nix"
       }
     },
@@ -89,11 +48,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1744623277,
-        "narHash": "sha256-0HWA2YD9v71SHyMF11PKnVJcHnrHhRLHDCldlUbzYII=",
+        "lastModified": 1755059052,
+        "narHash": "sha256-yUJmmNIw11ZEIAFogqcqNomk4YV3F/zjwI1f7bYzIyY=",
         "owner": "inscapist",
         "repo": "ruby-nix",
-        "rev": "43964ced23803f49e2d307fbbfd4e03ed23760c0",
+        "rev": "86b498e80058a84461d1f533e121574d85d272d7",
         "type": "github"
       },
       "original": {
