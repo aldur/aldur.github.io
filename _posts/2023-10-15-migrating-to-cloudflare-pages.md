@@ -29,38 +29,35 @@ I like GitHub Pages! They make it easy to spin up Jekyll websites. GitHub
 Actions, then, provide additional space for customization, if one needs to. But
 simplicity comes with constraints, too.
 
-In my case, I wanted to add privacy-preserving (and GDPR-compliant) analytics to
-the blog. GitHub doesn't provide analytics for pages.
-[Plausible](https://plausible.io) would be a good alternative, but the _little_
-traffic on this blog doesn't justify their paid plans; the self-hosted option
-instead requires spinning up an instance, securing it, maintaining it, and so
-on. Not ideal.
+In my case, I wanted to add privacy-preserving (and GDPR-compliant) analytics
+to the blog. GitHub doesn't provide analytics for pages. [Plausible][0] would
+be a good alternative, but the _little_ traffic on this blog doesn't justify
+their paid plans; the self-hosted option instead requires spinning up an
+instance, securing it, maintaining it, and so on. Not ideal.
 
 That's when I thought about Cloudflare Pages -- their option to serve static
 content.
 
 Being integrated into Cloudflare, Pages can measure [privacy-preserving
-analytics](https://www.cloudflare.com/en-gb/web-analytics/) that don't rely on
-client state and don't require adding the most-hated-banner of the web: "_Allow
-Cookies?_". Also, I have used Cloudflare to manage DNSs before. If I ever move
-this to a custom domain, it would be good to have everything it one
-place[^censorship].
+analytics][9] that don't rely on client state and don't require adding the
+most-hated-banner of the web: "_Allow Cookies?_". Also, I have used Cloudflare
+to manage DNSs before. If I ever move this to a custom domain, it would be good
+to have everything it one place[^censorship].
 
 So, Cloudflare Pages.
 
 ## Setting things up
 
-Setting things up was smooth. Their
-[docs](https://developers.cloudflare.com/pages/migrations/migrating-jekyll-from-github-pages/)
-will guide you to create the Pages project, provide access to the GitHub
-repository[^reverse_access], and test the deployment the
-`*.pages.dev` domain assigned to the project. So far, so good.
+Setting things up was smooth. Their [docs][1] will guide you to create the
+Pages project, provide access to the GitHub repository[^reverse_access], and
+test the deployment the `*.pages.dev` domain assigned to the project. So far,
+so good.
 
 Any trouble? When setting up the deployment, I experimented with their "Access
 Policy", that gates who can see pre-deployed versions of the website. Thing is,
 once enabled there's no way to disable it through the interface without
 onboarding to their "Zero Trust" product. Luckily, we can go the
-[API-based approach](https://community.cloudflare.com/t/how-can-i-disable-the-access-policy-of-cloudflare-pages/292358/10).
+[API-based approach][2].
 
 Having disabled "Access Policy" and tested the deployment we now have two
 versions of the website, respectively served by GitHub and Cloudflare, on two
@@ -89,9 +86,7 @@ I should probably be using a singular form:
 What _constraints_ do we have?
 
 - The ideal solution would be responding with a `302` status code. But GitHub
-  [doesn't
-  provide](https://til.simonwillison.net/github/github-pages#user-content-custom-redirects-are-not-supported)
-  dynamic HTTP redirects.
+  [doesn't provide][10] dynamic HTTP redirects.
 - We'll have to engineer this through what we have: static files, HTML and
   JavaScript (this one if we _really_ need to, as that breaks bots, SEO, etc.).
 
@@ -100,17 +95,19 @@ OK, what's the plan then? We will take the matter into our hands!
 #### HTML pages
 
 All HTML pages at GitHub will redirect to their corresponding page at Cloudflare
-by using `<meta http-equiv="refresh"
-content="3;url=https://aldur.pages.dev/[destination]">` and `<link
-rel="canonical" href="https://aldur.pages.dev/[destination]">`. This informs
-search-engine bots of the redirect and lets us display an informative page to
-the user. There are less than a dozen pages in total. It takes less to write the
-HTML code by hand than to script it -- but a Jekyll plugin could do that
-automatically.
+by using:
+
+- `<meta http-equiv="refresh" content="3;url=https://aldur.pages.dev/[destination]">` and
+- `<link rel="canonical" href="https://aldur.pages.dev/[destination]">`.
+
+This informs search-engine bots of the redirect and lets us display an
+informative page to the user. There are less than a dozen pages in total. It
+takes less to write the HTML code by hand than to script it -- but a Jekyll
+plugin could do that automatically.
 
 {:.text-align-center}
 ![This blog has moved, about page]({% link /images/moved.webp %}){:.centered}
-_What the result looks like for our [about](https://aldur.github.io/about) page -- try clicking on the link yourself._
+_What the result looks like for our [about][3] page -- try clicking on the link yourself._
 
 #### The RSS feed
 
@@ -121,7 +118,7 @@ new website.
 
 {:.text-align-center}
 ![This blog has migrated, RSS entry]({% link /images/rss_migration.webp %}){:.centered}
-_The [RSS feed entry](https://aldur.github.io/feed.xml) showing the notification._
+_The [RSS feed entry][4] showing the notification._
 
 <div class="hint" markdown="1">
 [This handy
@@ -146,7 +143,7 @@ resources that didn't exist on the old website -- or anything we missed during
 the migration. The downside, if you are asking, is that the JavaScript approach
 doesn't work with `curl`, bots, and so on.
 
-You can try the resulting feel [here](https://aldur.github.io/foo).
+You can try the resulting feel [here][5].
 
 <div class="note" markdown="1">
 {:.text-align-center}
@@ -175,7 +172,7 @@ If you are reading this, it means the migration worked 🎉.
 
 So far, I only spotted one difference. Cloudflare's RSS feed doesn't include the
 full URI (including the `pages.dev` domain), but only relative URLs. That's
-because the [`jekyll-feed` plugin](https://github.com/jekyll/jekyll-feed) relies
+because the [`jekyll-feed` plugin][6] relies
 on `site.url` or `site.github.url` (if deployed on GitHub) -- both missing in my
 case.
 
@@ -215,10 +212,8 @@ legacy we have.
 Looking back, the outcome was good. We now have analytics (and rollbacks!) in
 place, the UX of the migration feels good enough, and there's room for more
 goodies and growth if the occasion comes (e.g., a custom domain or the addition
-of web workers). Also, if the need for a migration arises again, Cloudflare will
-provide better flexibility: HTTP
-[redirects](https://developers.cloudflare.com/pages/platform/redirects/) and
-[headers](https://developers.cloudflare.com/pages/platform/headers/).
+of web workers). Also, if the need for a migration arises again, Cloudflare
+will provide better flexibility: HTTP [redirects][7] and [headers][8].
 
 #### Footnotes
 
@@ -239,3 +234,15 @@ provide better flexibility: HTTP
     Jekyll builds are well-supported). But on the first sign of trouble, I would
     switch to pushing the assets to Cloudflare through GitHub actions for more
     control.
+
+[0]: https://plausible.io
+[1]: https://developers.cloudflare.com/pages/migrations/migrating-jekyll-from-github-pages/
+[2]: https://community.cloudflare.com/t/how-can-i-disable-the-access-policy-of-cloudflare-pages/292358/10
+[3]: https://aldur.github.io/about
+[4]: https://aldur.github.io/feed.xml
+[5]: https://aldur.github.io/foo
+[6]: https://github.com/jekyll/jekyll-feed
+[7]: https://developers.cloudflare.com/pages/platform/redirects/
+[8]: https://developers.cloudflare.com/pages/platform/headers/
+[9]: https://www.cloudflare.com/en-gb/web-analytics/
+[10]: https://til.simonwillison.net/github/github-pages#user-content-custom-redirects-are-not-supported
