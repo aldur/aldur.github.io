@@ -1,6 +1,7 @@
 ---
 layout: micros
 title: µ
+permalink: /micro/
 ---
 
 Welcome to my micro-blog, hosting quick thoughts and discoveries that don't
