@@ -3,7 +3,7 @@ title: 'NixOS Baguette images in ChromeOS'
 excerpt: >
   Running containerless NixOS VMs in ChromeOS.
 tags: [ChromeOS]
-modified_date: 2025-11-18
+modified_date: 2026-01-18
 redirect_from:
   - /nixos-baguette
 ---
@@ -36,8 +36,8 @@ what that would take. This post describes the results:
 <div class="todo" markdown="1">
 
   _tl;dr_: You can build both LXC containers and Baguette images to run your
-  NixOS configuration in Crostini. They provide the same features and
-  UX (e.g., clipboard sharing, Wayland/port forwarding, file browsing from
+  NixOS configuration in Crostini. They provide the same features and UX (e.g.,
+  clipboard sharing, Wayland/port forwarding, notifications, file browsing from
   ChromeOS).
 
 </div>
