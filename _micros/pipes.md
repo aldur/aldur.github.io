@@ -34,13 +34,15 @@ earlier. Well-behaved Unix processes will detect that their standard input is
 not a terminal and disable shell completion (often implemented through GNU
 `readline`).
 
-For CPython, I _think_ the relevant code is
-[here](https://github.com/python/cpython/blob/71ae93374defd192e5e88fe0912eff4f8e56f286/Parser/myreadline.c#L2).
-Entering text into a terminal is [indeed
-complicated](https://jvns.ca/blog/2024/07/08/readline/).
+For CPython, I _think_ the relevant code is [here][0]. Entering text into a
+terminal is [indeed complicated][2].
 
 Mystery solved! Here the behavior in action:
 
 {:.text-align-center}
 ![A terminal screencast showing how pipes break completion]({% link /images/pipes.svg %}){:.centered}
-Also on [asciinema](https://asciinema.org/a/FpGU25luEC4q30STLGw4Lj0fX)
+Also on [asciinema][1]
+
+[0]: https://github.com/python/cpython/blob/71ae93374defd192e5e88fe0912eff4f8e56f286/Parser/myreadline.c#L2
+[1]: https://asciinema.org/a/FpGU25luEC4q30STLGw4Lj0fX
+[2]: https://jvns.ca/blog/2024/07/08/readline/
