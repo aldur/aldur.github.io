@@ -74,13 +74,10 @@ minima:
   show_excerpts: true
   show_tags: true
 
-# If you want to link only specific pages in your header, uncomment this and
-# add the path to the pages in
-# order as they should show up.
-#
+# Add the path to the header pages in the order they should show up.
 header_pages:
-  - micro.md
-  - about.md
+  - pages/micro.md
+  - pages/about.md
 
 strict_front_matter : true
 
