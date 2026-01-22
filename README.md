@@ -5,13 +5,14 @@ Personal blog, powered by [Jekyll][0] and the [Minima][4] theme.
 ## Making changes
 
 - `new "Post Title"` creates a new post.
-- `micro "Micro Title"` creates a new micro post.
+- `micro "Micro Title"` creates a new micro post. With `-b` it create a new
+  branch.
 
 Both commands will set the current date and a _slugify_ the filename.
 
 ## Building it
 
-Install [Nix][1] and enable [flakes][2]. Then, run `nix run`. 
+Install [Nix][1] and enable [flakes][2]. Then, run `nix run`.
 
 ### Developing
 
@@ -42,9 +43,9 @@ The tag layout filters all posts with that tag.
 
 Configure whether excerpts show (by order of priority):
 
-1. Per post (with `show_excerpt: ` in the frontmatter).
+1. Per post (with `show_excerpt:` in the frontmatter).
 1. Per collection (in `_config.yml`, under `collections:`).
-1. Default: the value of `show_excerpts: ` in `_config.yml` under `minima:`.
+1. Default: the value of `show_excerpts:` in `_config.yml` under `minima:`.
 
 ### RSS Feeds
 
