@@ -125,27 +125,23 @@ let username = "aldur"; in {
 
 ### Wrapping up
 
-I have been running with impermanence for a few weeks now. So far, I haven't
-had any issue. On systems with 16GB of RAM, I typically size `/home` to 4GB. I
-suspect that this could create issues if compiling artifact-heavy or
-memory-intensive builds, e.g. Rust workspaces or numeric Python projects (which
-pull a lot of packages from PyPi). If that happens, I should be able to
-configure the build tools to store assets in `/tmp`. Similarly, I could run
-into issues if a project's cache is wiped on reboot, preventing offline
-rebuilds (e.g., while on a flight). To avoid that, I typically rely on `nix
-develop` for local development shells, caching anything required in the `nix`
-store.
+I have run with impermanence for a few weeks now and, so far, I haven't had any
+issue. With 16GB of RAM, I typically size `/home` to 4GB. I suspect that this
+could not be enough to complete artifact-heavy or memory-intensive builds, e.g.
+Rust workspaces or numeric Python projects. If that happens, I'll configure the
+build tools to store assets in `/tmp`. Similarly, if a project's cache is wiped
+on reboot, offline rebuilds would fail (e.g., while on a flight). I avoid that
+by relying on `nix develop` for local development shells, which caches
+requirements in the `nix` store.
 
-I can also see a few security limitations of the approach. For instance,
-sophisticated malware could persist by escalating privileges and infecting the
-system configuration, or by storing copies of itself in the `nix` store (to
-which my user has append access). Although it isn't a silver bullet,
-impermanence for `/home` still adds to defense in depth. It should prevent
-_some classes_ of attacks (e.g., supply chain compromises) from harvesting
-credentials that accumulated over time. For the remaining ones (and because
-it's fun!) I will continue hardening the VM image: I would love to do that
-through mandatory access control policies, but using them in NixOS seems like a
-deep rabbit hole to explore.
+I also see a few security limitations of the approach. Sophisticated malware
+could persist through the system configuration or in the `nix` store (to which
+my user has write access). Although it isn't a silver bullet, impermanence for
+`/home` still adds to defense in depth. It prevents _some classes_ of attacks
+(e.g., supply chain compromises) from harvesting credentials that accumulated
+over time. I'll continue hardening the VM image against the remaining attacks:
+I would love to enable mandatory access control policies, but doing that in
+NixOS seems like a deep rabbit hole to explore.
 
 👋 Thank you for reading so far! [Shoot me an email](mailto:{{
 site.author.email }}) if you'd like to comment, discuss, or just say hi. Until
