@@ -8,7 +8,8 @@ excerpt: >
 I recently upgraded my home network to gigabit internet provided by O2, the
 low-cost brand of Movistar Spain. They run fiber to the home ([FTTH][0]) and
 lease consumers their routers to convert the optical signal into an electric
-one. In my case, I got a Mitrastar HGU (`GPT-2742GX4X5 v6`) router.
+one. In my case, I got a Mitrastar HGU router (`GPT-2742GX4X5 v6`, running
+firmware `GL_g2.5_100XNT0b23`).
 
 ISP routers come with security and privacy concerns: where possible, I replace
 them with alternatives I can customize and control. At home, I already own a
