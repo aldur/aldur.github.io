@@ -1,5 +1,5 @@
 ---
-title: 'Why my internet dropped every two hours'
+title: 'Why my internet dropped like clockwork'
 excerpt: >
   How a misconfigured watchdog in my ISP router killed my connection every two
   hours.
@@ -35,8 +35,7 @@ bit more and noticed a pattern:
   <img src="{% link images/fiber-drop-light.svg %}" alt="A plot measuring the ICMP drop rate and showing peaks every two hours." class="centered">
 </picture>
   <small>
-    _OpenWRT showed that the connection dropped every two
-    hours (plus a few times I restarted the router)._
+    _OpenWRT's statistics showed connection drops every two hours, like clockwork._
   </small>
 </p>
 
