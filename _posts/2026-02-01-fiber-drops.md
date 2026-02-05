@@ -1,40 +1,56 @@
 ---
-title: 'fiber-drops'
+title: 'Why my internet dropped every two hours'
 excerpt: >
-  TODO
+  How a misconfigured watchdog in my ISP router killed my connection every two
+  hours.
 ---
 
 I recently upgraded my home network to gigabit internet provided by O2, the
 low-cost brand of Movistar Spain. They run fiber to the home ([FTTH][0]) and
 lease consumers their routers to convert the optical signal into an electric
-one.
+one. In my case, I got a Mitrastar HGU (`GPT-2742GX4X5 v6`) router.
 
-In my case, I got a Mitrastar HGU (`GPT-2742GX4X5 v6`) router. ISP routers give
-me security and privacy concerns and, where possible, I prefer to replace them
-with something I can control, like my own router running OpenWRT.
+ISP routers come with security and privacy concerns: where possible, I replace
+them with alternatives I can customize and control. At home, I already own a
+router that supports OpenWRT. It's much better from a security/privacy
+standpoint, but it doesn't have an [ONT][1] and so I cannot connect it directly
+to fiber.
 
-Because my OpenWRT router doesn't have an [ONT][1], I cannot connect it
-directly to fiber. Instead, I configured the HGU in _bridge_ network mode and
-connected a LAN port to the WAN on my router. Then, in OpenWRT, I configured
-the required PPoE credentials and created a VLAN. I got online, made a few
-speed measurements, and ensured that everything was working great. After a few
-minutes I noticed that the connection dropped, but I brushed it off as the
-network stabilizing. When that happened a couple more times, though, I started
-noticing a pattern:
+To fix that, I configured the ISP router in _bridge_ network mode and connected
+one of its LAN ports to the WAN on my router. Then, within OpenWRT, I
+configured the required [PPPoE credentials][5] and created a VLAN. I got
+online, made a few speed measurements, and ensured that everything was working
+great.
 
-[Picture of connection dropping exactly every two hours.]
+After a few minutes I noticed that the connection dropped and that the web
+interface of the router wasn't reachable anymore. I brushed it off, thinking
+that the network would eventually stabilize. But it kept happening, so I dug a
+bit more and noticed a pattern:
 
-[`rddtool` in OpenWRT][2] showed that the connection was dropping exactly every
-two hours. After ensuring that the issue wasn't on OpenWRT's side, I turned the
-investigation to the HGU router: Mitrastar firmware have a [history][3] of bugs
-and it is also likely that bridge mode isn't battletested (few users need it).
+<p align="center" markdown="1">
+<picture class="text-align-center" markdown="1">
+  <source srcset="{% link images/fiber-drop-light.svg %}" media="(prefers-color-scheme: light)">
+  <source srcset="{% link images/fiber-drop-dark.svg %}" media="(prefers-color-scheme: dark)">
+  <img src="{% link images/fiber-drop-light.svg %}" alt="A plot measuring the ICMP drop rate and showing peaks every two hours." class="centered">
+</picture>
+  <small>
+    _OpenWRT showed that the connection dropped every two
+    hours (plus a few times I restarted the router)._
+  </small>
+</p>
 
-ISP routers are usually a mixed bag in terms of debug access. This one is a bit
-weirder than usual:
+After ensuring that the issue wasn't on OpenWRT's side, I turned the
+investigation to the HGU router: Mitrastar firmwares have a [history][3] of
+bugs; it is also likely that bridge mode, isn't as battle-tested as the rest,
+because few users enable it.
 
-1. Default user `1234` can `ssh` with a password printed on the router.
-1. Which, by default, drops the user into a restricted shell.
-1. Unless using `ssh 1234@192.168.1.1 /bin/sh` to get a better shell.
+ISP routers can be a mixed bag in terms of debug access. This one is weirder
+than usual:
+
+1. User `1234` can `ssh` into the router with a password printed on a label on
+   the router's back.
+1. By default, `ssh` drops the user into a restricted shell, unless you use
+   `ssh 1234@192.168.1.1 /bin/sh` to get a better shell.
 
 ```bash
 $ ssh 1234@192.168.1.1
@@ -43,6 +59,7 @@ $ ssh 1234@192.168.1.1
 Can't find command: [ls]. Type '?' for usage
 >?
 >?
+# Confused at what's going on
 <c-d>
 $ ssh 1234@192.168.1.1 /bin/sh
 1234@192.168.1.1's password:
@@ -53,11 +70,13 @@ BusyBox v1.26.2 (2025-06-19 15:12:31 CST) multi-call binary.
 ...
 ```
 
-User `1234` is technically `root`. The shell is based on `busybox` and
-half-broken (there are no prompts and `ls` doesn't show the full directory
-listing). However, after a lot of digging, I discovered that the router holds
-its configuration in memory at `/tmp/var/pdm/config.xml`. The configuration
-refers to a watchdog:
+The `1234` user is technically `root`; the shell is based on `busybox` and it
+is half-broken: there are no prompts and `ls` doesn't show the full directory
+listing. However, it's enough to start digging.
+
+After poking around, I discovered the router configuration at
+`/tmp/var/pdm/config.xml`. It refers to a watchdog, which seems to be one of
+the customizations that `TELEFONICA` (Movistar's brand in Spain) applied to it:
 
 ```xml
 <X_TELEFONICA_COM_Watchdog>
@@ -74,15 +93,16 @@ refers to a watchdog:
 </X_TELEFONICA_COM_Watchdog>
 ```
 
-The watchdog itself should be `tefdog`. My guess was that, when running in
-bridge mode, some health checks would fail and restart the connection. `pppd`,
-in particular, doesn't even run in bridge mode but remains one of the monitored
-processes.
+The watchdog itself appears to be `tefdog`. When running in bridge mode some of
+its health checks likely fail and trigger a restart of the connection. It also
+seems to leak memory, which explains why the web interface would become
+unreachable after a while. In particular, the list of monitored processes
+always includes `pppd`, even though it doesn't run in bridge mode.
 
-To test the hypothesis of a badly configured watchdog I first tried to `kill`
+To test the hypothesis of a badly configured watchdog, I first tried to `kill`
 it and wait. That did not work, because PID `1` would restart it after a few
-minutes. Becuse the file-system on the router is read-only, I couldn't edit the
-executable directly. But I could use a bind mount _over_ it:
+minutes. Because the file-system on the router is read-only, I couldn't edit
+the executable directly. But I could use a bind mount _over_ it:
 
 ```bash
 echo '#!/bin/sh' > /tmp/tefdog_fake
@@ -98,13 +118,13 @@ found the issue!
 The bind mount hack, however, wouldn't survive a reboot. After a power loss,
 the router would restart and the watchdog would resume killing the connection
 every two hours. I kept poking around for ways to persist the change or to
-overwrite the router configuration, until I remembered that, usually, a
-router's web interface allows backing up and re-uploading the configuration. In
-some cases, uploading a modified configuration would also unlock further
-functionalities or modify settings not available through the web interface.
+overwrite the router configuration, until I remembered that a router's web
+interface typically allows backing up and re-uploading the configuration. In
+some cases, modified configurations would also unlock settings not available
+through the web interface.
 
-I went ahead, exported the configuration, and quickly discovered that it is
-encrypted:
+I went ahead, exported the configuration through the web UI, and quickly
+discovered that it is encrypted:
 
 ```bash
 $ file romfile.cfg
@@ -113,8 +133,8 @@ romfile.cfg: openssl enc'd data with salted password
 
 I mentioned that this router is a bit _weird_, didn't I? `ssh` provides `root`
 access, but only if you know which process to launch. You can read the
-configuration, but the export is encrypted. After a bit more digging,
-I found out where the configuration is decrypted:
+configuration through SSH, but then the export is encrypted. After a bit more
+digging, I figured out where the decryption happens in the firmware:
 
 ```bash
 /usr/bin/ccc_preload.sh: openssl aes-256-cbc -md MD5 -k $2 -d \
@@ -122,8 +142,8 @@ I found out where the configuration is decrypted:
 # NOTE: I added the line break for readability.
 ```
 
-Later on, I found the encryption password to be a `base64` encoding of 24
-(random?) bytes:
+Later on, I discovered where the encryption password is stored and that it's a
+`base64` encoding of 24 (random?) bytes:
 
 ```bash
 $ grep ENCRYPT /etc/MLD_Config.sh
@@ -133,16 +153,104 @@ MLD_APPS_ENABLE_ENCRYPT_CONF_FILE_KEY=zRUqIM1VCqPBrlYbf6CXiOZoZwiIAMHJ
 
 I don't have another router to check whether this password is hardcoded into
 the firmware or generated depending on the hardware (e.g., the MAC address).
-Out of abundance of caution I haven't shared the exact key I found on my
+Out of an abundance of caution, I haven't shared the exact key I found on my
 router, but feel free to [reach out](mailto:{{ site.author.email }}) if you are
 interested in it.
 
 After testing the decryption key, I modified the configuration by disabling the
-watchdog.
+watchdog:
 
-#### Footnotes
+```diff
+diff -u config.xml.back config.xml
+--- config.xml.back 2026-02-01 18:28:36
++++ config.xml 2026-02-01 18:41:10
+@@ -292,7 +292,7 @@
+     </Firewall>
+   </X_TELEFONICA_Firewall>
+   <X_TELEFONICA_COM_Watchdog>
+-    <Enable PARAMETER="configured" TYPE="boolean">1</Enable>
++    <Enable PARAMETER="configured" TYPE="boolean">0</Enable>
+     <PPP>
+       <LookupDomain PARAMETER="configured" TYPE="string" LENGTH="256">hgu.rima-tde.net</LookupDomain>
+       <MaxReset PARAMETER="configured" TYPE="uint32" MAX="9" MIN="0">1</MaxReset>
+```
+
+While I was at it, I also made a few more changes to disable analytics, prevent
+the router from phoning home, turn off WPS and block [`TR069`][4] at the
+firewall level, preventing remote firmware upgrades or configuration changes.
+
+```diff
+diff -u config.xml.back config.xml
+--- config.xml.back 2026-02-01 18:28:36
++++ config.xml 2026-02-01 18:41:10
+@@ -150,7 +150,7 @@
+             <Action PARAMETER="configured" TYPE="string" LENGTH="16">Permit</Action>
+             <Protocol PARAMETER="configured" TYPE="string" LENGTH="16">TCP</Protocol>
+             <X_5067F0_RuleName PARAMETER="configured" TYPE="string" LENGTH="64">Default_TR069</X_5067F0_RuleName>
+-            <Enabled PARAMETER="configured" TYPE="boolean">1</Enabled>
++            <Enabled PARAMETER="configured" TYPE="boolean">0</Enabled>
+             <Origin>
+@@ -602,7 +602,7 @@
+             <ConfigMethodsEnabled PARAMETER="configured" TYPE="string" LENGTH="128">PushButton</ConfigMethodsEnabled>
+             <X_5067F0_WPS_Last_State PARAMETER="configured" TYPE="boolean">1</X_5067F0_WPS_Last_State>
+             <SetupLock PARAMETER="configured" TYPE="boolean">1</SetupLock>
+-            <Enable PARAMETER="configured" TYPE="boolean">1</Enable>
++            <Enable PARAMETER="configured" TYPE="boolean">0</Enable>
+             <DevicePassword PARAMETER="configured" TYPE="uint32" MAX="4294967295" MIN="0">0</DevicePassword>
+           </WPS>
+           <PreSharedKey>
+@@ -921,7 +921,7 @@
+             <ConfigMethodsEnabled PARAMETER="configured" TYPE="string" LENGTH="128">PushButton</ConfigMethodsEnabled>
+             <X_5067F0_WPS_Last_State PARAMETER="configured" TYPE="boolean">1</X_5067F0_WPS_Last_State>
+             <SetupLock PARAMETER="configured" TYPE="boolean">1</SetupLock>
+-            <Enable PARAMETER="configured" TYPE="boolean">1</Enable>
++            <Enable PARAMETER="configured" TYPE="boolean">0</Enable>
+             <DevicePassword PARAMETER="configured" TYPE="uint32" MAX="4294967295" MIN="0">0</DevicePassword>
+           </WPS>
+           <PreSharedKey>
+@@ -1502,7 +1502,7 @@
+     <X_5067F0_Installed PARAMETER="configured" TYPE="boolean">1</X_5067F0_Installed>
+     <X_5067F0_CheckCertificateCN PARAMETER="configured" TYPE="boolean">0</X_5067F0_CheckCertificateCN>
+-    <PeriodicInformEnable PARAMETER="configured" EXTATTR="0x0800" TYPE="boolean">1</PeriodicInformEnable>
++    <PeriodicInformEnable PARAMETER="configured" EXTATTR="0x0800" TYPE="boolean">0</PeriodicInformEnable>
+     <PeriodicInformInterval PARAMETER="configured" EXTATTR="0x0800" TYPE="uint32" MAX="4294967295" MIN="30">604800</PeriodicInformInterval>
+     <X_5067F0_CAContent>
+       <i1>
+```
+
+After re-encrypting the modified configuration, I uploaded it, rebooted the
+router, and it has since been running smoothly:
+
+<p align="center" markdown="1">
+<picture class="text-align-center" markdown="1">
+  <source srcset="{% link images/fiber-drop-fixed-light.svg %}" media="(prefers-color-scheme: light)">
+  <source srcset="{% link images/fiber-drop-fixed-dark.svg %}" media="(prefers-color-scheme: dark)">
+  <img src="{% link images/fiber-drop-fixed-light.svg %}" alt="A plot measuring the ICMP drop rate with no recent peaks." class="centered">
+</picture>
+  <small>
+    _No more drops after the fix!_
+  </small>
+</p>
+
+Before checking out, I also dumped the bootloader and the firmware (just in
+case, as neither seems to be available online):
+
+```bash
+cat /dev/mtd0 > /tmp/bootloader.bin
+cat /dev/mtd4 > /tmp/tclinux.bin
+md5sum /tmp/bootloader.bin
+16fa4cafc4e2c412e053e8757af3d60b  /tmp/bootloader.bin
+md5sum /tmp/tclinux.bin
+8bb6e6d4e1fb231e4fbb0a98a494ccaf  /tmp/tclinux.bin
+nc 192.168.1.3 1234 < /tmp/bootloader.bin
+nc 192.168.1.3 1234 < /tmp/tclinux.bin
+```
+
+As usual, thank you for reading so far and [reach out](mailto:{{
+site.author.email }}) if you'd like to chat 👋
 
 [0]: https://en.wikipedia.org/wiki/Fiber_to_the_x
 [1]: https://en.wikipedia.org/wiki/Network_interface_device#Optical_network_terminals
-[2]: https://openwrt.org/docs/guide-user/luci/luci_app_statistics
 [3]: https://forocoches.com/foro/showthread.php?t=7024832
+[4]: https://en.wikipedia.org/wiki/TR-069
+[5]: https://bandaancha.eu/foros/configurar-openwrt-movistar-internet-1742525
