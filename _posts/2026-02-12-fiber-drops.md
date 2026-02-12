@@ -1,8 +1,7 @@
 ---
 title: 'Why my internet dropped like clockwork'
 excerpt: >
-  How a misconfigured watchdog in my ISP router killed my connection every two
-  hours.
+  A misconfigured watchdog in my ISP router brought me offline every two hours.
 ---
 
 I recently upgraded my home network to gigabit internet provided by O2, the
@@ -23,10 +22,11 @@ configured the required [PPPoE credentials][5] and created a VLAN. I got
 online, made a few speed measurements, and ensured that everything was working
 great.
 
-After a few minutes I noticed that the connection dropped and that the web
+After some time I noticed that the connection dropped and that the web
 interface of the router wasn't reachable anymore. I brushed it off, thinking
-that the network would eventually stabilize. But it kept happening, so I dug a
-bit more and noticed a pattern:
+that the network would eventually stabilize. But it kept happening! So I dug a
+bit more. At first, I thought of a hardware issue (maybe on the fiber line).
+Then, I noticed the following pattern:
 
 <p align="center" markdown="1">
 <picture class="text-align-center" markdown="1">
@@ -39,10 +39,10 @@ bit more and noticed a pattern:
   </small>
 </p>
 
-After ensuring that the issue wasn't on OpenWRT's side, I turned the
-investigation to the HGU router: Mitrastar firmwares have a [history][3] of
-bugs; it is also likely that bridge mode, isn't as battle-tested as the rest,
-because few users enable it.
+Drops so predictable likely indicated a software issue. After ensuring that the
+issue wasn't on OpenWRT's side, I started looking at the HGU router. Mitrastar
+firmwares have a [history][3] of bugs; it is also likely that bridge mode,
+isn't as battle-tested as the rest, because few users enable it.
 
 ISP routers can be a mixed bag in terms of debug access. This one is weirder
 than usual:
@@ -232,8 +232,8 @@ router, and it has since been running smoothly:
   </small>
 </p>
 
-Before checking out, I also dumped the bootloader and the firmware (just in
-case, as neither seems to be available online):
+To wrap things up, I also dumped the bootloader and the firmware (just in case,
+as neither seems to be available online):
 
 ```bash
 cat /dev/mtd0 > /tmp/bootloader.bin
@@ -246,8 +246,24 @@ nc 192.168.1.3 1234 < /tmp/bootloader.bin
 nc 192.168.1.3 1234 < /tmp/tclinux.bin
 ```
 
-As usual, thank you for reading so far and [reach out](mailto:{{
-site.author.email }}) if you'd like to chat 👋
+One mystery remains. Why did the drops happen _exactly_ every two hours? I
+looked at the router configuration and then had an AI agent look at the
+firwmware through Ghidra's MCP. The most convincing explanation (so far) is
+that the watchdog performs a check every 15 minutes. After 4 failed checks, it
+tries to restart the PPP interfaces (a noop in bridge mode). After 4 more
+failed checks, it sends a telemetry event to the ISP's IoT bridge on Azure.
+Which, in response, requests a reset of the network stack and temporarily drops
+the connection. Here are the relevant parameters from the decrypted
+configuration:
+
+| Parameter name | Value | Notes |
+| ------------- | -------------- | ---- |
+| WD_CheckChange | 900 | seconds, frequency of checks |
+| AlertAfter | 2 | how many failed checks before resetting PPP (off-by-one, the decompiled shows it resets when ≥ 3, 0-based) |
+| MaxReset | 1 | how many resets to try before notifying upstream |
+
+Thank you for reading so far! [Reach out](mailto:{{ site.author.email }}) if
+you'd like to chat. 👋
 
 [0]: https://en.wikipedia.org/wiki/Fiber_to_the_x
 [1]: https://en.wikipedia.org/wiki/Network_interface_device#Optical_network_terminals
