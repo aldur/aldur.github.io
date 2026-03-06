@@ -1,5 +1,6 @@
 ---
 title: 'All Ruby versions in Cloudflare pages'
+date: 2026-03-06
 ---
 
 This post originally started as a rant: until late February, Cloudflare Pages'
