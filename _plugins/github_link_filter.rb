@@ -7,7 +7,7 @@ module Jekyll
 
   Jekyll::Hooks.register [:posts, :micros, :pages], :post_render do |doc|
     next unless doc.output
-    next unless doc.output.include?("https://github.com/aldur")
+    next unless GITHUB_LINK_RE.match?(doc.output)
 
     svg_path = File.join(doc.site.source, "_includes", "social-icons", "github.svg.path")
     svg_path_content = File.read(svg_path, encoding: "UTF-8").strip
