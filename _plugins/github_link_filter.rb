@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module Jekyll
   # Post-render hook that automatically adds a GitHub SVG icon to links
   # pointing to https://github.com/aldur.
@@ -22,7 +24,7 @@ module Jekyll
         Regexp.last_match(0)
       else
         text = inner.empty? ? "here" : inner
-        plain = text.gsub(/<[^>]*>/, "").gsub('"', "&quot;")
+        plain = CGI.escapeHTML(text.gsub(/<[^>]*>/, ""))
         %(<a #{attrs} title="#{plain}">#{svg_icon}\n  #{text}</a>)
       end
     end
