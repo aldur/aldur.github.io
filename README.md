@@ -60,6 +60,15 @@ View the markdown source of any post by changing its URL to end with `.md`:
 - `page/` → `page.md`
 - `page` → `page.md`
 
+### GitHub link icons
+
+Links to `https://github.com/aldur` automatically get a GitHub SVG icon. Opt
+out on a specific link with:
+
+```markdown
+[some link](https://github.com/aldur/repo){: data-no-icon }
+```
+
 ### Custom redirects
 
 Use [`jekyll-redict-from`][3] to add multiple URLs for a page.
