@@ -24,7 +24,11 @@ module Jekyll
         Regexp.last_match(0)
       else
         text = inner.empty? ? "here" : inner
-        plain = CGI.escapeHTML(text.gsub(/<[^>]*>/, ""))
+        # Two-step sanitization to avoid multi-character bypass (e.g.,
+        # "<scr<script>ipt>" surviving a single pass of /<[^>]*>/):
+        # first strip HTML tags, then remove any surviving angle brackets.
+        plain = text.gsub(/<[^>]*>/, "").gsub(/[<>]/, "")
+        plain = CGI.escapeHTML(plain)
         %(<a #{attrs} title="#{plain}">#{svg_icon}\n  #{text}</a>)
       end
     end
