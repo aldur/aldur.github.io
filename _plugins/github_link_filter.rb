@@ -24,11 +24,7 @@ module Jekyll
         Regexp.last_match(0)
       else
         text = inner.empty? ? "here" : inner
-        # Two-step sanitization to avoid multi-character bypass (e.g.,
-        # "<scr<script>ipt>" surviving a single pass of /<[^>]*>/):
-        # first strip HTML tags, then remove any surviving angle brackets.
-        plain = text.gsub(/<[^>]*>/, "").gsub(/[<>]/, "")
-        plain = CGI.escapeHTML(plain)
+        plain = CGI.escapeHTML(text.gsub(/[<>]/, ""))
         %(<a #{attrs} title="#{plain}">#{svg_icon}\n  #{text}</a>)
       end
     end
