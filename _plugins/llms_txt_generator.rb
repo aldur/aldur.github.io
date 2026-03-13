@@ -66,6 +66,7 @@ module Jekyll
       text = doc.data["excerpt"].to_s
         .gsub(/<[^>]+>/, "")  # strip HTML tags
         .gsub(/[<>]/, "")     # remove any remaining angle brackets
+        .gsub(/<|>/, "")      # and harden it
         .gsub(/\s+/, " ")     # collapse whitespace
         .strip
       text.empty? ? nil : text
