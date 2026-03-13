@@ -223,6 +223,7 @@
               bundix
               libwebp
               html-proofer
+              ruby-lsp
             ]);
           };
         };
