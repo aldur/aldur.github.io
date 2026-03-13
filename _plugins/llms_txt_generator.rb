@@ -27,7 +27,7 @@ module Jekyll
       lines << "## Articles"
       lines << ""
       sorted_posts(site).each do |post|
-        lines << format_entry(post)
+        lines << format_entry(post, excerpt: true)
       end
 
       if site.collections.key?("micros")
@@ -51,11 +51,11 @@ module Jekyll
       site.collections["micros"].docs.sort_by { |m| m.date }.reverse
     end
 
-    def format_entry(doc)
+    def format_entry(doc, excerpt: false)
       title = doc.data["title"]
       entry = "- [#{title}](#{doc.url})"
-      if (excerpt = doc.data["description"] || plain_excerpt(doc))
-        entry += ": #{excerpt}"
+      if excerpt && (desc = doc.data["description"] || plain_excerpt(doc))
+        entry += ": #{desc}"
       end
       entry
     end
