@@ -60,14 +60,13 @@ module Jekyll
       entry
     end
 
+    include Liquid::StandardFilters
+
     def plain_excerpt(doc)
       return nil unless doc.data["excerpt"]
 
-      text = doc.data["excerpt"].to_s
-        .gsub(/<[^>]+>/, "")  # strip HTML tags
-        .gsub(/[<>]/, "")     # remove any remaining angle brackets
-        .gsub(/<|>/, "")      # and harden it
-        .gsub(/\s+/, " ")     # collapse whitespace
+      text = strip_html(doc.data["excerpt"].to_s)
+        .gsub(/\s+/, " ")
         .strip
       text.empty? ? nil : text
     end
