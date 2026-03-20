@@ -1,5 +1,6 @@
 ---
 title: 'Human voices'
+date: 2026-03-20 14:23:00 +0200
 excerpt: >
   On writing, finding your voice, and making a corner of the internet yours.
 ---
