@@ -1,7 +1,7 @@
 ---
 title: 'Shell pipes break readline completion'
 date: 2025-02-01
-modified_date: 2025-07-10
+last_modified_at: 2025-07-10
 redirect_from: /articles/2025/02/01/pipes.html
 ---
 

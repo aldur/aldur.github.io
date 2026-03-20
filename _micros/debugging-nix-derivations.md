@@ -1,7 +1,7 @@
 ---
 title: 'Debugging Nix derivations'
 date: 2025-09-09
-modified_date: 2025-11-23
+last_modified_at: 2025-11-23
 ---
 
 A living collection of tips to debug Nix derivations.

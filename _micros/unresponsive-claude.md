@@ -1,7 +1,7 @@
 ---
 title: 'Unresponsive Claude'
 date: 2025-10-02
-modified_date: 2025-10-03
+last_modified_at: 2025-10-03
 ---
 
 I recently spent a couple of hours debugging why `claude-code` was entirely

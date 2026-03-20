@@ -2,7 +2,7 @@
 layout: post
 title: 'Bare-minimum Google indexing for Jekyll'
 categories: [articles]
-modified_date: 2024-02-26
+last_modified_at: 2024-02-26
 ---
 
 Searching for this blog on Google right now does not return any results. Let's

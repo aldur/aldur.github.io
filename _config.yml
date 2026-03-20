@@ -15,7 +15,7 @@ about:
 
 twitter:
   username: AdrianoDiLuzio
-  card: summary
+  card: summary_large_image
 
 tagline: aldur's blog
 
@@ -67,6 +67,9 @@ minima:
     - title: aldur on GitHub
       icon: github
       url: "https://github.com/aldur"
+    - title: aldur on Bluesky
+      icon: bluesky
+      url: "https://bsky.app/profile/aldur.blog"
     - title: AdrianoDiLuzio on X (formerly Twitter)
       icon: x-twitter
       url: "https://x.com/AdrianoDiLuzio"
@@ -95,6 +98,12 @@ exclude:
   - .direnv/
 
 defaults:
+  # Default OG image for all pages
+  -
+    scope:
+      path: ""
+    values:
+      image: /assets/images/og-image.webp
   # When not specified, posts will have a `post` layout
   # and have `articles` in the categories.
   -

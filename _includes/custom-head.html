@@ -30,3 +30,15 @@
 {%- endif %}
 
 <link rel="human-json" href="/human.json">
+
+{%- if page.date %}
+{%- if page.last_modified_at %}
+<meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}" />
+{%- endif %}
+{%- if page.is_micro %}
+<meta property="article:section" content="μ" />
+{%- endif %}
+{%- for tag in page.tags %}
+<meta property="article:tag" content="{{ tag }}" />
+{%- endfor %}
+{%- endif %}
