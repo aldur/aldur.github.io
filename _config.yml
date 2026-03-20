@@ -67,12 +67,12 @@ minima:
     - title: aldur on GitHub
       icon: github
       url: "https://github.com/aldur"
-    - title: AdrianoDiLuzio on X (formerly Twitter)
-      icon: x-twitter
-      url: "https://x.com/AdrianoDiLuzio"
     - title: aldur on Bluesky
       icon: bluesky
       url: "https://bsky.app/profile/aldur.blog"
+    - title: AdrianoDiLuzio on X (formerly Twitter)
+      icon: x-twitter
+      url: "https://x.com/AdrianoDiLuzio"
 
   show_excerpts: true
   show_tags: true
