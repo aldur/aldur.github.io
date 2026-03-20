@@ -15,7 +15,7 @@ about:
 
 twitter:
   username: AdrianoDiLuzio
-  card: summary
+  card: summary_large_image
 
 tagline: aldur's blog
 
@@ -95,6 +95,12 @@ exclude:
   - .direnv/
 
 defaults:
+  # Default OG image for all pages
+  -
+    scope:
+      path: ""
+    values:
+      image: /assets/images/og-image.webp
   # When not specified, posts will have a `post` layout
   # and have `articles` in the categories.
   -

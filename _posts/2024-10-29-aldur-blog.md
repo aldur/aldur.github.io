@@ -1,6 +1,6 @@
 ---
 title: "Migrating to aldur.blog"
-modified_date: 2025-06-20
+last_modified_at: 2025-06-20
 excerpt: >
   Transparently migrating this blog to its own domain.
 ---

@@ -8,8 +8,8 @@
         <li>
           <span class="post-meta">
             {{ post.date | date: date_format }}
-            {% if post.modified_date %}
-              ~ ✎ {{ post.modified_date | date_to_xmlschema | date: date_format }}
+            {% if post.last_modified_at %}
+              ~ ✎ {{ post.last_modified_at | date_to_xmlschema | date: date_format }}
             {% endif %}
           </span>
           <h3 class="post-link">

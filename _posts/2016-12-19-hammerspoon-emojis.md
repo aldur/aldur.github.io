@@ -3,7 +3,7 @@ layout: post
 title: macOS Emoji Chooser with Hammerspoon
 excerpt: >
     Search and select emojis by name with Hammerspoon.
-modified_date: 2025-07-14
+last_modified_at: 2025-07-14
 categories: [articles]
 tags: [hammerspoon, emoji]
 ---
