@@ -80,12 +80,45 @@
         buildJekyll = pkgs.stdenv.mkDerivation {
           name = "jekyll-build";
           src = pkgs.lib.cleanSource ./.;
-          buildInputs = [ env ];
+          buildInputs = [
+            env
+            pkgs.imagemagick
+          ];
           buildPhase = ''
             unset BUNDLE_PATH
             ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
             mv _site $out;
+          '';
+        };
+
+        checkOgImages = pkgs.stdenv.mkDerivation {
+          name = "check-og-images";
+          src = pkgs.lib.cleanSource ./.;
+          nativeBuildInputs = [
+            env
+            pkgs.imagemagick
+          ];
+          buildPhase = ''
+            unset BUNDLE_PATH
+
+            # List committed OG images before build.
+            find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-before.txt || true
+
+            # Build the site — the plugin generates any missing OG images.
+            ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
+
+            # List OG images after build.
+            find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-after.txt || true
+
+            if ! diff -u /tmp/og-before.txt /tmp/og-after.txt; then
+              echo ""
+              echo "ERROR: OG images are out of date."
+              echo "Run 'nix run .#og' to regenerate, then commit the results."
+              exit 1
+            fi
+
+            mkdir -p $out
           '';
         };
 
@@ -115,9 +148,10 @@
         };
       in
       {
-        checks = rec {
+        checks = {
           jekyll-build = buildJekyll;
-          default = jekyll-build;
+          og-images = checkOgImages;
+          default = buildJekyll;
         };
 
         packages = {
@@ -141,6 +175,11 @@
             unset BUNDLE_PATH
             ${env}/bin/bundler exec -- jekyll clean \
                 ${jekyllArgs}
+          '';
+
+          regenerateOgImages = pkgs.writeShellScript "run" ''
+            unset BUNDLE_PATH
+            FORCE_OG=1 ${env}/bin/bundler exec -- jekyll build ${jekyllArgs}
           '';
 
           newPost = pkgs.writeShellScriptBin "new" ''
@@ -198,6 +237,7 @@
           default = mkApp "Serve Jekyll" "${self.packages.${system}.serveJekyll}";
           lock = mkApp "Lock Gemfile and update gemset.nix" "${self.packages.${system}.lockGemset}";
           clean = mkApp "Clean build artifacts" "${self.packages.${system}.cleanJekyll}";
+          og = mkApp "Regenerate all OG images" "${self.packages.${system}.regenerateOgImages}";
           new = mkApp "Create a new blog post" "${self.packages.${system}.newPost}/bin/new";
           micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
         };
