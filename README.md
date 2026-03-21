@@ -68,7 +68,7 @@ Links to `https://github.com/aldur` automatically get a GitHub SVG icon. Opt
 out on a specific link with:
 
 ```markdown
-[some link][5]{: data-no-icon }
+[some link](https://github.com/aldur/repo){: data-no-icon }
 ```
 
 ### Custom redirects
