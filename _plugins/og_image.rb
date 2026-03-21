@@ -2,6 +2,7 @@
 
 require "base64"
 require "cgi"
+require "open3"
 require "tempfile"
 
 module Jekyll
@@ -49,12 +50,16 @@ module Jekyll
       active_slugs = Set.new
 
       site.posts.docs.each do |post|
+        next if post.data["draft"]
+
         slug = process_document(post, og_dir, false, force)
         active_slugs.add(slug) if slug
       end
 
       if site.collections.key?("micros")
         site.collections["micros"].docs.each do |micro|
+          next if micro.data["draft"]
+
           slug = process_document(micro, og_dir, true, force)
           active_slugs.add(slug) if slug
         end
@@ -91,6 +96,7 @@ module Jekyll
       end
 
       og_path = File.join(og_dir, "#{slug}.webp")
+      generated = false
 
       unless !force && File.file?(og_path)
         title = doc.data["title"]
@@ -100,6 +106,13 @@ module Jekyll
         end
 
         generate_image(title, slug, is_micro, og_path)
+        generated = true
+      end
+
+      # Register newly generated images so Jekyll copies them to _site/.
+      if generated && File.file?(og_path)
+        site = doc.site
+        site.static_files << StaticFile.new(site, site.source, OG_DIR, "#{slug}.webp")
       end
 
       doc.data["image"] = "/#{OG_DIR}/#{slug}.webp"
@@ -131,7 +144,7 @@ module Jekyll
         tmp.write(svg)
         tmp.flush
 
-        success = system(
+        stdout, status = Open3.capture2e(
           "magick", "-density", "150",
           tmp.path,
           "-resize", "1200x630!",
@@ -139,8 +152,8 @@ module Jekyll
           output_path
         )
 
-        unless success
-          Jekyll.logger.error "OG Image:", "Failed to generate #{slug}.webp"
+        unless status.success?
+          Jekyll.logger.error "OG Image:", "Failed to generate #{slug}.webp: #{stdout.strip}"
         end
       end
     end

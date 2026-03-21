@@ -35,7 +35,8 @@
         gemConfig = { };
 
         expectedRubyVersion = pkgs.lib.trim (builtins.readFile ./.ruby-version);
-        actualRubyVersion = toString pkgs.ruby_3_4.version;
+        rubyPackage = pkgs.ruby_3_4;
+        actualRubyVersion = toString rubyPackage.version;
         parseVersion =
           v:
           let
@@ -54,12 +55,16 @@
           assert pkgs.lib.assertMsg majorMinorMatch
             "Ruby version mismatch: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}";
           if patchMatch then
-            pkgs.ruby_3_4
+            rubyPackage
           else
             # Rationale:
             # Pinning to a version outside of nixpkgs would require
             # low-powered machines to compile Ruby from source
-            (builtins.trace ''warning: Ruby patch version differs: .ruby-version specifies ${expectedRubyVersion} but nixpkgs provides ${actualRubyVersion}'' pkgs.ruby_3_4);
+            (
+              builtins.trace "warning: Ruby patch version differs: "
+              + ".ruby-version specifies ${expectedRubyVersion} "
+              + "but nixpkgs provides ${actualRubyVersion}" rubyPackage
+            );
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
@@ -77,16 +82,20 @@
           ;
 
         jekyllArgs = "--trace --drafts --future";
-        buildJekyll = pkgs.stdenv.mkDerivation {
-          name = "jekyll-build";
-          src = pkgs.lib.cleanSource ./.;
-          buildInputs = [
+        jekyllEnv = pkgs.buildEnv {
+          name = "jekyll-env";
+          paths = [
             env
             pkgs.imagemagick
           ];
+        };
+        buildJekyll = pkgs.stdenv.mkDerivation {
+          name = "jekyll-build";
+          src = pkgs.lib.cleanSource ./.;
+          buildInputs = [ jekyllEnv ];
           buildPhase = ''
             unset BUNDLE_PATH
-            ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
+            ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
             mv _site $out;
           '';
@@ -106,7 +115,7 @@
             find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-before.txt || true
 
             # Build the site — the plugin generates any missing OG images.
-            ${env}/bin/bundler exec -- jekyll build ${jekyllArgs};
+            ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs};
 
             # List OG images after build.
             find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-after.txt || true
@@ -158,7 +167,7 @@
           lockGemset = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
             echo "Locking Gemfile..."
-            ${env}/bin/bundler lock
+            ${jekyllEnv}/bin/bundler lock
             echo "Locking Gemfile.lock to gemset.nix..."
             ${pkgs.bundix}/bin/bundix -l
           '';
@@ -167,19 +176,19 @@
 
           serveJekyll = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
-            ${env}/bin/bundler exec -- jekyll serve \
+            ${jekyllEnv}/bin/bundler exec -- jekyll serve \
                 ${jekyllArgs} --livereload
           '';
 
           cleanJekyll = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
-            ${env}/bin/bundler exec -- jekyll clean \
+            ${jekyllEnv}/bin/bundler exec -- jekyll clean \
                 ${jekyllArgs}
           '';
 
           regenerateOgImages = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
-            FORCE_OG=1 ${env}/bin/bundler exec -- jekyll build ${jekyllArgs}
+            FORCE_OG=1 ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs}
           '';
 
           newPost = pkgs.writeShellScriptBin "new" ''
@@ -254,7 +263,7 @@
             BUNDLE_PATH = "vendor/bundle";
 
             packages = [
-              env
+              jekyllEnv
               ruby
               self.packages.${system}.newPost
               self.packages.${system}.newMicro
