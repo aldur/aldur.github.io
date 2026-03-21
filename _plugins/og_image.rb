@@ -6,13 +6,16 @@ require "tempfile"
 
 module Jekyll
   # Generates per-post OG images (1200x630 webp) and sets the `image` property
-  # on all pages and documents. Posts and micros get a unique OG image rendered
-  # from an SVG template with their title; other pages get a site-wide default.
+  # on all pages and documents.
   #
-  # Images are written to <source>/images/og/ and only regenerated when missing.
-  # Use FORCE_OG=1 to regenerate all images.
+  # Images are written to <source>/images/og/ and committed to the repo.
+  # - Missing images are generated automatically.
+  # - Stale images (no matching post/micro) are deleted.
+  # - FORCE_OG=1 regenerates all images (disabled during `jekyll serve`).
   #
-  # Requires `magick` (ImageMagick 7) on PATH.
+  # Use `nix run .#og` to force-regenerate all images.
+  #
+  # Requires `magick` (ImageMagick 7) or `convert` (v6) on PATH.
   class OgImageGenerator < Generator
     safe true
     priority :low
@@ -42,17 +45,29 @@ module Jekyll
                        "data:image/webp;base64,#{Base64.strict_encode64(File.binread(bg_path))}"
                      end
 
+      # Track which slugs are active so we can clean up stale images.
+      active_slugs = Set.new
+
       site.posts.docs.each do |post|
-        process_document(post, og_dir, false, force)
+        slug = process_document(post, og_dir, false, force)
+        active_slugs.add(slug) if slug
       end
 
       if site.collections.key?("micros")
         site.collections["micros"].docs.each do |micro|
-          process_document(micro, og_dir, true, force)
+          slug = process_document(micro, og_dir, true, force)
+          active_slugs.add(slug) if slug
         end
       end
 
-      site.pages.each { |page| set_default(page) }
+      # Delete stale images that no longer match any post or micro.
+      cleanup_stale(og_dir, active_slugs)
+
+      # Everything without an image gets the default.
+      all_docs = site.posts.docs.dup
+      all_docs.concat(site.collections["micros"].docs) if site.collections.key?("micros")
+      all_docs.concat(site.pages)
+      all_docs.each { |doc| set_default(doc) }
     end
 
     private
@@ -65,14 +80,14 @@ module Jekyll
 
     def process_document(doc, og_dir, is_micro, force)
       # Don't override an explicitly set image in front matter.
-      return if doc.data.key?("image") && !doc.data["image"].nil?
+      return nil if doc.data.key?("image") && !doc.data["image"].nil?
 
       slug = slug_from_url(doc.url)
 
       # Validate slug: only alphanumeric, hyphens, underscores.
       unless slug.match?(/\A[a-zA-Z0-9_-]+\z/)
         Jekyll.logger.warn "OG Image:", "Skipping invalid slug: #{slug.inspect}"
-        return
+        return nil
       end
 
       og_path = File.join(og_dir, "#{slug}.webp")
@@ -81,19 +96,30 @@ module Jekyll
         title = doc.data["title"]
         if title.nil? || title.strip.empty?
           doc.data["image"] = DEFAULT_OG_IMAGE
-          return
+          return nil
         end
 
         generate_image(title, slug, is_micro, og_path)
       end
 
       doc.data["image"] = "/#{OG_DIR}/#{slug}.webp"
+      slug
     end
 
-    def set_default(page)
-      return if page.data.key?("image") && !page.data["image"].nil?
+    def cleanup_stale(og_dir, active_slugs)
+      Dir.glob(File.join(og_dir, "*.webp")).each do |path|
+        slug = File.basename(path, ".webp")
+        next if active_slugs.include?(slug)
 
-      page.data["image"] = DEFAULT_OG_IMAGE
+        Jekyll.logger.info "OG Image:", "Removing stale #{slug}.webp"
+        File.delete(path)
+      end
+    end
+
+    def set_default(doc)
+      return if doc.data.key?("image") && !doc.data["image"].nil?
+
+      doc.data["image"] = DEFAULT_OG_IMAGE
     end
 
     def generate_image(title, slug, is_micro, output_path)
