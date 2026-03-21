@@ -96,6 +96,7 @@ exclude:
   - flake.nix
   - gemset.nix
   - .direnv/
+  - cloudflare_build.sh
 
 defaults:
   # When not specified, posts will have a `post` layout
