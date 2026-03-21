@@ -96,14 +96,9 @@ exclude:
   - flake.nix
   - gemset.nix
   - .direnv/
+  - cloudflare_build.sh
 
 defaults:
-  # Default OG image for all pages
-  -
-    scope:
-      path: ""
-    values:
-      image: /assets/images/og-image.webp
   # When not specified, posts will have a `post` layout
   # and have `articles` in the categories.
   -

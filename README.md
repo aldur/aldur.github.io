@@ -60,6 +60,8 @@ View the markdown source of any post by changing its URL to end with `.md`:
 - `page/` → `page.md`
 - `page` → `page.md`
 
+`/llms.txt` indexes posts and micros in markdown.
+
 ### GitHub link icons
 
 Links to `https://github.com/aldur` automatically get a GitHub SVG icon. Opt
@@ -78,6 +80,16 @@ redirect_from:
   - /short-link
 ```
 
+### Opengraph images
+
+Run `nix run .#og` to (re)generate [OpenGraph images][6] for posts and micros.
+
+Images are committed to [images/og/](./images/og/), because Cloudflare builds
+don't ship `imagemagick` to dynamically generate them (SVG to Webp) at build
+time.
+
+`nix flake check` ensures that there's an image for each post/micro.
+
 ### Theme
 
 [Minima's][4] default color follows the user's system preference (light/dark).
@@ -88,3 +100,4 @@ The toggle icon overrides it.
 [2]: https://nixos.wiki/wiki/Flakes
 [3]: https://github.com/jekyll/jekyll-redirect-from
 [4]: https://github.com/jekyll/minima
+[6]: https://ogp.me
