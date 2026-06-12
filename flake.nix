@@ -61,9 +61,13 @@
             # Pinning to a version outside of nixpkgs would require
             # low-powered machines to compile Ruby from source
             (
-              builtins.trace "warning: Ruby patch version differs: "
-              + ".ruby-version specifies ${expectedRubyVersion} "
-              + "but nixpkgs provides ${actualRubyVersion}" rubyPackage
+              builtins.trace
+                (
+                  "warning: Ruby patch version differs: "
+                  + ".ruby-version specifies ${expectedRubyVersion} "
+                  + "but nixpkgs provides ${actualRubyVersion}"
+                )
+                rubyPackage
             );
 
         # Node, used by the OG renderer (bin/og-render.mjs). `.node-version`
