@@ -61,10 +61,25 @@
             # Pinning to a version outside of nixpkgs would require
             # low-powered machines to compile Ruby from source
             (
-              builtins.trace "warning: Ruby patch version differs: "
-              + ".ruby-version specifies ${expectedRubyVersion} "
-              + "but nixpkgs provides ${actualRubyVersion}" rubyPackage
+              builtins.trace
+                (
+                  "warning: Ruby patch version differs: "
+                  + ".ruby-version specifies ${expectedRubyVersion} "
+                  + "but nixpkgs provides ${actualRubyVersion}"
+                )
+                rubyPackage
             );
+
+        # Node, used by the OG renderer (bin/og-render.mjs). `.node-version`
+        # pins Cloudflare's Node; assert its major matches the flake's, the way
+        # we do for Ruby.
+        expectedNodeVersion = pkgs.lib.trim (builtins.readFile ./.node-version);
+        nodePackage = pkgs.nodejs_22;
+        nodejs =
+          assert pkgs.lib.assertMsg
+            ((parseVersion expectedNodeVersion).major == (parseVersion nodePackage.version).major)
+            "Node major version mismatch: .node-version specifies ${expectedNodeVersion} but nixpkgs provides ${nodePackage.version}";
+          nodePackage;
 
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
@@ -82,52 +97,72 @@
           ;
 
         jekyllArgs = "--trace --drafts --future";
+
+        # The og_image plugin renders images with `node bin/og-render.mjs`,
+        # which needs `node_modules`. The nix sandbox has no network, so pin the
+        # deps as a fixed-output derivation (pnpm 10, to match Cloudflare).
+        # To refresh after editing package.json: set `hash = pkgs.lib.fakeHash`,
+        # run `nix build .#default`, and copy the reported hash back in.
+        pnpmSrc = pkgs.lib.fileset.toSource {
+          root = ./.;
+          fileset = pkgs.lib.fileset.unions [
+            ./package.json
+            ./pnpm-lock.yaml
+          ];
+        };
+        ogPackage = pkgs.lib.importJSON "${pnpmSrc}/package.json";
+        ogNodeModules = pkgs.stdenv.mkDerivation (finalAttrs: {
+          pname = ogPackage.name;
+          inherit (ogPackage) version;
+          src = pnpmSrc;
+          nativeBuildInputs = [
+            nodejs
+            pkgs.pnpm_10
+            pkgs.pnpmConfigHook
+          ];
+          pnpmDeps = pkgs.fetchPnpmDeps {
+            pnpm = pkgs.pnpm_10;
+            inherit (finalAttrs) pname version src;
+            fetcherVersion = 3;
+            hash = "sha256-ORTcmASa9ZzcMak9v4ZukkOfjZFjNFdhKXSygJ1DSk4=";
+          };
+          dontBuild = true;
+          # `${ogNodeModules}` is the populated node_modules directory.
+          installPhase = ''
+            runHook preInstall
+            cp -R node_modules "$out"
+            runHook postInstall
+          '';
+        });
+
+        # The renderer and its node_modules, co-located in the store, so `node`
+        # resolves dependencies from there — no node_modules in the working
+        # tree. The plugin finds the script via OG_RENDER_SCRIPT.
+        ogRenderer = pkgs.runCommand "og-renderer" { } ''
+          mkdir -p "$out"
+          cp ${./bin/og-render.mjs} "$out/og-render.mjs"
+          ln -s ${ogNodeModules} "$out/node_modules"
+        '';
+
         jekyllEnv = pkgs.buildEnv {
           name = "jekyll-env";
           paths = [
             env
-            pkgs.imagemagick
+            nodejs
           ];
         };
         buildJekyll = pkgs.stdenv.mkDerivation {
           name = "jekyll-build";
           src = pkgs.lib.cleanSource ./.;
           buildInputs = [ jekyllEnv ];
+          # A failed OG render aborts the build, so this check also guarantees
+          # every post/micro ends up with its image.
+          OG_RENDER_SCRIPT = "${ogRenderer}/og-render.mjs";
           buildPhase = ''
             unset BUNDLE_PATH
             ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs};
             mkdir $out;
             mv _site $out;
-          '';
-        };
-
-        checkOgImages = pkgs.stdenv.mkDerivation {
-          name = "check-og-images";
-          src = pkgs.lib.cleanSource ./.;
-          nativeBuildInputs = [
-            env
-            pkgs.imagemagick
-          ];
-          buildPhase = ''
-            unset BUNDLE_PATH
-
-            # List committed OG images before build.
-            find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-before.txt || true
-
-            # Build the site — the plugin generates any missing OG images.
-            ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs};
-
-            # List OG images after build.
-            find images/og -name '*.webp' -printf '%f\n' 2>/dev/null | sort > /tmp/og-after.txt || true
-
-            if ! diff -u /tmp/og-before.txt /tmp/og-after.txt; then
-              echo ""
-              echo "ERROR: OG images are out of date."
-              echo "Run 'nix run .#og' to regenerate, then commit the results."
-              exit 1
-            fi
-
-            mkdir -p $out
           '';
         };
 
@@ -159,7 +194,6 @@
       {
         checks = {
           jekyll-build = buildJekyll;
-          og-images = checkOgImages;
           default = buildJekyll;
         };
 
@@ -176,6 +210,8 @@
 
           serveJekyll = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
+            export PATH="${jekyllEnv}/bin:$PATH"
+            export OG_RENDER_SCRIPT="${ogRenderer}/og-render.mjs"
             ${jekyllEnv}/bin/bundler exec -- jekyll serve \
                 ${jekyllArgs} --livereload
           '';
@@ -188,6 +224,8 @@
 
           regenerateOgImages = pkgs.writeShellScript "run" ''
             unset BUNDLE_PATH
+            export PATH="${jekyllEnv}/bin:$PATH"
+            export OG_RENDER_SCRIPT="${ogRenderer}/og-render.mjs"
             FORCE_OG=1 ${jekyllEnv}/bin/bundler exec -- jekyll build ${jekyllArgs}
           '';
 
@@ -251,31 +289,62 @@
           micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
         };
 
-        devShells = {
-          default = pkgs.mkShell {
-            # Ignore the current machine's platform and install only ruby
-            # platform gems. As a result, gems with native extensions will be
-            # compiled from source.
-            # https://bundler.io/v2.4/man/bundle-config.1.html
-            BUNDLE_FORCE_RUBY_PLATFORM = "true";
+        devShells =
+          let
+            shellEnv = {
+              # Ignore the current machine's platform and install only ruby
+              # platform gems. As a result, gems with native extensions will be
+              # compiled from source.
+              # https://bundler.io/v2.4/man/bundle-config.1.html
+              BUNDLE_FORCE_RUBY_PLATFORM = "true";
 
-            # Vendor gems locally instead of in Nix store.
-            BUNDLE_PATH = "vendor/bundle";
+              # Vendor gems locally instead of in Nix store.
+              BUNDLE_PATH = "vendor/bundle";
 
-            packages = [
+              # Lets a manual `bundle exec jekyll build/serve` in the shell find
+              # the OG renderer (and its node_modules) in the store.
+              OG_RENDER_SCRIPT = "${ogRenderer}/og-render.mjs";
+            };
+
+            # Everything needed for the everyday build/serve/write loop.
+            # `node` (for the OG renderer) comes from `jekyllEnv`.
+            corePackages = [
               jekyllEnv
               ruby
               self.packages.${system}.newPost
               self.packages.${system}.newMicro
             ]
             ++ (with pkgs; [
-              bundix
-              libwebp
-              html-proofer
               ruby-lsp
             ]);
+          in
+          {
+            # Lean shell loaded by `direnv` / `nix develop`. Kept small so the
+            # first build (and every `nix-direnv` cache miss) stays fast.
+            default = pkgs.mkShell (
+              shellEnv // { packages = corePackages; }
+            );
+
+            # Heavier maintenance shell: `bundix` (gem locking) and
+            # `html-proofer` (link checking). These are rarely needed and pull
+            # in large closures — `bundix` alone drags in a second copy of Nix,
+            # git, and the full Perl LWP stack — so they stay out of `default`.
+            # Enter with `nix develop .#full`. Note: gem locking is also
+            # available without this shell via `nix run .#lock`.
+            full = pkgs.mkShell (
+              shellEnv
+              // {
+                packages =
+                  corePackages
+                  ++ (with pkgs; [
+                    bundix
+                    html-proofer
+                    # For refreshing pnpm-lock.yaml (`pnpm install`).
+                    pnpm_10
+                  ]);
+              }
+            );
           };
-        };
       }
     );
 }

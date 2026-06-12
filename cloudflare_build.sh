@@ -5,10 +5,12 @@ set -euo pipefail
 # Uses CF_PAGES_URL for preview deployments so that OG images and canonical
 # URLs point to the correct preview domain.
 
+pnpm install --frozen-lockfile
+
 configs="_config.yml,cloudflare_pages._config.yml"
 
 if [ "${CF_PAGES_BRANCH:-}" != "master" ] && [ -n "${CF_PAGES_URL:-}" ]; then
-  echo "url: $CF_PAGES_URL" > _cf_preview.yml
+  echo "url: $CF_PAGES_URL" >_cf_preview.yml
   configs="${configs},_cf_preview.yml"
 fi
 

@@ -1,0 +1,12 @@
+{
+  "name": "aldur-blog-og",
+  "version": "1.0.0",
+  "description": "Build-time OpenGraph image rendering (SVG -> WebP) for aldur.blog. Used by the Jekyll og_image plugin in environments without ImageMagick (e.g. the Cloudflare Pages builder).",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@jsquash/webp": "^1.5.0",
+    "@resvg/resvg-wasm": "^2.6.2",
+    "dejavu-fonts-ttf": "^2.37.3"
+  }
+}

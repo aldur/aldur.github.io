@@ -16,11 +16,13 @@ Install [Nix][1] and enable [flakes][2]. Then, run `nix run`.
 
 ### Developing
 
-- `nix develop` (or `direnv allow`) will prepare and enter an environment with
-  everything you need.
+- `nix develop` (or `direnv allow`) is a lean dev shell that allows
+  build/serve/write loop.
+- `nix develop '.#full'` includes the heavier maintenance tools (`bundix`,
+  `html-proofer`).
 - `bundler update` will update your Gems. `bundler` is configured to use the
   `vendor` directory, so that it won't try installing it under `nix` store.
-- `nix run '.#lock'` will generates the `gemset.nix` file from `Gemfile.lock`.
+- `nix run '.#lock'` will generate the `gemset.nix` file from `Gemfile.lock`.
 - `nix flake check` will test the build and run linters.
 
 ## Features
@@ -82,13 +84,14 @@ redirect_from:
 
 ### Opengraph images
 
-Run `nix run .#og` to (re)generate [OpenGraph images][6] for posts and micros.
+The [`og_image`](./_plugins/og_image.rb) plugin generates a per-post
+[OpenGraph image][6] (1200x630 WebP) at build time, from an SVG it renders to
+WebP. Images are **not** committed: they live under `images/og/` (gitignored)
+and are regenerated on every build.
 
-Images are committed to [images/og/](./images/og/), because Cloudflare builds
-don't ship `imagemagick` to dynamically generate them (SVG to Webp) at build
-time.
-
-`nix flake check` ensures that there's an image for each post/micro.
+Run `nix run .#og` to force-regenerate all images locally (e.g. to preview a
+template change). Use `nix develop .#full` (which includes `pnpm`) to refresh
+`pnpm-lock.yaml` after changing dependencies.
 
 ### Theme
 

@@ -4,3 +4,6 @@ vendor/bundle
 .jekyll-metadata
 .direnv
 result
+node_modules
+# OG images are generated at build time (see _plugins/og_image.rb), not committed.
+images/og/
