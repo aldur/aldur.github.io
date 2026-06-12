@@ -6,9 +6,11 @@ set -euo pipefail
 # URLs point to the correct preview domain.
 
 # OG images are generated at build time by the og_image plugin via the WASM
-# renderer in bin/og-render.mjs (@resvg/resvg-wasm, @jsquash/webp, DejaVu
-# fonts). Install its dependencies. pnpm is preinstalled on the build image.
-pnpm install --frozen-lockfile
+# renderer in bin/og-render.mjs (@resvg/resvg-wasm, @jsquash/webp). Install its
+# dependencies with the same pnpm the nix build uses: .pnpm-version is the
+# single source of truth, asserted against nixpkgs in flake.nix. (Node and Ruby
+# are likewise pinned via .node-version and .ruby-version.)
+npx --yes "pnpm@$(cat .pnpm-version)" install --frozen-lockfile
 
 configs="_config.yml,cloudflare_pages._config.yml"
 

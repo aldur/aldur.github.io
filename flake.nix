@@ -66,6 +66,27 @@
               + "but nixpkgs provides ${actualRubyVersion}" rubyPackage
             );
 
+        # Node, used by the OG renderer (bin/og-render.mjs). `.node-version`
+        # pins Cloudflare's Node; assert its major matches the flake's, the way
+        # we do for Ruby.
+        expectedNodeVersion = pkgs.lib.trim (builtins.readFile ./.node-version);
+        nodePackage = pkgs.nodejs_22;
+        nodejs =
+          assert pkgs.lib.assertMsg
+            ((parseVersion expectedNodeVersion).major == (parseVersion nodePackage.version).major)
+            "Node major version mismatch: .node-version specifies ${expectedNodeVersion} but nixpkgs provides ${nodePackage.version}";
+          nodePackage;
+
+        # pnpm builds the OG renderer's node_modules: as a fixed-output
+        # derivation here, and via `pnpm install` on Cloudflare (which reads
+        # .pnpm-version). Assert nixpkgs provides exactly that version, so both
+        # environments use the same pnpm.
+        expectedPnpmVersion = pkgs.lib.trim (builtins.readFile ./.pnpm-version);
+        pnpm =
+          assert pkgs.lib.assertMsg (expectedPnpmVersion == pkgs.pnpm_10.version)
+            "pnpm version mismatch: .pnpm-version specifies ${expectedPnpmVersion} but nixpkgs provides ${pkgs.pnpm_10.version}";
+          pkgs.pnpm_10;
+
         # --- Here's what's happening below. ---
         # First we call the function `ruby-nix.lib` by passing it `pkgs`.
         # This returns a function, that accepts a set (having a `name`), etc.
@@ -101,12 +122,12 @@
           inherit (ogPackage) version;
           src = pnpmSrc;
           nativeBuildInputs = [
-            pkgs.nodejs
-            pkgs.pnpm_10
+            nodejs
+            pnpm
             pkgs.pnpmConfigHook
           ];
           pnpmDeps = pkgs.fetchPnpmDeps {
-            pnpm = pkgs.pnpm_10;
+            pnpm = pnpm;
             inherit (finalAttrs) pname version src;
             fetcherVersion = 3;
             hash = "sha256-ORTcmASa9ZzcMak9v4ZukkOfjZFjNFdhKXSygJ1DSk4=";
@@ -133,7 +154,7 @@
           name = "jekyll-env";
           paths = [
             env
-            pkgs.nodejs
+            nodejs
           ];
         };
         buildJekyll = pkgs.stdenv.mkDerivation {
@@ -325,7 +346,7 @@
                     bundix
                     html-proofer
                     # For refreshing pnpm-lock.yaml (`pnpm install`).
-                    pnpm_10
+                    pnpm
                   ]);
               }
             );
