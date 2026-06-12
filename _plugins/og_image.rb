@@ -2,25 +2,30 @@
 
 require "base64"
 require "cgi"
+require "json"
 require "open3"
-require "tempfile"
+require "tmpdir"
 
 module Jekyll
   # Generates per-post OG images (1200x630 webp) and sets the `image` property
   # on all pages and documents.
   #
-  # Images are written to <source>/images/og/ and committed to the repo.
+  # Images are written to <source>/images/og/ at build time (they are NOT
+  # committed to the repo).
   # - Missing images are generated automatically.
   # - Stale images (no matching post/micro) are deleted.
   # - FORCE_OG=1 regenerates all images (disabled during `jekyll serve`).
   #
   # Use `nix run .#og` to force-regenerate all images.
   #
-  # Requires `magick` (ImageMagick 7) or `convert` (v6) on PATH.
+  # Rasterisation (SVG -> WebP) is done by `node bin/og-render.mjs`.
   class OgImageGenerator < Generator
     safe true
     priority :low
 
+    # Single source image: the fallback OG image for pages without a generated
+    # one, and the card background (embedded into the SVG; the renderer
+    # transcodes it to PNG since resvg-wasm can't decode an embedded WebP).
     DEFAULT_OG_IMAGE = "/assets/images/og-image.webp"
     BG_IMAGE_PATH = "assets/images/og-image.webp"
     OG_DIR = "images/og"
@@ -40,11 +45,15 @@ module Jekyll
       # to prevent infinite rebuild loops (writing to source triggers watch).
       force = ENV["FORCE_OG"] == "1" && !site.config["serving"]
 
-      # Load background image once for all OG images.
+      # Load the background once, shared by every image.
       bg_path = File.join(site.source, BG_IMAGE_PATH)
       @bg_data_uri = if File.file?(bg_path)
                        "data:image/webp;base64,#{Base64.strict_encode64(File.binread(bg_path))}"
                      end
+
+      # Collect rasterisation jobs and render them in one batch, so the renderer
+      # pays its WASM start-up cost only once.
+      jobs = []
 
       # Track which slugs are active so we can clean up stale images.
       active_slugs = Set.new
@@ -52,7 +61,7 @@ module Jekyll
       site.posts.docs.each do |post|
         next if post.data["draft"]
 
-        slug = process_document(post, og_dir, false, force)
+        slug = process_document(post, og_dir, false, force, jobs)
         active_slugs.add(slug) if slug
       end
 
@@ -60,9 +69,21 @@ module Jekyll
         site.collections["micros"].docs.each do |micro|
           next if micro.data["draft"]
 
-          slug = process_document(micro, og_dir, true, force)
+          slug = process_document(micro, og_dir, true, force, jobs)
           active_slugs.add(slug) if slug
         end
+      end
+
+      render_jobs(site, jobs)
+
+      # Register newly generated images so Jekyll copies them to _site/. Images
+      # that already existed at read time are picked up by Jekyll on its own.
+      jobs.each do |job|
+        next unless job[:new] && File.file?(job[:out])
+
+        # Leading slash so `relative_path` matches Jekyll's own reader (e.g. so
+        # `{% link /images/og/<slug>.webp %}` resolves to this generated file).
+        site.static_files << StaticFile.new(site, site.source, "/#{OG_DIR}", "#{job[:slug]}.webp")
       end
 
       # Delete stale images that no longer match any post or micro.
@@ -83,7 +104,9 @@ module Jekyll
       url.gsub(%r{^/|/+$}, "").gsub(%r{\.html$}, "").tr("/", "-")
     end
 
-    def process_document(doc, og_dir, is_micro, force)
+    # Decides whether `doc` needs an OG image, queues a render job if so, and
+    # sets `doc.data["image"]`. Returns the slug (or nil when skipped).
+    def process_document(doc, og_dir, is_micro, force, jobs)
       # Don't override an explicitly set image in front matter.
       return nil if doc.data.key?("image") && !doc.data["image"].nil?
 
@@ -96,23 +119,17 @@ module Jekyll
       end
 
       og_path = File.join(og_dir, "#{slug}.webp")
-      generated = false
+      already_exists = File.file?(og_path)
 
-      unless !force && File.file?(og_path)
+      if force || !already_exists
         title = doc.data["title"]
         if title.nil? || title.strip.empty?
           doc.data["image"] = DEFAULT_OG_IMAGE
           return nil
         end
 
-        generate_image(title, slug, is_micro, og_path)
-        generated = true
-      end
-
-      # Register newly generated images so Jekyll copies them to _site/.
-      if generated && File.file?(og_path)
-        site = doc.site
-        site.static_files << StaticFile.new(site, site.source, OG_DIR, "#{slug}.webp")
+        svg = build_svg(wrap_title(title), is_micro)
+        jobs << { slug: slug, svg: svg, out: og_path, new: !already_exists }
       end
 
       doc.data["image"] = "/#{OG_DIR}/#{slug}.webp"
@@ -135,28 +152,51 @@ module Jekyll
       doc.data["image"] = DEFAULT_OG_IMAGE
     end
 
-    def generate_image(title, slug, is_micro, output_path)
-      Jekyll.logger.info "OG Image:", "Generating #{slug}"
-      tspans = wrap_title(title)
-      svg = build_svg(tspans, is_micro)
+    # --- Rasterisation -------------------------------------------------------
 
-      Tempfile.create(["og-", ".svg"]) do |tmp|
-        tmp.write(svg)
-        tmp.flush
+    def render_jobs(site, jobs)
+      return if jobs.empty?
 
-        stdout, status = Open3.capture2e(
-          "magick", "-density", "150",
-          tmp.path,
-          "-resize", "1200x630!",
-          "-quality", "90",
-          output_path
-        )
+      Jekyll.logger.info "OG Image:", "Rendering #{jobs.length} image(s)"
 
-        unless status.success?
-          Jekyll.logger.error "OG Image:", "Failed to generate #{slug}.webp: #{stdout.strip}"
+      Dir.mktmpdir("og-svg-") do |dir|
+        manifest = jobs.each_with_index.map do |job, i|
+          svg_path = File.join(dir, "#{i}.svg")
+          File.write(svg_path, job[:svg])
+          { "svg" => svg_path, "out" => job[:out] }
         end
+
+        manifest_path = File.join(dir, "manifest.json")
+        File.write(manifest_path, JSON.generate(manifest))
+
+        # nix points OG_RENDER_SCRIPT at a store copy with its node_modules
+        # alongside; otherwise (e.g. Cloudflare) use the in-tree script, which
+        # resolves the repo's node_modules.
+        script = ENV.fetch("OG_RENDER_SCRIPT") { File.join(site.source, "bin", "og-render.mjs") }
+        ok, out = run("node", script, manifest_path)
+        Jekyll.logger.error "OG Image:", "renderer failed: #{out.strip}" unless ok
       end
+
+      # Fail the build if anything didn't render: this is what guarantees every
+      # post/micro ends up with its image (there are no committed fallbacks).
+      # During `jekyll serve` we only warn, to avoid crashing the dev loop.
+      failed = jobs.reject { |job| File.file?(job[:out]) && File.size(job[:out]).positive? }
+      return if failed.empty?
+
+      msg = "failed to render #{failed.length} image(s): #{failed.map { |j| j[:slug] }.join(", ")}"
+      raise "OG Image: #{msg}" unless site.config["serving"]
+
+      Jekyll.logger.error "OG Image:", msg
     end
+
+    def run(*cmd)
+      out, status = Open3.capture2e(*cmd)
+      [status.success?, out]
+    rescue Errno::ENOENT => e
+      [false, e.message]
+    end
+
+    # --- SVG construction ----------------------------------------------------
 
     def wrap_title(title)
       safe = CGI.escapeHTML(title)

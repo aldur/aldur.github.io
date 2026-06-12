@@ -97,6 +97,11 @@ exclude:
   - gemset.nix
   - .direnv/
   - cloudflare_build.sh
+  # OG image rendering toolchain (see _plugins/og_image.rb, bin/og-render.mjs).
+  - bin/
+  - node_modules/
+  - package.json
+  - pnpm-lock.yaml
 
 defaults:
   # When not specified, posts will have a `post` layout
