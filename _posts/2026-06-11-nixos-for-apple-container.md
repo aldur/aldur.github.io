@@ -1,5 +1,6 @@
 ---
 title: 'NixOS for Apple container'
+last_modified_at: 2026-06-18
 excerpt: >
   Building NixOS images that run both as containers and VMs on macOS.
 ---
@@ -67,6 +68,17 @@ uid=501(nixos) gid=20(lp) groups=20(lp)
 
 # If you are confused about `/home/aldur`,
 # container VMs derive `cwd`, `id` and `guid` from your macOS user.
+```
+
+#### Careful with those backups
+
+A few days after writing this post, I discovered that [`container` bloats Time
+Machine backups]({% link
+_micros/psa-apple-container-bloats-time-machine-backups.md %}). Prevent that by
+excluding its state directory with:
+
+```bash
+tmutil addexclusion ~/Library/Application\ Support/com.apple.container
 ```
 
 [0]: https://github.com/aldur/dotfiles/tree/master/base_hosts/apple-container
