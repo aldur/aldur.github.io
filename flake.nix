@@ -1,5 +1,5 @@
 {
-  description = "Package Jekyll and its gems for 'aldur.github.io'";
+  description = "Package Jekyll and its gems for 'aldur.blog'";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -60,15 +60,11 @@
             # Rationale:
             # Pinning to a version outside of nixpkgs would require
             # low-powered machines to compile Ruby from source
-            (
-              builtins.trace
-                (
-                  "warning: Ruby patch version differs: "
-                  + ".ruby-version specifies ${expectedRubyVersion} "
-                  + "but nixpkgs provides ${actualRubyVersion}"
-                )
-                rubyPackage
-            );
+            (builtins.trace (
+              "warning: Ruby patch version differs: "
+              + ".ruby-version specifies ${expectedRubyVersion} "
+              + "but nixpkgs provides ${actualRubyVersion}"
+            ) rubyPackage);
 
         # Node, used by the OG renderer (bin/og-render.mjs). `.node-version`
         # pins Cloudflare's Node; assert its major matches the flake's, the way
@@ -321,9 +317,7 @@
           {
             # Lean shell loaded by `direnv` / `nix develop`. Kept small so the
             # first build (and every `nix-direnv` cache miss) stays fast.
-            default = pkgs.mkShell (
-              shellEnv // { packages = corePackages; }
-            );
+            default = pkgs.mkShell (shellEnv // { packages = corePackages; });
 
             # Heavier maintenance shell: `bundix` (gem locking) and
             # `html-proofer` (link checking). These are rarely needed and pull
@@ -341,6 +335,7 @@
                     html-proofer
                     # For refreshing pnpm-lock.yaml (`pnpm install`).
                     pnpm_10
+                    libwebp
                   ]);
               }
             );
