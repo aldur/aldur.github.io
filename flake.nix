@@ -181,9 +181,9 @@
           fi
         '';
 
-        mkApp = description: program: {
+        mkApp = description: package: {
           type = "app";
-          inherit program;
+          program = pkgs.lib.getExe package;
           meta = { inherit description; };
         };
       in
@@ -194,7 +194,7 @@
         };
 
         packages = {
-          lockGemset = pkgs.writeShellScript "run" ''
+          lockGemset = pkgs.writeShellScriptBin "lock" ''
             unset BUNDLE_PATH
             echo "Locking Gemfile..."
             ${jekyllEnv}/bin/bundler lock
@@ -204,7 +204,7 @@
 
           default = buildJekyll;
 
-          serveJekyll = pkgs.writeShellScript "run" ''
+          serveJekyll = pkgs.writeShellScriptBin "serve" ''
             unset BUNDLE_PATH
             export PATH="${jekyllEnv}/bin:$PATH"
             export OG_RENDER_SCRIPT="${ogRenderer}/og-render.mjs"
@@ -212,13 +212,13 @@
                 ${jekyllArgs} --livereload
           '';
 
-          cleanJekyll = pkgs.writeShellScript "run" ''
+          cleanJekyll = pkgs.writeShellScriptBin "clean" ''
             unset BUNDLE_PATH
             ${jekyllEnv}/bin/bundler exec -- jekyll clean \
                 ${jekyllArgs}
           '';
 
-          regenerateOgImages = pkgs.writeShellScript "run" ''
+          regenerateOgImages = pkgs.writeShellScriptBin "og" ''
             unset BUNDLE_PATH
             export PATH="${jekyllEnv}/bin:$PATH"
             export OG_RENDER_SCRIPT="${ogRenderer}/og-render.mjs"
@@ -276,14 +276,25 @@
           '';
         };
 
-        apps = {
-          default = mkApp "Serve Jekyll" "${self.packages.${system}.serveJekyll}";
-          lock = mkApp "Lock Gemfile and update gemset.nix" "${self.packages.${system}.lockGemset}";
-          clean = mkApp "Clean build artifacts" "${self.packages.${system}.cleanJekyll}";
-          og = mkApp "Regenerate all OG images" "${self.packages.${system}.regenerateOgImages}";
-          new = mkApp "Create a new blog post" "${self.packages.${system}.newPost}/bin/new";
-          micro = mkApp "Create a new micro post" "${self.packages.${system}.newMicro}/bin/micro";
-        };
+        apps =
+          let
+            inherit (self.packages.${system})
+              serveJekyll
+              lockGemset
+              cleanJekyll
+              regenerateOgImages
+              newPost
+              newMicro
+              ;
+          in
+          {
+            default = mkApp "Serve Jekyll" serveJekyll;
+            lock = mkApp "Lock Gemfile and update gemset.nix" lockGemset;
+            clean = mkApp "Clean build artifacts" cleanJekyll;
+            og = mkApp "Regenerate all OG images" regenerateOgImages;
+            new = mkApp "Create a new blog post" newPost;
+            micro = mkApp "Create a new micro post" newMicro;
+          };
 
         devShells =
           let
