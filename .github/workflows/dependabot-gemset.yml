@@ -1,0 +1,52 @@
+name: Update gemset.nix on Dependabot PRs
+
+# Dependabot only bumps Gemfile.lock. Regenerate gemset.nix from it and push
+# the result back onto the PR branch.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - Gemfile
+      - Gemfile.lock
+
+# Dependabot-triggered workflows get a read-only token by default; request
+# write access explicitly so we can push to the PR branch.
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gemset:
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          # Keep the token around so we can push below.
+          persist-credentials: true
+      - uses: ./.github/actions/install-nix
+      - run: nix run '.#lock'
+      - name: Commit and push
+        id: push
+        run: |
+          if git diff --quiet -- Gemfile.lock gemset.nix; then
+            echo "gemset.nix already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Gemfile.lock gemset.nix
+          git commit -m "Update gemset.nix"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+      # Pushes made with GITHUB_TOKEN don't trigger other workflows, so
+      # check.yml won't run on the new commit. Run the checks here instead.
+      - if: steps.push.outputs.pushed == 'true'
+        run: nix flake check -L
