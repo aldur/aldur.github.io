@@ -23,14 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with: 
-          persist-credentials: false
-      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # Authenticate GitHub API calls (Nix install + fetching flake inputs) to avoid rate limits
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
+      - uses: ./.github/actions/install-nix
       - run: nix flake check -L
       # This needs to run outside of nix checks because it downloads new packages (gems)
       - run: nix run '.#lock'
-      - run: git diff gemset.nix  # Exit 1 if this changed
+      - run: git diff --exit-code gemset.nix  # Fail if it changed
